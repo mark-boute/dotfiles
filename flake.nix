@@ -12,17 +12,17 @@
 
   outputs = { self, nixpkgs, home-manager, ... } @ inputs: 
   let
-    system = "x86_64-linux";
-    # hosts = import ./hosts;  # TODO is this the right way to import the hosts? Might need a hosts/default.nix file  
-    pkgs = inputs.nixpkgs.legacyPackages.${system};
-
-    mkSystem = pkgs: hostname:
-      pkgs.lib.nixosSystem {
-        system = system;
-        specialArgs = { inherit inputs; };
+    mkSystem = packages: system: hostname:
+      nixpkgs.lib.nixosSystem {
+        specialArgs = { 
+          inherit inputs system; 
+          pkgs = import packages {
+            inherit system;
+            config = { allowUnfree = true; };
+          };
+        };
         modules = [
           { networking.hostName = hostname; }
-
           # Base configuration and host specific configuration
           ./modules/system/configuration.nix
           ./hosts/${hostname}/configuration.nix
@@ -41,7 +41,7 @@
   in
   {
     nixosConfigurations = {
-      laptop = mkSystem inputs.nixpkgs "laptop";
+      laptop = mkSystem nixpkgs "x86_64-linux" "laptop";
     };
     # homeConfigurations = {
     #   mark = home-manager.lib.homeManagerConfiguration {
