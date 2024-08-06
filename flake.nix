@@ -16,7 +16,7 @@
     # hosts = import ./hosts;  # TODO is this the right way to import the hosts? Might need a hosts/default.nix file  
     pkgs = inputs.nixpkgs.legacyPackages.${system};
 
-    mkSystem = pkgs: system: hostname:
+    mkSystem = pkgs: hostname:
       pkgs.lib.nixosSystem {
         system = system;
         specialArgs = { inherit inputs; };
@@ -41,7 +41,7 @@
   in
   {
     nixosConfigurations = {
-      laptop = mkSystem inputs.nixpkgs "x86_64-linux" "laptop";
+      laptop = mkSystem inputs.nixpkgs "laptop";
     };
     # homeConfigurations = {
     #   mark = home-manager.lib.homeManagerConfiguration {
