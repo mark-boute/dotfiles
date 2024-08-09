@@ -14,7 +14,6 @@ in
       ../../lib/main-user.nix
     ];
 
-
   # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
 
   main-user = {
@@ -23,6 +22,11 @@ in
     userName = username;
     description = "Mark Boute";
   };
+
+  # Enable numlock on GDM login screen
+  programs.dconf.profiles.gdm.databases = [{
+    settings."org/gnome/desktop/peripherals/keyboard".numlock-state = true;
+  }];
 
   # home-manager = {
   #   extraSpecialArgs = { inherit inputs; };
