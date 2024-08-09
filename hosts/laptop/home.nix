@@ -3,10 +3,8 @@
 {
   imports = [ ../../home-manager/default.nix ];
   modules = {
-    hyprland = {
-      enable = true;
-      style = "nord";
-    };
+    hyprland = { enable = true; style = "nord"; };
+    eww.enable = true;
   };
 
   # Home Manager needs a bit of information about you and the paths it should
