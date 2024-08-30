@@ -7,7 +7,7 @@
     # gui
     ./eww
 
-    # writing
+    # writing and editing
     ./latex
   ];
 }

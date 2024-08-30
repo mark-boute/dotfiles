@@ -5,5 +5,8 @@
     [ 
      # system
      ./system/configuration.nix
+
+     # editor
+     ./neovim
     ];
 }

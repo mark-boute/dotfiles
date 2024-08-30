@@ -12,6 +12,7 @@ in
     [ # Include the results of the hardware scan.
       ./hardware-configuration.nix
       ../../lib/main-user.nix
+      ../../modules/neovim/default.nix
     ];
 
   # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
