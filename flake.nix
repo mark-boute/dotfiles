@@ -43,10 +43,5 @@
     nixosConfigurations = {
       laptop = mkSystem nixpkgs "x86_64-linux" "laptop";
     };
-    # homeConfigurations = {
-    #   mark = home-manager.lib.homeManagerConfiguration {
-    #     inherit system;
-    #     modules = [ ./users/mark/home.nix ];
-    # };
   };
 }

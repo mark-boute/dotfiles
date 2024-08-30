@@ -4,6 +4,18 @@ with lib;
 
 let 
   cfg = config.modules.hyprland;
+
+  importFilesToHome = to: folder: builtins.listToAttrs 
+    (map 
+      (file: {
+        name = "${to}/${file}"; 
+        value = { source = ./. + "/${folder}/${file}"; executable = true; };
+      }) 
+      (builtins.attrNames (builtins.readDir ./${folder}))
+    );
+
+  importFoldersToHome = to: folders: lib.mkMerge (map (importFilesToHome to) folders);
+
 in {
   options.modules.hyprland= { 
 
@@ -22,7 +34,11 @@ in {
       wofi swaybg wlsunset wl-clipboard hyprland
     ];
 
-    home.file.".config/hypr/hyprland.conf".source = ./${cfg.style}/hyprland.conf;
+
+    home.file = lib.mkMerge [
+      (importFilesToHome ".config/hypr/scripts" "scripts")
+      (importFilesToHome ".config/hypr/" "nord")
+    ];
 
   };
 }

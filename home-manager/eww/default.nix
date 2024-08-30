@@ -3,17 +3,18 @@ with lib;
 let
     cfg = config.modules.eww;
 
-    importFiles = folder: builtins.listToAttrs 
+    importFilesToHome = to: folder: builtins.listToAttrs 
       (map 
         (file: {
-          name = ".config/eww/${folder}/${file}"; 
+          name = "${to}/${folder}/${file}"; 
           value = { source = ./. + "/${folder}/${file}"; executable = true; };
         }) 
         (builtins.attrNames (builtins.readDir ./${folder}))
       );
 
-    importFolders = folders: lib.mkMerge (map importFiles folders);
+    importFoldersToHome = to: folders: lib.mkMerge (map (importFilesToHome to) folders);
 in {
+
     options.modules.eww = { 
       enable = mkEnableOption "eww"; 
     };
@@ -30,7 +31,7 @@ in {
 
       # configuration
       home.file = lib.mkMerge [
-        (importFolders [ 
+        (importFoldersToHome ".config/eww" [ 
           "assets"
           "css"
           "modules"

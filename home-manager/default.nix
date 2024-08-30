@@ -6,5 +6,8 @@
      
     # gui
     ./eww
+
+    # writing
+    ./latex
   ];
 }

@@ -5,6 +5,7 @@
   modules = {
     hyprland = { enable = true; style = "nord"; };
     eww.enable = true;
+    latex.enable = true;
   };
 
   # Home Manager needs a bit of information about you and the paths it should
