@@ -15,7 +15,7 @@ in
   ];
 
   modules = {
-    steam.enable = true;
+    steam = { enable = true; addprotonup = true; };
   };
 
 

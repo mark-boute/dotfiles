@@ -2,7 +2,7 @@
 
 {
   imports = [
-    # ./heroic
-    # ./lutris
+    ./heroic
+    ./lutris
   ];
 }
