@@ -10,20 +10,31 @@ in {
 
     setgamemode = mkOption {
       default = false;
+      type = types.bool;
       description = "Enable gamemode. NOTE! This will override the gamemode setting in the optimus-prime module.";
     };
 
+    addmangohud = mkOption {
+      default = false;
+      type = types.bool;
+      description = "Add mangohud to the systemPackages.";
+    };
   };
 
-  config = mkIf cfg.enable {
+  config = mkMerge [
+    ( mkIf cfg.enable {
 
-    programs.steam.enable = true;
-    programs.steam.gamescopeSession.enable = true;
+      programs.steam.enable = true;
+      programs.steam.gamescopeSession.enable = true;
 
+      environment.systemPackages = with pkgs; if cfg.addmangohud then [
+        mangohud
+      ] else [];
 
-    # home.packages = with pkgs; [
-    #   mangohud
-    # ];
-
-  };
+    })
+    # seperate module for gamemode to allow for safe override
+    ( mkIf (cfg.enable && cfg.setgamemode) {
+      programs.gamemode.enable = true;
+    })
+  ];
 }
