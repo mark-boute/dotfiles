@@ -1,8 +1,6 @@
 { inputs, pkgs, lib, config, ... }:
 
-with lib;
-
-let 
+with lib; let 
   cfg = config.modules.hyprland;
 
   importFilesToHome = to: folder: builtins.listToAttrs 

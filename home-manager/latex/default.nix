@@ -1,7 +1,5 @@
 { config, lib, pkgs, ... }:
-with lib;
-let
-
+with lib; let
   cfg = config.modules.latex;
 
   tex = (pkgs.texlive.combine {
