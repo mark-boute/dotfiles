@@ -5,31 +5,31 @@ with lib; let
 in
 {
   options.main-user = {
-    enable = lib.mkEnableOption "enable user module";
+    enable = mkEnableOption "enable user module";
     
-    sudoUser = lib.mkOption {
-      type = lib.types.bool;
+    sudoUser = mkOption {
+      type = types.bool;
       default = false;
       description = "adds user to wheel and networkmanager groups";
     };
 
-    userName = lib.mkOption {
+    userName = mkOption {
       default = "mainuser";
       description = "username";
     };
 
-    description = lib.mkOption {
+    description = mkOption {
       default = "Main User";
       description = "description";
     };
   };
 
-  config = lib.mkIf cfg.enable {
+  config = mkIf cfg.enable {
     users.users.${cfg.userName} = {
       isNormalUser = true;
       initialPassword = "hello";
       description = cfg.description;
-      extraGroups = [] ++ lib.optionals (cfg.sudoUser) [
+      extraGroups = [] ++ optionals (cfg.sudoUser) [
         "networkmanager"
 	      "wheel"
       ];
