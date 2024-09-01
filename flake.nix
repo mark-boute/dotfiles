@@ -18,7 +18,7 @@
 
   outputs = { self, nixpkgs, home-manager, ... } @ inputs: 
   let
-    mkSystem = packages: system: hostname:
+    mkSystem = packages: system: hostname: main-user:
       nixpkgs.lib.nixosSystem {
         specialArgs = { 
           inherit inputs system; 
@@ -39,7 +39,7 @@
               useUserPackages = true;
               useGlobalPkgs = true;
               extraSpecialArgs = { inherit inputs; };
-              users.mark = ./hosts/${hostname}/home.nix;
+              users.${main-user} = ./hosts/${hostname}/home.nix;
             };
           }
         ];
@@ -47,7 +47,7 @@
   in
   {
     nixosConfigurations = {
-      laptop = mkSystem nixpkgs "x86_64-linux" "laptop";
+      laptop = mkSystem nixpkgs "x86_64-linux" "laptop" "mark";
     };
   };
 }
