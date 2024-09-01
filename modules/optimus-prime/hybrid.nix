@@ -17,6 +17,7 @@
   # add a special boot entry NVIDIA Sync mode for gaming
   specialisation = {
     gaming.configuration = {
+      programs.gamemode.enable = true;
 
       hardware.nvidia = {
         prime.sync.enable = lib.mkForce true;

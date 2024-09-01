@@ -1,13 +1,11 @@
 { inputs, pkgs, config, ... }:
 
 {
-  imports = [ 
-    ./hyprland
-     
-    # gui
-    ./eww
+  imports = [
+    ./desktop
+    ./game-launchers
 
-    # writing and editing
+    # standealone
     ./latex
   ];
 }
