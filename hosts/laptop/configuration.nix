@@ -8,13 +8,17 @@ let
   username = "mark";
 in
 {
-  imports =
-    [ # Include the results of the hardware scan.
-      ./hardware-configuration.nix
-      inputs.nixos-hardware.nixosModules.dell-g3-3779
-      ../../lib/main-user.nix
-      ../../modules/optimus-prime/hybrid.nix
-    ];
+  imports = [ # Include the results of the hardware scan.
+    ./hardware-configuration.nix
+    inputs.nixos-hardware.nixosModules.dell-g3-3779
+    ../../lib
+    ../../modules
+  ];
+
+  modules = {
+    steam.enable = true;
+  };
+
 
   # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
 

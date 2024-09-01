@@ -29,7 +29,7 @@ in {
       ];
 
       # configuration
-      home.file = lib.mkMerge [
+      home.file = mkMerge [
         (importFoldersToHome ".config/eww" [ 
           "assets"
           "css"

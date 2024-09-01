@@ -12,14 +12,14 @@ with lib; let
       (builtins.attrNames (builtins.readDir ./${folder}))
     );
 
-  importFoldersToHome = to: folders: lib.mkMerge (map (importFilesToHome to) folders);
+  importFoldersToHome = to: folders: mkMerge (map (importFilesToHome to) folders);
 
 in {
-  options.modules.hyprland= { 
+  options.modules.hyprland = { 
 
     enable = mkEnableOption "hyprland"; 
 
-    style = lib.mkOption {
+    style = mkOption {
       default = "nord";
       description = "style to use";
     };
@@ -33,9 +33,9 @@ in {
     ];
 
 
-    home.file = lib.mkMerge [
+    home.file = mkMerge [
       (importFilesToHome ".config/hypr/scripts" "scripts")
-      (importFilesToHome ".config/hypr/" "nord")
+      (importFilesToHome ".config/hypr/" cfg.style)
     ];
 
   };

@@ -1,7 +1,7 @@
 { config, pkgs, ... }:
 
 {
-  imports = [ ../../home-manager/default.nix ];
+  imports = [ ../../home-manager ];
   modules = {
     hyprland = { enable = true; style = "nord"; };
     eww.enable = true;
