@@ -27,9 +27,9 @@ in {
       programs.steam.enable = true;
       programs.steam.gamescopeSession.enable = true;
 
-      environment.systemPackages = with pkgs; if cfg.addmangohud then [
-        mangohud
-      ] else [];
+      environment.systemPackages = with pkgs; [
+        protonup
+      ] optionals cfg.addmangohud [ mangohud ];
 
     })
     # seperate module for gamemode to allow for safe override

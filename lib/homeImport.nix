@@ -1,7 +1,6 @@
 {lib, ...}:
 
-with lib; 
-{
+with lib; let
   importFilesToHome = to: folder: builtins.listToAttrs 
     (map 
       (file: {
@@ -12,4 +11,8 @@ with lib;
     );
 
   importFoldersToHome = to: folders: mkMerge (map (importFilesToHome to) folders);
+in
+{
+  inherit importFoldersToHome;
+  inherit importFilesToHome;
 }
