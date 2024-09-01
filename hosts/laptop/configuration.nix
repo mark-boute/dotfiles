@@ -10,7 +10,6 @@ in
 {
   imports = [ # Include the results of the hardware scan.
     ./hardware-configuration.nix
-    inputs.nixos-hardware.nixosModules.dell-g3-3779
     ../../lib
     ../../modules
   ];
