@@ -11,8 +11,9 @@ in
   imports =
     [ # Include the results of the hardware scan.
       ./hardware-configuration.nix
+      inputs.nixos-hardware.nixosModules.dell-g3-3779
       ../../lib/main-user.nix
-      ../../modules/neovim/default.nix
+      ../../modules/optimus-prime/hybrid.nix
     ];
 
   # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
@@ -28,6 +29,14 @@ in
   programs.dconf.profiles.gdm.databases = [{
     settings."org/gnome/desktop/peripherals/keyboard".numlock-state = true;
   }];
+
+  # Enable OpenGL support for NVIDIA
+  hardware.graphics = {
+    enable = true;
+    enable32Bit = true;
+  };
+  services.xserver.videoDrivers = ["nvidia"];
+  hardware.nvidia.modesetting.enable = true;
 
   # home-manager = {
   #   extraSpecialArgs = { inherit inputs; };

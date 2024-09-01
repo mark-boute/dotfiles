@@ -10,7 +10,10 @@
       customRC = lib.fileContents ./init.vim;
 
       packages.myVimPackage = with pkgs.vimPlugins; {
-        start = [ ctrlp ];
+        start = [ 
+          ctrlp
+          nvim-tree-lua
+        ];
         # manually loadable by calling `:packadd $plugin-name`
         opt = [ ];
       };

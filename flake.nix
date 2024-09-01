@@ -3,6 +3,7 @@
 
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
+    nixos-hardware.url = "github:nixos/nixos-hardware/master";
 
     home-manager = {
       url = "github:nix-community/home-manager";
@@ -10,7 +11,7 @@
     };
   };
 
-  outputs = { self, nixpkgs, home-manager, ... } @ inputs: 
+  outputs = { self, nixpkgs, home-manager, nixos-hardware, ... } @ inputs: 
   let
     mkSystem = packages: system: hostname:
       nixpkgs.lib.nixosSystem {

@@ -5,6 +5,7 @@
     [ 
      # system
      ./system/configuration.nix
+     ./optimus-prime/default.nix
 
      # editor
      ./neovim
