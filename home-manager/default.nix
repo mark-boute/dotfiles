@@ -4,6 +4,7 @@
   imports = [
     ./desktop
     ./game-launchers
+    ./editors
 
     # standealone
     ./latex

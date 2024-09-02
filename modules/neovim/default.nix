@@ -5,6 +5,7 @@
     defaultEditor = true;
     viAlias = true;
     vimAlias = true;
+    vimdiffAlias = true;
 
     configure = {
       customRC = lib.fileContents ./init.vim;

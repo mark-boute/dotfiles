@@ -9,11 +9,6 @@
       url = "github:nix-community/home-manager";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-
-    nixvim = {
-      url = "github:nix-community/nixvim";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
   };
 
   outputs = { self, nixpkgs, home-manager, ... } @ inputs: 
@@ -48,6 +43,7 @@
   {
     nixosConfigurations = {
       laptop = mkSystem nixpkgs "x86_64-linux" "laptop" "mark";
+      ties-laptop = mkSystem nixpkgs "x86_64-linux" "ties-laptop" "ties";
     };
   };
 }

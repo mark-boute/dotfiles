@@ -8,7 +8,7 @@
      ./optimus-prime
 
      # editor
-     ./neovim
+    #  ./neovim
 
      # system programs
      ./steam
