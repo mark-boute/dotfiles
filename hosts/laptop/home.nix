@@ -44,6 +44,8 @@
     pkgs.vscode
     pkgs.kitty
     pkgs.gh
+    pkgs.discord
+    pkgs.vesktop
   ];
 
   # Home Manager is pretty good at managing dotfiles. The primary way to manage
@@ -59,6 +61,7 @@
     #   org.gradle.console=verbose
     #   org.gradle.daemon.idletimeout=3600000
     # '';
+
   };
 
 
