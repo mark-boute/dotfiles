@@ -3,7 +3,7 @@
 {
   # This needs device IDs to be set! See:
   # https://github.com/vimjoyer/nixos-gaming-video
-  # and 
+  # and if possible:
   # https://github.com/NixOS/nixos-hardware
 
   hardware.nvidia.open = true;
