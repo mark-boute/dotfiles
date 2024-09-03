@@ -48,6 +48,8 @@
   {
     nixosConfigurations = {
       laptop = mkSystem nixpkgs "x86_64-linux" "laptop" "mark";
+      desktop = mkSystem nixpkgs "x86_64-linux" "desktop" "mark";
+
       ties-laptop = mkSystem nixpkgs "x86_64-linux" "ties-laptop" "tiesd";
     };
   };
