@@ -21,6 +21,7 @@
   boot = {
     tmp.cleanOnBoot = true;
     loader = {
+      systemd-boot.enable = false;
       timeout = 5;
       efi.canTouchEfiVariables = true;
       grub = {
