@@ -10,15 +10,22 @@ in
 {
   imports = [ # Include the results of the hardware scan.
     ./hardware-configuration.nix
-    ../../modules/optimus-prime/hybrid.nix
     ../../lib
     ../../modules
   ];
 
   modules = {
+    system.gpu.optimus-prime = {
+      enable = true;
+      mode = "offload";
+      cpu = "intel";
+      setDeviceIds = true;
+      cpuId = "PCI:0:2:0";
+      gpuId = "PCI:1:0:0";
+    };
+
     steam = { enable = true; addprotonup = true; };
   };
-
 
   # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
 

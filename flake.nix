@@ -3,6 +3,7 @@
 
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
+    nixos-unstable-small.url = "github:NixOS/nixpkgs/nixos-unstable-small";
     nixos-hardware.url = "github:nixos/nixos-hardware/master";
 
     home-manager = {
@@ -14,6 +15,7 @@
       url = "github:nix-community/nixvim";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+
   };
 
   outputs = { self, nixpkgs, home-manager, ... } @ inputs: 
@@ -24,6 +26,13 @@
           inherit inputs system; 
           pkgs = import packages {
             inherit system;
+
+            overlays = [
+              (final: prev: { # https://nixpk.gs/pr-tracker.html?pr=338836
+                inherit (import inputs.nixos-unstable-small {inherit system;}) xdg-desktop-portal-hyprland;
+              })            
+            ];
+
             config = { allowUnfree = true; };
           };
         };

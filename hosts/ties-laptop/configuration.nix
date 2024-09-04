@@ -16,21 +16,16 @@ in
   ];
 
   modules = {
-    # steam = { enable = true; addprotonup = true; };
-  };
-
-  hardware.nvidia.prime = {
-    offload = {
+    system.gpu.optimus-prime = {
       enable = true;
-      enableOffloadCmd = true;
+      mode = "offload";
+      setDeviceIds = true;
+      cpu = "intel";
+      cpuId = "PCI:0:2:0";
+      gpuId = "PCI:1:0:0";
     };
 
-    # integrated
-    intelBusId = "PCI:0:2:0";
-    # amdgpuBusId = "PCI:6:0:0"
-    
-    # dedicated
-    nvidiaBusId = "PCI:1:0:0";
+    steam = { enable = true; addprotonup = true; };
   };
 
   # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
