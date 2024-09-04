@@ -4,8 +4,7 @@
   imports =
     [ 
      # system
-     ./system/configuration.nix
-     ./optimus-prime
+    ./system
 
      # editor
      ./neovim
