@@ -3,6 +3,7 @@
 
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
+    nixos-unstable-small.url = "github:NixOS/nixpkgs/nixos-unstable-small";
     nixos-hardware.url = "github:nixos/nixos-hardware/master";
 
     home-manager = {
@@ -19,6 +20,13 @@
           inherit inputs system; 
           pkgs = import packages {
             inherit system;
+
+            overlays = [
+              (final: prev: { # https://nixpk.gs/pr-tracker.html?pr=338836
+                inherit (import inputs.nixos-unstable-small {inherit system;}) xdg-desktop-portal-hyprland;
+              })            
+            ];
+
             config = { allowUnfree = true; };
           };
         };
@@ -43,7 +51,7 @@
   {
     nixosConfigurations = {
       laptop = mkSystem nixpkgs "x86_64-linux" "laptop" "mark";
-      ties-laptop = mkSystem nixpkgs "x86_64-linux" "ties-laptop" "ties";
+      ties-laptop = mkSystem nixpkgs "x86_64-linux" "ties-laptop" "tiesd";
     };
   };
 }

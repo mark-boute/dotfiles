@@ -5,7 +5,7 @@
 { config, pkgs, inputs, ... }:
 
 let
-  username = "mark";
+  username = "tiesd";
 in
 {
   imports = [ # Include the results of the hardware scan.
@@ -18,8 +18,8 @@ in
     system.gpu.optimus-prime = {
       enable = true;
       mode = "offload";
-      cpu = "intel";
       setDeviceIds = true;
+      cpu = "intel";
       cpuId = "PCI:0:2:0";
       gpuId = "PCI:1:0:0";
     };
@@ -33,7 +33,7 @@ in
     enable = true;
     sudoUser = true;
     userName = username;
-    description = "Mark Boute";
+    description = "Ties Dirksen";
   };
 
   # Enable numlock on GDM login screen
@@ -71,7 +71,7 @@ in
   services.xserver.desktopManager.gnome.enable = true;
 
   # Enable the Hyprland compositor
-  programs.hyprland.enable = true;
+  # programs.hyprland.enable = true;
 
   # Configure keymap in X11
   services.xserver.xkb = {

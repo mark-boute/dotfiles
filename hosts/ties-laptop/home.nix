@@ -3,16 +3,15 @@
 {
   imports = [ ../../home-manager ];
   modules = {
-    hyprland = { enable = true; style = "nord"; };
-    eww.enable = true;
-    latex.enable = true;
-    neovim.enable = true;
+    # hyprland = { enable = true; style = "nord"; };
+    # eww.enable = true;
+    # latex.enable = true;
   };
 
   # Home Manager needs a bit of information about you and the paths it should
   # manage.
-  home.username = "mark";
-  home.homeDirectory = "/home/mark";
+  home.username = "tiesd";
+  home.homeDirectory = "/home/tiesd";
   nixpkgs.config.allowUnfree = true;
 
   # wayland.windowManager.hyprland = {
@@ -43,7 +42,6 @@
     #   echo "Hello, ${config.home.username}!"
     # '')
     pkgs.vscode
-    pkgs.kitty
     pkgs.gh
     pkgs.discord
     pkgs.vesktop
@@ -68,8 +66,8 @@
 
   programs.git = {
     enable = true;
-    userName = "Mark Boute";
-    userEmail = "bmark0702@gmail.com";
+    userName = "Ties Dirksen";
+    userEmail = "tiesdirksen@gmail.com";
   };
 
   # Home Manager can also manage your environment variables through
