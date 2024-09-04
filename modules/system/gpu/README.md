@@ -1,5 +1,6 @@
 # NVIDIA
-Read: https://nixos.wiki/wiki/Nvidia
+
+Read: <https://nixos.wiki/wiki/Nvidia>
 
 In order to find your PCI IDs:
 
