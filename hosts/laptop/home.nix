@@ -6,6 +6,7 @@
     hyprland = { enable = true; style = "nord"; };
     eww.enable = true;
     latex.enable = true;
+    astrovim.enable = true;
   };
 
   # Home Manager needs a bit of information about you and the paths it should
@@ -43,9 +44,14 @@
     # '')
     pkgs.vscode
     pkgs.kitty
+
     pkgs.gh
+    pkgs.glab
+    
     pkgs.discord
     pkgs.vesktop
+
+    pkgs.eduvpn-client
   ];
 
   # Home Manager is pretty good at managing dotfiles. The primary way to manage
