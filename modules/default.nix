@@ -6,6 +6,9 @@
      # system
     ./system
 
+    # development tools
+    ./development-tools
+
      # editor
      ./neovim
 
