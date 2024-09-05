@@ -14,6 +14,8 @@ in
     ../../modules
   ];
 
+  programs.tmux.enable = true;
+
   modules = {
     system.gpu.optimus-prime = {
       enable = true;
@@ -40,14 +42,6 @@ in
   programs.dconf.profiles.gdm.databases = [{
     settings."org/gnome/desktop/peripherals/keyboard".numlock-state = true;
   }];
-
-  # Enable OpenGL support for NVIDIA
-  hardware.graphics = {
-    enable = true;
-    enable32Bit = true;
-  };
-  services.xserver.videoDrivers = ["nvidia"];
-  hardware.nvidia.modesetting.enable = true;
 
   # home-manager = {
   #   extraSpecialArgs = { inherit inputs; };
