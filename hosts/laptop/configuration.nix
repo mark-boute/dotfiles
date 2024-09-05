@@ -27,6 +27,7 @@ in
     };
 
     steam = { enable = true; addprotonup = true; };
+    development-tools.r = { enable = true; rstudio = true; };
   };
 
   # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
