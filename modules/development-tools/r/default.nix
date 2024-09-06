@@ -13,12 +13,12 @@ in {
   config = mkIf cfg.enable {
     environment.systemPackages = with pkgs; [
       R
-	    chromium 
-	    pandoc
-	    rPackages.pagedown
-	    rPackages.ggplot2
-	    rPackages.dplyr
-	    rPackages.xts
+      # chromium 
+      pandoc
+      rPackages.pagedown
+      rPackages.ggplot2
+      rPackages.dplyr
+      rPackages.xts
     ] ++ optionals cfg.rstudio [ rstudio ];
 
   };

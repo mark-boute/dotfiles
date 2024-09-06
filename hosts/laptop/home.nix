@@ -1,31 +1,18 @@
 { config, pkgs, ... }:
 
 {
+  # Home Manager needs a bit of information about you and the paths it should
+  # manage.
+  home.username = "mark";
+  home.homeDirectory = "/home/mark";
   imports = [ ../../home-manager ];
+
   modules = {
     hyprland = { enable = true; style = "nord"; };
     eww.enable = true;
     latex.enable = true;
     astrovim.enable = true;
   };
-
-  # Home Manager needs a bit of information about you and the paths it should
-  # manage.
-  home.username = "mark";
-  home.homeDirectory = "/home/mark";
-  nixpkgs.config.allowUnfree = true;
-
-  # wayland.windowManager.hyprland = {
-  #   enable = true;
-  #   settings = {
-  #     "$mod" = "SUPER";
-  #     bind = [
-  #       "$mod, W, exec, firefox"
-	#       "$mod, T, exec, kitty"
-  #     ];
-  #   };
-  #   systemd.variables = ["--all"];
-  # };
 
   # The home.packages option allows you to install Nix packages into your
   # environment.
@@ -52,7 +39,30 @@
     pkgs.vesktop
 
     pkgs.eduvpn-client
+    pkgs.spotify
   ];
+
+  programs.git = {
+    enable = true;
+    userName = "Mark Boute";
+    userEmail = "bmark0702@gmail.com";
+    diff-so-fancy.enable = true;
+
+    aliases = {
+      s = "status";
+      c = "commit";
+      b = "switch";  # yep, this is on purpose
+      d = "diff";
+      l = "log";
+      p = "push";
+      f = "fetch";
+      a = "add";
+    };
+
+    extraConfig = {
+      push = { autoSetupRemote = true; };
+    };
+  };
 
   # Home Manager is pretty good at managing dotfiles. The primary way to manage
   # plain files is through 'home.file'.
@@ -68,13 +78,6 @@
     #   org.gradle.daemon.idletimeout=3600000
     # '';
 
-  };
-
-
-  programs.git = {
-    enable = true;
-    userName = "Mark Boute";
-    userEmail = "bmark0702@gmail.com";
   };
 
   # Home Manager can also manage your environment variables through
