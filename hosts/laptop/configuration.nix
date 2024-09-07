@@ -14,7 +14,12 @@ in
     ../../modules
   ];
 
-  programs.tmux.enable = true;
+  main-user = {
+    enable = true;
+    sudoUser = true;
+    userName = username;
+    description = "Mark Boute";
+  };
 
   modules = {
     system.gpu.optimus-prime = {
@@ -30,13 +35,9 @@ in
     development-tools.r = { enable = true; rstudio = true; };
   };
 
-  # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
-
-  main-user = {
-    enable = true;
-    sudoUser = true;
-    userName = username;
-    description = "Mark Boute";
+  programs = {
+    tmux.enable = true;
+    firefox.enable = true;
   };
 
   # Enable numlock on GDM login screen
@@ -44,26 +45,19 @@ in
     settings."org/gnome/desktop/peripherals/keyboard".numlock-state = true;
   }];
 
-  # home-manager = {
-  #   extraSpecialArgs = { inherit inputs; };
-  #   users = {
-  #     "${username}" = import ./home.nix;
-  #   };
-  # };
-
-  # Configure network proxy if necessary
-  # networking.proxy.default = "http://user:password@proxy:port/";
-  # networking.proxy.noProxy = "127.0.0.1,localhost,internal.domain";
-
   # Enable networking
   networking.networkmanager.enable = true;
 
   # Enable the X11 windowing system.
   services.xserver.enable = true;
 
-  # Enable the GNOME Desktop Environment.
+  # Enable the GNOME Desktop Environment and GDM
   services.xserver.displayManager.gdm.enable = true;
   services.xserver.desktopManager.gnome.enable = true;
+
+  # Enable the COSMIC Desktop Environment without cosmic-greeter
+  services.desktopManager.cosmic.enable = true;
+  services.displayManager.cosmic-greeter.enable = false;
 
   # Enable the Hyprland compositor
   programs.hyprland.enable = true;
@@ -99,14 +93,4 @@ in
   # Enable touchpad support (enabled default in most desktopManager).
   services.libinput.enable = true;
 
-  # Install firefox.
-  programs.firefox.enable = true;
-
-  # List services that you want to enable:
-
-  # Open ports in the firewall.
-  # networking.firewall.allowedTCPPorts = [ ... ];
-  # networking.firewall.allowedUDPPorts = [ ... ];
-  # Or disable the firewall altogether.
-  # networking.firewall.enable = false;
 }
