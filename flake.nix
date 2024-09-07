@@ -18,7 +18,7 @@
 
   };
 
-  outputs = { self, nixpkgs, nixpkgs-unstable, home-manager, ... } @ inputs: 
+  outputs = { self, nixpkgs, nixpkgs-unstable, home-manager, nixos-cosmic, ... } @ inputs: 
   let
     mkSystem = packages: system: hostname: main-user:
       nixpkgs.lib.nixosSystem {
@@ -64,6 +64,15 @@
               users.${main-user} = ./hosts/${hostname}/home.nix;
             };
           }
+
+          nixos-cosmic.nixosModules.default # https://github.com/lilyinstarlight/nixos-cosmic
+          {
+            nix.settings = {
+              substituters = [ "https://cosmic.cachix.org/" ];
+              trusted-public-keys = [ "cosmic.cachix.org-1:Dya9IyXD4xdBehWjrkPv6rtxpmMdRel02smYzA85dPE=" ];
+            };
+          }
+          
         ];
       };
   in
