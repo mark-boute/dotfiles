@@ -3,6 +3,7 @@
 {
   imports = [ ../../home-manager ];
   modules = {
+    gnome-settings.enable = true;
     # hyprland = { enable = true; style = "nord"; };
     # eww.enable = true;
     # latex.enable = true;
@@ -45,6 +46,7 @@
     pkgs.gh
     pkgs.discord
     pkgs.vesktop
+    pkgs.brave
   ];
 
   # Home Manager is pretty good at managing dotfiles. The primary way to manage

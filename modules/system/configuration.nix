@@ -36,11 +36,6 @@
   environment.defaultPackages = [];
   services.xserver.desktopManager.xterm.enable = false;
 
-  # I use zsh (btw)
-  environment.shells = [ pkgs.zsh ];
-  users.defaultUserShell = pkgs.zsh;
-  programs.zsh.enable = true;
-
   environment.systemPackages = with pkgs; [
     neovim
     bat
