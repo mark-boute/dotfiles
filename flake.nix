@@ -27,12 +27,11 @@
 
           pkgs = import packages {
             inherit system;
-            overlays = [
-
-              (final: prev: { # https://nixpk.gs/pr-tracker.html?pr=338836
-                inherit (import nixpkgs-unstable {inherit system;}) xdg-desktop-portal-hyprland;
-              })            
-            ];
+            #overlays = [
+            #  (final: prev: { # https://nixpk.gs/pr-tracker.html?pr=338836
+            #    inherit (import nixpkgs-unstable {inherit system;}) xdg-desktop-portal-hyprland;
+            #  })            
+            #];
 
             config = { allowUnfree = true; };
           };
@@ -69,7 +68,7 @@
   in
   {
     nixosConfigurations = {
-      laptop = mkSystem nixpkgs "x86_64-linux" "laptop" "mark";
+      legion = mkSystem nixpkgs "x86_64-linux" "legion" "mark";
       ties-laptop = mkSystem nixpkgs "x86_64-linux" "ties-laptop" "tiesd";
     };
   };
