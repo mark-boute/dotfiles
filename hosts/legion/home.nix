@@ -8,8 +8,9 @@
   imports = [ ../../home-manager ];
 
   modules = {
-    hyprland = { enable = true; style = "nord"; };
-    eww.enable = true;
+    gnome-settings.enable = true;
+    # hyprland = { enable = true; style = "nord"; };
+    # eww.enable = true;
     latex.enable = true;
     astrovim.enable = true;
   };
