@@ -43,8 +43,8 @@ in {
       "org/gnome/desktop/background" = {
         color-shading-type = "solid";
         picture-options = "zoom";
-        picture-uri = background-light;
-        picture-uri-dark = background-dark;
+        picture-uri = cfg.background-light;
+        picture-uri-dark = cfg.background-dark;
         primary-color = "#241f31";
         secondary-color = "#000000";
       };
@@ -53,7 +53,7 @@ in {
       "org/gnome/desktop/screensaver" = {
         color-shading-type = "solid";
         picture-options = "zoom";
-        picture-uri = background-light;
+        picture-uri = cfg.background-light;
         primary-color = "#241f31";
         secondary-color = "#000000";
       };
