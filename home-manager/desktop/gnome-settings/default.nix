@@ -8,6 +8,22 @@ in {
 
     enable = mkEnableOption "gnome-settings"; 
 
+    background-light = mkOption {
+      type = types.str;
+      default = "file:///run/current-system/sw/share/backgrounds/gnome/blobs-l.svg";
+      description = ''
+        The URI of the background image in light mode.
+      '';
+    };
+
+    background-dark = mkOption {
+      type = types.str;
+      default = "file:///run/current-system/sw/share/backgrounds/gnome/blobs-d.svg";
+      description = ''
+        The URI of the background image in dark mode.
+      '';
+    };
+
   };
 
   config = mkIf cfg.enable {
@@ -27,8 +43,8 @@ in {
       "org/gnome/desktop/background" = {
         color-shading-type = "solid";
         picture-options = "zoom";
-        picture-uri = "file:///run/current-system/sw/share/backgrounds/gnome/blobs-l.svg";
-        picture-uri-dark = "file:///run/current-system/sw/share/backgrounds/gnome/blobs-d.svg";
+        picture-uri = background-light;
+        picture-uri-dark = background-dark;
         primary-color = "#241f31";
         secondary-color = "#000000";
       };
@@ -37,7 +53,7 @@ in {
       "org/gnome/desktop/screensaver" = {
         color-shading-type = "solid";
         picture-options = "zoom";
-        picture-uri = "file:///run/current-system/sw/share/backgrounds/gnome/blobs-l.svg";
+        picture-uri = background-light;
         primary-color = "#241f31";
         secondary-color = "#000000";
       };
