@@ -3,11 +3,11 @@ with lib; let
   cfg = config.modules.latex;
 
   tex = (pkgs.texlive.combine {
-    inherit (pkgs.texlive) scheme-basic
+    inherit (pkgs.texlive) scheme-small
       dvisvgm dvipng # for preview and export as html
       wrapfig amsmath ulem hyperref capt-of;
-      #(setq org-latex-compiler "lualatex")
-      #(setq org-preview-latex-default-process 'dvisvgm)
+      # (setq org-latex-compiler "lualatex")
+      # (setq org-preview-latex-default-process dvisvgm)
   });
 in
 { # home-manager

@@ -20,10 +20,10 @@ in
     system.gpu.optimus-prime = {
       enable = true;
       mode = "offload";
-      cpu = "intel";
+      cpu = "amd";
       setDeviceIds = true;
-      cpuId = "PCI:0:2:0";
-      gpuId = "PCI:1:0:0";
+      cpuId = "PCI:1:0:0";
+      gpuId = "PCI:5:0:0";
     };
 
     steam = { enable = true; addprotonup = true; };
