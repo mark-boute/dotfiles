@@ -84,7 +84,6 @@ in {
 
     # offload
     (mkIf (cfg.enable && cfg.mode == "offload") {
-      # hardware.nvidia.powerManagement.finegrained = true;
 
       hardware.nvidia.prime = {
         offload = {
@@ -93,11 +92,14 @@ in {
         };
       };
 
+      hardware.nvidia.powerManagement.finegrained = mkDefault true;
+
       # add a special boot entry NVIDIA Sync mode for gaming
       specialisation = {
         gaming.configuration = {
           programs.gamemode.enable = true;
 
+          hardware.nvidia.powerManagement.finegrained = false;
           hardware.nvidia = {
             prime.sync.enable = lib.mkForce true;
             prime.offload = {
