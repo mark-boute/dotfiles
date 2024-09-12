@@ -10,6 +10,7 @@ in
 {
   imports = [ # Include the results of the hardware scan.
     ./hardware-configuration.nix
+    ./nixos-hardware.nix
     ../../lib
     ../../modules
   ];
@@ -19,7 +20,7 @@ in
   modules = {
     system.gpu.optimus-prime = {
       enable = true;
-      mode = "offload";
+      # mode = "offload";
       cpu = "amd";
       setDeviceIds = true;
       cpuId = "PCI:1:0:0";
