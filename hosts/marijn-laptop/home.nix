@@ -3,8 +3,8 @@
 {
   # Home Manager needs a bit of information about you and the paths it should
   # manage.
-  home.username = "marijn";
-  home.homeDirectory = "/home/marijn";
+  home.username = "scarletto";
+  home.homeDirectory = "/home/scarletto";
   imports = [ ../../home-manager ];
 
   modules = {
