@@ -92,7 +92,7 @@ in {
         };
       };
 
-      hardware.nvidia.powerManagement.finegrained = mkDefault true;
+      # hardware.nvidia.powerManagement.finegrained = mkDefault true;
 
       # add a special boot entry NVIDIA Sync mode for gaming
       specialisation = {
