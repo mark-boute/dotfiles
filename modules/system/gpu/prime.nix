@@ -1,7 +1,8 @@
-{ config, pkgs, lib, ... }:
+{ config, pkgs, lib, inputs, ... }:
 
 with lib; let 
   cfg = config.modules.system.gpu.optimus-prime;
+  hardware-modules = inputs.nixos-hardware.nixosModules;
 in {
   # This needs device IDs to be set! See:
   # https://github.com/vimjoyer/nixos-gaming-video
@@ -12,11 +13,12 @@ in {
     enable = mkEnableOption "optimus-prime";
 
     mode = mkOption {
-      default = "offload";
+      default = "";
       type = types.str;
       description = ''
         The mode to use for NVIDIA Optimus.
         Possible values are:
+        - "": All options enabled as boot entries
         - "sync": NVIDIA Sync mode
         - "reverse-sync": NVIDIA Reverse Sync mode
         - "offload": Adds a special boot entry for NVIDIA sync mode, defaults to offload mode
@@ -71,7 +73,33 @@ in {
     # require nvidia module
     (mkIf cfg.enable { modules.system.gpu.nvidia.enable = true; })
 
-    # (mkIf (cfg.enable && cfg.mode != "offload") { powerManagement.finegrained = true; })
+    # no specification
+    (mkIf (cfg.enable && cfg.mode == "") {
+      specialisation = {
+        prime.configuration = {
+          imports = [ hardware-modules.common-gpu-nvidia ];
+          hardware.nvidia.modesetting.enable = mkDefault true;
+          hardware.nvidia.powerManagement.enable = mkDefault true;
+        };
+        prime-sync.configuration = {
+          imports = [ hardware-modules.common-gpu-nvidia-sync ];
+
+          hardware.nvidia = {
+            modesetting.enable = mkDefault true;
+            powerManagement.enable = mkDefault false;
+            powerManagement.finegrained = mkDefault false;
+            open = mkDefault false;
+          };
+
+        };
+        no-prime.configuration = {
+          imports = [ hardware-modules.common-gpu-nvidia-nonprime ];
+        };
+        iGPU.configuration = {
+          imports = [ hardware-modules.common-gpu-nvidia-disable ];
+        };
+      };
+    })
 
     # sync
     (mkIf (cfg.enable && cfg.mode == "sync") { hardware.nvidia.prime.sync.enable = true; })
