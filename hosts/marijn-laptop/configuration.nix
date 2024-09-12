@@ -8,6 +8,18 @@ let
   username = "marijn";
 in
 {
+  nix = {
+    settings = {
+      experimental-features = [ "nix-command" "flakes" ];
+      auto-optimise-store = true;
+      trusted-users = [ "@wheel" ];
+    };
+    gc = {
+      automatic = true;
+      dates = "weekly";
+      options = "--delete-older-than 30d";
+    };
+  };
   imports = [ # Include the results of the hardware scan.
     ./hardware-configuration.nix
     inputs.nixos-hardware.nixosModules.lenovo-ideapad-15alc6
