@@ -3,8 +3,8 @@
 {
   # Home Manager needs a bit of information about you and the paths it should
   # manage.
-  home.username = "mark";
-  home.homeDirectory = "/home/mark";
+  home.username = "marijn";
+  home.homeDirectory = "/home/marijn";
   imports = [ ../../home-manager ];
 
   modules = {
@@ -40,13 +40,12 @@
     pkgs.vesktop
 
     pkgs.eduvpn-client
-    pkgs.spotify
   ];
 
   programs.git = {
     enable = true;
-    userName = "Mark Boute";
-    userEmail = "bmark0702@gmail.com";
+    userName = "Marijn Meuleman";
+    userEmail = "marijn2312@gmail.com";
     diff-so-fancy.enable = true;
 
     aliases = {

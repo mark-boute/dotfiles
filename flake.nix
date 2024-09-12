@@ -11,11 +11,6 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    nixvim = {
-      url = "github:nix-community/nixvim";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-
   };
 
   outputs = { self, nixpkgs, nixpkgs-unstable, home-manager, ... } @ inputs: 
@@ -68,8 +63,15 @@
   in
   {
     nixosConfigurations = {
+      # mark
       legion = mkSystem nixpkgs "x86_64-linux" "legion" "mark";
+      desktop = mkSystem nixpkgs "x86_64-linux" "desktop" "mark";
+      
+      # ties
       ties-laptop = mkSystem nixpkgs "x86_64-linux" "ties-laptop" "tiesd";
+      
+      # marijn
+      marijn-laptop = mkSystem nixpkgs "x86_64-linux" "marijn-laptop" "scarletto";
     };
   };
 }
