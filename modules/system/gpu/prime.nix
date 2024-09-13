@@ -25,6 +25,8 @@ in {
       '';
     };
 
+    open = mkEnableOption "open";
+
     setDeviceIds = mkOption {
       default = false;
       type = types.bool;
@@ -71,7 +73,7 @@ in {
   config = mkMerge [
 
     # require nvidia module
-    (mkIf cfg.enable { modules.system.gpu.nvidia.enable = true; })
+    (mkIf cfg.enable { modules.system.gpu.nvidia = {enable = true; open = cfg.open;};})
 
     # no specification
     (mkIf (cfg.enable && cfg.mode == "") {
