@@ -32,14 +32,21 @@
     # '')
     pkgs.vscode
     pkgs.kitty
+    pkgs.arduino-ide
 
     pkgs.gh
     pkgs.glab
+    pkgs.zotero
     
     pkgs.discord
     pkgs.vesktop
 
     pkgs.eduvpn-client
+
+    pkgs.gimp
+    pkgs.ffmpeg
+    
+    pkgs.python3
   ];
 
   programs.git = {

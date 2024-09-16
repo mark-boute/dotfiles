@@ -5,7 +5,7 @@
 { config, pkgs, inputs, ... }:
 
 let
-  username = "marijn";
+  username = "scarletto";
 in
 {
   nix = {
@@ -40,6 +40,7 @@ in
     sudoUser = true;
     userName = username;
     description = "Marijn Meuleman";
+    groups = [ "dialout" ];
   };
 
   # Enable numlock on GDM login screen
