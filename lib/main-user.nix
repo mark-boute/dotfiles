@@ -22,6 +22,11 @@ in
       default = "Main User";
       description = "description";
     };
+    
+    groups = mkOption {
+      default = [];
+      description = "extra groups";
+    };
   };
 
   config = mkIf cfg.enable {
@@ -32,7 +37,7 @@ in
       extraGroups = [] ++ optionals (cfg.sudoUser) [
         "networkmanager"
 	      "wheel"
-      ];
+      ] ++ cfg.groups;
     };
   };
 }
