@@ -31,6 +31,12 @@ in
     development-tools.r = { enable = true; rstudio = true; };
   };
 
+  environment.systemPackages = with pkgs; [
+    lenovo-legion
+  ];
+
+  boot.extraModulePackages = with config.boot.kernelPackages; [ lenovo-legion-module ]; 
+
   # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
 
   main-user = {
