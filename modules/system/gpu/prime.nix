@@ -80,25 +80,16 @@ in {
       specialisation = {
         prime.configuration = {
           imports = [ hardware-modules.common-gpu-nvidia ];
-          hardware.nvidia.modesetting.enable = mkDefault true;
-          hardware.nvidia.powerManagement.enable = mkDefault true;
         };
         prime-sync.configuration = {
           imports = [ hardware-modules.common-gpu-nvidia-sync ];
-
-          hardware.nvidia = {
-            modesetting.enable = mkDefault true;
-            powerManagement.enable = mkDefault false;
-            powerManagement.finegrained = mkDefault false;
-            open = mkDefault false;
-          };
-
         };
         no-prime.configuration = {
           imports = [ hardware-modules.common-gpu-nvidia-nonprime ];
         };
         iGPU.configuration = {
           imports = [ hardware-modules.common-gpu-nvidia-disable ];
+          modules.system.gpu.nvidia = { enable = mkForce false; };
         };
       };
     })

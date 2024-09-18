@@ -10,6 +10,8 @@ in {
     enable = mkEnableOption "nvidia";
 
     open = mkEnableOption "open";
+    powerManagement = mkEnableOption "powerManagement";
+    finegrained = mkEnableOption "finegrained";
   };
 
   config = mkIf cfg.enable {
@@ -30,7 +32,10 @@ in {
       # Enable this if you have graphical corruption issues or application crashes after waking
       # up from sleep. This fixes it by saving the entire VRAM memory to /tmp/ instead 
       # of just the bare essentials.
-      powerManagement.enable = false;
+      powerManagement.enable = cfg.powerManagement;
+
+      # Fine-grained power management. Turns off the GPU when not in use.
+      powerManagement.finegrained = cfg.finegrained && cfg.powerManagement;
 
       # Use the NVidia open source kernel module (not to be confused with the
       # independent third-party "nouveau" open source driver).
