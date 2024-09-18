@@ -33,6 +33,12 @@ in
 
   environment.systemPackages = with pkgs; [
     lenovo-legion
+
+    # cora dependencies
+    z3
+    jdk22
+    gradle-completion
+    vscode-extensions.vscjava.vscode-gradle
   ];
 
   boot.extraModulePackages = with config.boot.kernelPackages; [ lenovo-legion-module ]; 
