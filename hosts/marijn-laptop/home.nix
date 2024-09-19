@@ -47,6 +47,8 @@
     pkgs.ffmpeg
     
     pkgs.python3
+
+    pkgs.rpi-imager
   ];
 
   programs.git = {
