@@ -15,16 +15,21 @@ in
     ../../modules
   ];
 
+  # boot.kernelPackages = pkgs.linuxPackages_zen;
+  boot.kernelPackages = pkgs.linuxPackages_xanmod_latest;
+
   programs.tmux.enable = true;
 
   modules = {
     system.gpu.optimus-prime = {
       enable = true;
-      # mode = "offload";
+      mode = "offload";
       cpu = "amd";
       setDeviceIds = true;
       cpuId = "PCI:1:0:0";
       gpuId = "PCI:5:0:0";
+      powerManagement = true;
+      finegrained = true;
     };
 
     steam = { enable = true; addprotonup = true; };
@@ -32,16 +37,22 @@ in
   };
 
   environment.systemPackages = with pkgs; [
-    lenovo-legion
+    # lenovo-legion
+    # (callPackage ../../modules/power-options/gtk.nix {})
+
+    powertop
+    nvtopPackages.full
 
     # cora dependencies
     z3
     jdk22
     gradle-completion
+    cmake
+    unzip
     vscode-extensions.vscjava.vscode-gradle
   ];
 
-  boot.extraModulePackages = with config.boot.kernelPackages; [ lenovo-legion-module ]; 
+  # boot.extraModulePackages = with config.boot.kernelPackages; [ lenovo-legion-module ]; 
 
   # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
 
