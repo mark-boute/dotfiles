@@ -29,6 +29,7 @@
         default = "saved";
         efiSupport = true;
         device = "nodev";
+        useOSProber = true;
       };
     };
   };
@@ -43,6 +44,7 @@
     wget
     zoxide
     git
+    xdg-utils
   ];
 
   # Enable networking

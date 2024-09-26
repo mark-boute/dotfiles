@@ -26,17 +26,10 @@ in {
     };
 
     open = mkEnableOption "open";
+    powerManagement = mkEnableOption "powerManagement";
+    finegrained = mkEnableOption "finegrained";
 
-    setDeviceIds = mkOption {
-      default = false;
-      type = types.bool;
-      description = ''
-        Set the device IDs for NVIDIA Optimus.
-        This is required for the modes to work.
-        But may also be set using:
-          https://github.com/NixOS/nixos-hardware
-      '';
-    };
+    setDeviceIds = mkEnableOption "setDeviceIds";
 
     cpu = mkOption {
       default = "intel";
@@ -73,13 +66,20 @@ in {
   config = mkMerge [
 
     # require nvidia module
-    (mkIf cfg.enable { modules.system.gpu.nvidia = {enable = true; open = cfg.open;};})
+    (mkIf cfg.enable { 
+      modules.system.gpu.nvidia = {
+        enable = true;
+        open = cfg.open;
+        powerManagement = cfg.powerManagement;
+      };
+    })
 
     # no specification
     (mkIf (cfg.enable && cfg.mode == "") {
       specialisation = {
         prime.configuration = {
           imports = [ hardware-modules.common-gpu-nvidia ];
+          modules.system.gpu.nvidia.finegrained = cfg.finegrained;
         };
         prime-sync.configuration = {
           imports = [ hardware-modules.common-gpu-nvidia-sync ];
@@ -89,7 +89,12 @@ in {
         };
         iGPU.configuration = {
           imports = [ hardware-modules.common-gpu-nvidia-disable ];
-          modules.system.gpu.nvidia = { enable = mkForce false; };
+          modules.system.gpu.nvidia = { 
+            enable = mkForce false;
+            open = mkForce false;
+            powerManagement = mkForce false;
+            finegrained = mkForce false;
+          };
         };
       };
     })

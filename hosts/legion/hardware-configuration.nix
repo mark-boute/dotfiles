@@ -11,22 +11,22 @@
 
   boot.initrd.availableKernelModules = [ "nvme" "xhci_pci" "usb_storage" "usbhid" "sd_mod" ];
   boot.initrd.kernelModules = [ ];
-  boot.kernelModules = [ "kvm-intel" ];
+  boot.kernelModules = [ "kvm-amd" ];
   boot.extraModulePackages = [ ];
 
   fileSystems."/" =
-    { device = "/dev/disk/by-label/NIX_ROOT";
+    { device = "/dev/disk/by-uuid/18796fa8-09cc-40e0-af93-1e28119b2c2d";
       fsType = "ext4";
     };
 
   fileSystems."/boot" =
-    { device = "/dev/disk/by-label/NIX_BOOT";
+    { device = "/dev/disk/by-uuid/AC9E-781F";
       fsType = "vfat";
       options = [ "fmask=0077" "dmask=0077" ];
     };
 
   swapDevices = [ {
-      device = "/dev/disk/by-label/swap";
+      device = "/dev/disk/by-uuid/a2c57484-e4a9-4b94-802b-0358cf779057";
   } ];
 
   # Enables DHCP on each ethernet and wireless interface. In case of scripted networking

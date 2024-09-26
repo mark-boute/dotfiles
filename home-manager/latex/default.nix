@@ -3,7 +3,7 @@ with lib; let
   cfg = config.modules.latex;
 
   tex = (pkgs.texlive.combine {
-    inherit (pkgs.texlive) scheme-small
+    inherit (pkgs.texlive) scheme-medium
       dvisvgm dvipng # for preview and export as html
       wrapfig amsmath ulem hyperref capt-of;
       # (setq org-latex-compiler "lualatex")
@@ -21,7 +21,7 @@ in
       tex
       ltex-ls # this is outdated, use ltex-ls-plus instead. Download from https://github.com/ltex-plus/vscode-ltex-plus
       
-      jdk
+      jdk22
     ];
   };
 }
