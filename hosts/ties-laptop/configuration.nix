@@ -17,7 +17,6 @@ in
   modules = {
     system.gpu.optimus-prime = {
       enable = true;
-      mode = "offload";
       setDeviceIds = true;
       cpu = "intel";
       cpuId = "PCI:0:2:0";
