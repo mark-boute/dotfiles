@@ -50,6 +50,9 @@ in
     cmake
     unzip
     vscode-extensions.vscjava.vscode-gradle
+
+  ] ++ [
+    inputs.zen-browser.packages.${system}.specific
   ];
 
   # boot.extraModulePackages = with config.boot.kernelPackages; [ lenovo-legion-module ]; 
