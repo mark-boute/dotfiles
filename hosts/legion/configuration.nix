@@ -90,7 +90,7 @@ in
   services.xserver.desktopManager.gnome.enable = true;
 
   # Enable the Hyprland compositor
-  programs.hyprland.enable = true;
+  programs.hyprland.enable = false;
 
   # Configure keymap in X11
   services.xserver.xkb = {
