@@ -17,6 +17,7 @@ in
 
   # boot.kernelPackages = pkgs.linuxPackages_zen;
   boot.kernelPackages = pkgs.linuxPackages_xanmod_latest;
+  time.hardwareClockInLocalTime = true;
 
   programs.tmux.enable = true;
 
@@ -43,6 +44,10 @@ in
     powertop
     nvtopPackages.full
 
+    # cloudflare-warp
+    gnomeExtensions.cloudflare-warp-indicator
+    gnomeExtensions.cloudflare-warp-toggle
+
     # cora dependencies
     z3
     jdk22
@@ -64,6 +69,7 @@ in
     sudoUser = true;
     userName = username;
     description = "Mark Boute";
+    shell = pkgs.zsh;
   };
 
   # Enable numlock on GDM login screen
@@ -84,6 +90,8 @@ in
 
   # Enable networking
   networking.networkmanager.enable = true;
+
+  services.cloudflare-warp.enable = true;
 
   # Enable the X11 windowing system.
   services.xserver.enable = true;
