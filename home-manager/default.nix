@@ -5,6 +5,7 @@
     ./desktop
     ./game-launchers
     ./editors
+    ./shell
 
     # standealone
     ./latex

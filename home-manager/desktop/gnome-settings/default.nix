@@ -29,9 +29,10 @@ in {
   config = mkIf cfg.enable {
 
     home.packages = with pkgs; [
-      
+      gnome-tweaks
     ];
-  dconf.enable = true;
+
+    dconf.enable = true;
     dconf.settings = {
 
       "org/gnome/desktop/interface" = {

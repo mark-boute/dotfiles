@@ -12,6 +12,7 @@
     # hyprland = { enable = true; style = "nord"; };
     # eww.enable = true;
     latex.enable = true;
+    zsh.enable = true;
     # astrovim.enable = true;
   };
 
@@ -41,6 +42,8 @@
 
     pkgs.eduvpn-client
     pkgs.spotify
+
+    pkgs.lunar-client
   ];
 
   programs.git = {
@@ -62,6 +65,7 @@
 
     extraConfig = {
       push = { autoSetupRemote = true; };
+      init = { defaultBranch = "main"; };
     };
   };
 

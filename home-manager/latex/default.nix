@@ -7,6 +7,7 @@ with lib; let
       dvisvgm dvipng # for preview and export as html
 
       # for multifile projects
+      standalone import
 
       wrapfig amsmath ulem hyperref capt-of;
       # (setq org-latex-compiler "lualatex")
