@@ -55,10 +55,11 @@ in {
         ls = "ls -lah";
         #Devops
         g = "git";
-        nix = "nom";
-        n = "nix";
+        n = "nom";
         nd = "nom develop -c $SHELL";
-        rebuild = "sudo nixos-rebuild switch --flake ~/dotfiles --fast;  notify-send -a NixOS 'Rebuild complete\!'";
+        switch = "sudo nixos-rebuild switch --flake ~/dotfiles --fast";
+        rebuild = "switch;  notify-send -a NixOS 'Rebuild complete\!'";
+        update = "sudo nix flake update --commit-lock-file -I ~/dotfiles; switch; notify-send -a NixOS 'System updated\!'";
         #Programs
       };
 
