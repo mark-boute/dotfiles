@@ -7,9 +7,11 @@ in {
   config = mkIf cfg.enable {
     home.packages = [
       pkgs.zsh
-      pkgs.libnotify
-      pkgs.zoxide
-      pkgs.fzf
+      pkgs.libnotify            # dependecy for notify-send
+      pkgs.zoxide               # the better cd
+      pkgs.fzf                  # zoxide dependecy
+      pkgs.nix-output-monitor   # colorful nix build outputs
+      pkgs.eza                  # better ls
     ];
 
     programs.zsh = {
@@ -52,7 +54,10 @@ in {
         cp = "cp -riv";
         ls = "ls -lah";
         #Devops
-        nd = "nix develop -c $SHELL";
+        g = "git";
+        nix = "nom";
+        n = "nix";
+        nd = "nom develop -c $SHELL";
         rebuild = "sudo nixos-rebuild switch --flake ~/dotfiles --fast;  notify-send -a NixOS 'Rebuild complete\!'";
         #Programs
       };
