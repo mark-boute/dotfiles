@@ -89,8 +89,12 @@ in {
         };
         iGPU.configuration = {
           imports = [ hardware-modules.common-gpu-nvidia-disable ];
-          hardware.nvidia.open = mkForce true;
-          modules.system.gpu.nvidia = { enable = mkForce false; };
+          modules.system.gpu.nvidia = { 
+            enable = mkForce false;
+            open = mkForce false;
+            powerManagement = mkForce false;
+            finegrained = mkForce false;
+          };
         };
       };
     })
