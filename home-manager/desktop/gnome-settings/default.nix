@@ -24,6 +24,13 @@ in {
       '';
     };
 
+    default-scaling = mkOption {
+      default = 1.20;
+      description = ''
+        The default scaling factor for text.
+      '';
+    };
+
   };
 
   config = mkIf cfg.enable {
@@ -37,7 +44,7 @@ in {
 
       "org/gnome/desktop/interface" = {
         color-scheme = "prefer-dark";
-        text-scaling-factor = 1.20;
+        text-scaling-factor = cfg.default-scaling;
       };
         
       # set background
