@@ -5,8 +5,7 @@
   modules = {
     gnome-settings = {enable = true; 
                       background-dark = file:///nix/store/z6mpfb1r6w7rzq04p9fkvvy8090050v7-simple-dark-gray-2016-02-19/share/backgrounds/nixos/nix-wallpaper-simple-dark-gray.png ; 
-                      background-light = file:///nix/store/pn4ahzf7bvws0fa7aifhw7ljksbc69j3-simple-blue-2016-02-19/share/backgrounds/nixos/nix-wallpaper-simple-blue.png;
-                      default-scaling = 1;};
+                      background-light = file:///nix/store/pn4ahzf7bvws0fa7aifhw7ljksbc69j3-simple-blue-2016-02-19/share/backgrounds/nixos/nix-wallpaper-simple-blue.png;};
     # hyprland = { enable = true; style = "nord"; };
     # eww.enable = true;
     # latex.enable = true;
@@ -50,7 +49,6 @@
     pkgs.discord
     pkgs.vesktop
     pkgs.brave
-    pkgs.spotify
   ];
 
   # Home Manager is pretty good at managing dotfiles. The primary way to manage

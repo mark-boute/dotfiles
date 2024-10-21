@@ -10,7 +10,6 @@ in
 {
   imports = [ # Include the results of the hardware scan.
     ./hardware-configuration.nix
-    ./nixos-hardware.nix
     ../../lib
     ../../modules
   ];
@@ -55,7 +54,7 @@ in
   #     "${username}" = import ./home.nix;
   #   };
   # };
-  systemd.coredump.enable = true;
+
   # Configure network proxy if necessary
   # networking.proxy.default = "http://user:password@proxy:port/";
   # networking.proxy.noProxy = "127.0.0.1,localhost,internal.domain";
