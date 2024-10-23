@@ -12,6 +12,11 @@ in {
     open = mkEnableOption "open";
     powerManagement = mkEnableOption "powerManagement";
     finegrained = mkEnableOption "finegrained";
+    nvidiaPackage = mkOption {
+      type = types.package;
+      default = config.boot.kernelPackages.nvidiaPackages.production;
+      description = "The Nvidia driver package to use.";
+    };
   };
 
   config = mkIf cfg.enable {
@@ -51,7 +56,7 @@ in {
       nvidiaSettings = true;
 
       # Optionally, you may need to select the appropriate driver version for your specific GPU.
-      package = config.boot.kernelPackages.nvidiaPackages.production;
+      package = cfg.nvidiaPackage;
     };
 
   };

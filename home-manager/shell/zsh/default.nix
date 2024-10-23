@@ -59,7 +59,7 @@ in {
         nd = "nom develop -c $SHELL";
         switch = "sudo nixos-rebuild switch --flake ~/dotfiles --fast";
         rebuild = "switch;  notify-send -a NixOS 'Rebuild complete\!'";
-        update = "sudo nix flake update --commit-lock-file -I ~/dotfiles; switch; notify-send -a NixOS 'System updated\!'";
+        update = "sudo nix flake update -I ~/dotfiles; switch; notify-send -a NixOS 'System updated\!'";
         #Programs
       };
 

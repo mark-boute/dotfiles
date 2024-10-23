@@ -61,6 +61,12 @@ in {
     };
 
     externalGpu = mkEnableOption "externalGpu";
+
+    nvidiaPackage = mkOption {
+      type = types.package;
+      default = config.boot.kernelPackages.nvidiaPackages.production;
+      description = "The Nvidia driver package to use.";
+    };
   };
 
   config = mkMerge [
@@ -71,6 +77,7 @@ in {
         enable = true;
         open = cfg.open;
         powerManagement = cfg.powerManagement;
+        nvidiaPackage = cfg.nvidiaPackage;
       };
     })
 

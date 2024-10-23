@@ -52,7 +52,8 @@ in {
     };
   };
 
-#     # enable the open source drivers for nvidia
+    # enable the open source drivers for nvidia
 #     hardware.nvidia.open = mkOverride 990 (nvidiaPackage ? open && nvidiaPackage ? firmware);
+    # hardware.nvidia.package = config.boot.kernelPackages.nvidiaPackages.beta;
   };
 }

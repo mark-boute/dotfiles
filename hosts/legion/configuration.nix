@@ -26,11 +26,13 @@ in
       enable = true;
       mode = "offload";
       cpu = "amd";
+      open = true;
       setDeviceIds = true;
       cpuId = "PCI:1:0:0";
       gpuId = "PCI:5:0:0";
-      powerManagement = true;
+      powerManagement = false;
       finegrained = true;
+      nvidiaPackage = config.boot.kernelPackages.nvidiaPackages.beta;
     };
 
     steam = { enable = true; addprotonup = true; };
