@@ -25,7 +25,7 @@ in
       tex
       ltex-ls # this is outdated, use ltex-ls-plus instead. Download from https://github.com/ltex-plus/vscode-ltex-plus
 
-      jdk22
+      jdk23
     ];
   };
 }

@@ -11,8 +11,10 @@ in
   imports = [ # Include the results of the hardware scan.
     ./hardware-configuration.nix
     ./nixos-hardware.nix
+    # ./openvpn.nix
     ../../lib
     ../../modules
+
   ];
 
   # boot.kernelPackages = pkgs.linuxPackages_zen;
@@ -36,7 +38,6 @@ in
     };
 
     steam = { enable = true; addprotonup = true; };
-    development-tools.r = { enable = true; rstudio = true; };
   };
 
   environment.systemPackages = with pkgs; [
@@ -50,17 +51,43 @@ in
     gnomeExtensions.cloudflare-warp-indicator
     gnomeExtensions.cloudflare-warp-toggle
 
+    eduvpn-client
+
+    # navigation
+    opencpn
+
+    # office suite
+    libreoffice
+
     # cora dependencies
     z3
-    jdk22
+    jdk23
     gradle-completion
     cmake
     unzip
-    vscode-extensions.vscjava.vscode-gradle
 
+    vscode-fhs
+    (vscode-with-extensions.override {
+      vscodeExtensions = with vscode-extensions; [
+        bbenoist.nix
+        ms-python.python
+        ms-azuretools.vscode-docker
+        ms-vscode-remote.remote-ssh
+        vscjava.vscode-gradle
+      ] ++ pkgs.vscode-utils.extensionsFromVscodeMarketplace [
+        {
+          name = "remote-ssh-edit";
+          publisher = "ms-vscode-remote";
+          version = "0.47.2";
+          sha256 = "1hp6gjh4xp2m1xlm1jsdzxw9d8frkiidhph6nvl24d0h8z34w49g";
+        }
+      ];
+    })
   ] ++ [
     inputs.zen-browser.packages.${system}.specific
   ];
+
+  virtualisation.docker.enable = true;
 
   # boot.extraModulePackages = with config.boot.kernelPackages; [ lenovo-legion-module ]; 
 
@@ -72,6 +99,7 @@ in
     userName = username;
     description = "Mark Boute";
     shell = pkgs.zsh;
+    groups = ["docker"];
   };
 
   # Enable numlock on GDM login screen
