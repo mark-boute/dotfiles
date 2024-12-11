@@ -11,6 +11,7 @@ in
   imports = [ # Include the results of the hardware scan.
     ./hardware-configuration.nix
     ../../lib
+    ./nixos-hardware.nix
     ../../modules
   ];
 
@@ -22,11 +23,14 @@ in
       cpu = "intel";
       cpuId = "PCI:0:2:0";
       gpuId = "PCI:1:0:0";
+      # powerManagement = false;
+      finegrained = true;
+      # nvidiaPackage = config.boot.kernelPackages.nvidiaPackages.beta;
     };
 
     steam = { enable = true; addprotonup = true; };
   };
-
+  systemd.coredump.enable = true;
   # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
 
   main-user = {
@@ -106,6 +110,13 @@ in
 
   # Install firefox.
   programs.firefox.enable = true;
+  programs.nix-ld.enable = true;
+
+  programs.nix-ld.libraries = with pkgs; [
+    codeql
+    ruff
+    uv
+  ];
 
   # List services that you want to enable:
 
