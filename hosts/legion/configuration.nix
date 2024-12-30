@@ -51,7 +51,7 @@ in
     gnomeExtensions.cloudflare-warp-indicator
     gnomeExtensions.cloudflare-warp-toggle
 
-    eduvpn-client
+    # eduvpn-client
 
     # navigation
     opencpn
@@ -73,6 +73,7 @@ in
         ms-python.python
         ms-azuretools.vscode-docker
         ms-vscode-remote.remote-ssh
+        vscjava.vscode-java-pack
         vscjava.vscode-gradle
       ] ++ pkgs.vscode-utils.extensionsFromVscodeMarketplace [
         {
@@ -84,7 +85,7 @@ in
       ];
     })
   ] ++ [
-    inputs.zen-browser.packages.${system}.specific
+    inputs.zen-browser.packages.${system}.default
   ];
 
   virtualisation.docker.enable = true;

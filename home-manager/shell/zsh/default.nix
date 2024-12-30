@@ -61,6 +61,7 @@ in {
         rebuild = "switch;  notify-send -a NixOS 'Rebuild complete\!'";
         update = "sudo nix flake update -I ~/dotfiles; switch; notify-send -a NixOS 'System updated\!'";
         #Programs
+	cora = "~/.cora/bin/cora";
       };
 
       # Source all plugins, nix-style
