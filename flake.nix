@@ -26,24 +26,7 @@
 
           pkgs = import packages {
             inherit system;
-            overlays = [
-
-              # https://github.com/NixOS/nixpkgs/issues/349759
-              (self: super: {
-                tlp = super.tlp.overrideAttrs (old: {
-                  makeFlags = (old.makeFlags or [ ]) ++ [
-                    "TLP_ULIB=/lib/udev"
-                    "TLP_NMDSP=/lib/NetworkManager/dispatcher.d"
-                    "TLP_SYSD=/lib/systemd/system"
-                    "TLP_SDSL=/lib/systemd/system-sleep"
-                    "TLP_ELOD=/lib/elogind/system-sleep"
-                    "TLP_CONFDPR=/share/tlp/deprecated.conf"
-                    "TLP_FISHCPL=/share/fish/vendor_completions.d"
-                    "TLP_ZSHCPL=/share/zsh/site-functions"
-                  ];
-                });
-              })
-              
+            overlays = [              
             #  (final: prev: { # https://nixpk.gs/pr-tracker.html?pr=338836
             #    inherit (import nixpkgs-unstable {inherit system;}) xdg-desktop-portal-hyprland;
             #  })            
@@ -59,9 +42,14 @@
         };
         modules = [
           { networking.hostName = hostname; }
-          # Base configuration and host specific configuration
-          ./modules/system/configuration.nix
+          ./modules  # options.modules.*
+          ./overlays # options.overlays.*
+          ./lib      # mainly just some functions
+
+          # Base configuration and host specific configuration and overlays
+          ./modules/system/configuration.nix  # imported here instead of in ./modules/default.nix for readability
           ./hosts/${hostname}/configuration.nix
+          ./overlays/hosts/${hostname}
           
           home-manager.nixosModules.home-manager
           {
@@ -86,7 +74,6 @@
     nixosConfigurations = {
       # mark
       legion = mkSystem nixpkgs "x86_64-linux" "legion" "mark";
-      desktop = mkSystem nixpkgs "x86_64-linux" "desktop" "mark";
       
       # ties
       ties-laptop = mkSystem nixpkgs "x86_64-linux" "ties-laptop" "tiesd";

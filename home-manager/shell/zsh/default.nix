@@ -33,7 +33,7 @@ in {
       '';
 
       # basically aliases for directories: 
-      # `cd ~dots` will cd into ~/.config/nixos
+      # `cd ~dotfiles` will cd into ~/dotfiles
       dirHashes = {
         dotfiles = "$HOME/dotfiles";
       };
@@ -59,9 +59,10 @@ in {
         nd = "nom develop -c $SHELL";
         switch = "sudo nixos-rebuild switch --flake ~/dotfiles --fast";
         rebuild = "switch;  notify-send -a NixOS 'Rebuild complete\!'";
-        update = "sudo nix flake update -I ~/dotfiles; switch; notify-send -a NixOS 'System updated\!'";
+        update = "sudo nix flake update --flake ~/dotfiles; switch; notify-send -a NixOS 'System updated\!'";
         #Programs
 	cora = "~/.cora/bin/cora";
+	cat = "bat -p";
       };
 
       # Source all plugins, nix-style
