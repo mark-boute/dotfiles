@@ -105,12 +105,12 @@ in
   # Enable networking
   networking.networkmanager.enable = true;
   hardware.bluetooth.enable = true;
+  security.rtkit.enable = true;
 
   services = {
     cloudflare-warp.enable = true;
     printing.enable = true;
     pulseaudio.enable = false;
-    rtkit.enable = true;
     libinput.enable = true;
 
     xserver = {  # Enable the GNOME Desktop Environment.

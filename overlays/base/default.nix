@@ -3,6 +3,6 @@
 {
   imports =
     [ 
-      ./steam-example
+      # ./steam-example.nix
     ];
 }

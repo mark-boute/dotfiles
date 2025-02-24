@@ -24,16 +24,18 @@
         specialArgs = { 
           inherit inputs system; 
 
-          pkgs = import packages {
-            inherit system;
-            overlays = [              
-            #  (final: prev: { # https://nixpk.gs/pr-tracker.html?pr=338836
-            #    inherit (import nixpkgs-unstable {inherit system;}) xdg-desktop-portal-hyprland;
-            #  })            
-            ];
+          nixpkgs.config.allowUnfree = true;
 
-            config = { allowUnfree = true; };
-          };
+          # pkgs = import packages {
+          #   inherit system;
+          #   overlays = [              
+          #   #  (final: prev: { # https://nixpk.gs/pr-tracker.html?pr=338836
+          #   #    inherit (import nixpkgs-unstable {inherit system;}) xdg-desktop-portal-hyprland;
+          #   #  })            
+          #   ];
+
+          #   config = { allowUnfree = true; };
+          # };
 
           pkgs-unstable = import nixpkgs-unstable { 
             inherit system;
