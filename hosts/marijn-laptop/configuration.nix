@@ -98,6 +98,14 @@ in
 
   # Install firefox.
   programs.firefox.enable = true;
+  
+  programs.nix-ld.enable = true;
+
+  programs.nix-ld.libraries = with pkgs; [
+    codeql
+    ruff
+    uv
+  ];
 
   # List services that you want to enable:
 

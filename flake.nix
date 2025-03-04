@@ -11,10 +11,15 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
+<<<<<<< Updated upstream
     zen-browser = {
       url = "github:0xc000022070/zen-browser-flake";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+=======
+    # External packages
+    zen-browser.url = "github:0xc000022070/zen-browser-flake";
+>>>>>>> Stashed changes
   };
 
   outputs = { self, nixpkgs, nixpkgs-unstable, home-manager, ... } @ inputs: 
