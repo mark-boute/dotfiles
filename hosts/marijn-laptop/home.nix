@@ -48,7 +48,7 @@
 
     pkgs.rpi-imager
 
-    inputs.zen-browser.packages.${pkgs.stdenv.system}.specific
+    inputs.zen-browser.packages.${pkgs.stdenv.system}.default
     
     pkgs.terraform
   ];
