@@ -49,20 +49,22 @@ in
     steam = { enable = true; addprotonup = true; };
   };
 
+  systemd = {
+    packages = [ pkgs.cloudflare-warp ];
+    targets.multiuser.wants = [ "warp-svc.service" ];
+  };
+
   environment.systemPackages = with pkgs; [
     powertop
     nvtopPackages.full
 
-    # cloudflare-warp
-    gnomeExtensions.cloudflare-warp-indicator
+    cloudflare-warp
+    # gnomeExtensions.cloudflare-warp-indicator  # currently only available on GNOME 45
     gnomeExtensions.cloudflare-warp-toggle
+    # wireguard-tools
 
     # navigation
     opencpn
-
-    # office suite
-    libreoffice
-    onlyoffice-bin
 
     # OOP grading
     p7zip
@@ -79,7 +81,7 @@ in
     (vscode-with-extensions.override {
       vscodeExtensions = with vscode-extensions; [
         bbenoist.nix
-        ms-python.python
+        # ms-python.python
         ms-azuretools.vscode-docker
         ms-vscode-remote.remote-ssh
         vscjava.vscode-java-pack

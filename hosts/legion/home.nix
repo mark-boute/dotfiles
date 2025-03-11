@@ -18,7 +18,7 @@
 
   # The home.packages option allows you to install Nix packages into your
   # environment.
-  home.packages = [
+  home.packages = with pkgs; [
     # # It is sometimes useful to fine-tune packages, for example, by applying
     # # overrides. You can do that directly here, just don't forget the
     # # parentheses. Maybe you want to install Nerd Fonts with a limited number of
@@ -31,19 +31,25 @@
     # (pkgs.writeShellScriptBin "my-hello" ''
     #   echo "Hello, ${config.home.username}!"
     # '')
-    pkgs.vscode
-    pkgs.kitty
+    vscode
+    kitty
 
-    pkgs.gh
-    pkgs.glab
+    gh
+    glab
     
-    pkgs.discord
-    pkgs.vesktop
+    # office suite
+    libreoffice
+    onlyoffice-bin
 
-    pkgs.eduvpn-client
-    pkgs.spotify
+    # communication
+    discord
+    vesktop
+    element-desktop
 
-    pkgs.lunar-client
+    eduvpn-client
+    spotify
+
+    lunar-client
   ];
 
   programs.git = {
