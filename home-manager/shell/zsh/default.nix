@@ -56,7 +56,8 @@ in {
         #Devops
         g = "git";
         n = "nom";
-        nd = "nom develop -c $SHELL";
+	hi = "() { echo $1 ;}"; 
+        nd = "() {nix develop $1 ;}";
         switch = "sudo nixos-rebuild switch --flake ~/dotfiles --fast";
         rebuild = "switch;  notify-send -a NixOS 'Rebuild complete\!'";
         update = "sudo nix flake update --flake ~/dotfiles; switch; notify-send -a NixOS 'System updated\!'";

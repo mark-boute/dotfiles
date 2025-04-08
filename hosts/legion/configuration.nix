@@ -2,13 +2,19 @@
 # your system.  Help is available in the configuration.nix(5) man page
 # and in the NixOS manual (accessible by running ‘nixos-help’).
 
-{ config, pkgs, inputs, ... }:
+{
+  config,
+  pkgs,
+  inputs,
+  ...
+}:
 
 let
   username = "mark";
 in
 {
-  imports = [ # Include the results of the hardware scan.
+  imports = [
+    # Include the results of the hardware scan.
     ./hardware-configuration.nix
     ./nixos-hardware.nix
     # ./openvpn.nix
@@ -20,7 +26,7 @@ in
     userName = username;
     description = "Mark Boute";
     shell = pkgs.zsh;
-    groups = ["docker"];
+    groups = [ "docker" ];
   };
   virtualisation.docker.enable = true;
 
@@ -46,7 +52,10 @@ in
       finegrained = true;
       nvidiaPackage = config.boot.kernelPackages.nvidiaPackages.beta;
     };
-    steam = { enable = true; addprotonup = true; };
+    steam = {
+      enable = true;
+      addprotonup = true;
+    };
   };
 
   systemd = {
@@ -54,55 +63,67 @@ in
     targets.multiuser.wants = [ "warp-svc.service" ];
   };
 
-  environment.systemPackages = with pkgs; [
-    powertop
-    nvtopPackages.full
+  environment.systemPackages =
+    with pkgs;
+    [
+      powertop
+      nvtopPackages.full
 
-    cloudflare-warp
-    # gnomeExtensions.cloudflare-warp-indicator  # currently only available on GNOME 45
-    gnomeExtensions.cloudflare-warp-toggle
-    # wireguard-tools
+      cloudflare-warp
 
-    # navigation
-    opencpn
+      gnomeExtensions.cloudflare-warp-indicator # currently only available on GNOME 45
 
-    # OOP grading
-    p7zip
-    virtualenv
+      gnomeExtensions.cloudflare-warp-toggle
+      # wireguard-tools
 
-    # cora dependencies
-    z3
-    jdk23
-    gradle-completion
-    cmake
-    unzip
+      # navigation
+      opencpn
 
-    vscode-fhs
-    (vscode-with-extensions.override {
-      vscodeExtensions = with vscode-extensions; [
-        bbenoist.nix
-        # ms-python.python
-        ms-azuretools.vscode-docker
-        ms-vscode-remote.remote-ssh
-        vscjava.vscode-java-pack
-        vscjava.vscode-gradle
-      ] ++ pkgs.vscode-utils.extensionsFromVscodeMarketplace [
-        {
-          name = "remote-ssh-edit";
-          publisher = "ms-vscode-remote";
-          version = "0.47.2";
-          sha256 = "1hp6gjh4xp2m1xlm1jsdzxw9d8frkiidhph6nvl24d0h8z34w49g";
-        }
-      ];
-    })
-  ] ++ [
-    inputs.zen-browser.packages.${system}.default
-  ];
+      # OOP grading
+      p7zip
+      virtualenv
+
+      # cora dependencies
+      z3
+      jdk23
+      gradle-completion
+      cmake
+      unzip
+
+      nixfmt-rfc-style
+
+      vscode-fhs
+      (vscode-with-extensions.override {
+        vscodeExtensions =
+          with vscode-extensions;
+          [
+            bbenoist.nix
+            # ms-python.python
+            ms-azuretools.vscode-docker
+            ms-vscode-remote.remote-ssh
+            vscjava.vscode-java-pack
+            vscjava.vscode-gradle
+          ]
+          ++ pkgs.vscode-utils.extensionsFromVscodeMarketplace [
+            {
+              name = "remote-ssh-edit";
+              publisher = "ms-vscode-remote";
+              version = "0.47.2";
+              sha256 = "1hp6gjh4xp2m1xlm1jsdzxw9d8frkiidhph6nvl24d0h8z34w49g";
+            }
+          ];
+      })
+    ]
+    ++ [
+      inputs.zen-browser.packages.${system}.default
+    ];
 
   # Enable numlock on GDM login screen
-  programs.dconf.profiles.gdm.databases = [{
-    settings."org/gnome/desktop/peripherals/keyboard".numlock-state = true;
-  }];
+  programs.dconf.profiles.gdm.databases = [
+    {
+      settings."org/gnome/desktop/peripherals/keyboard".numlock-state = true;
+    }
+  ];
 
   # Enable networking
   networking.networkmanager.enable = true;
@@ -115,13 +136,15 @@ in
     pulseaudio.enable = false;
     libinput.enable = true;
 
-    xserver = {  # Enable the GNOME Desktop Environment.
+    xserver = {
+      # Enable the GNOME Desktop Environment.
       enable = true;
       displayManager.gdm.enable = true;
       desktopManager.gnome.enable = true;
     };
 
-    xserver.xkb = {  # Configure keymap in X11
+    xserver.xkb = {
+      # Configure keymap in X11
       layout = "us";
       variant = "";
     };

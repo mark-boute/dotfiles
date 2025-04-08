@@ -49,6 +49,7 @@
     pkgs.discord
     pkgs.vesktop
     pkgs.brave
+    pkgs.onlyoffice-bin
   ];
 
   # Home Manager is pretty good at managing dotfiles. The primary way to manage
