@@ -3,15 +3,15 @@ with lib; let
   cfg = config.modules.latex;
 
   tex = (pkgs.texlive.combine {
-    inherit (pkgs.texlive) scheme-medium
+    inherit (pkgs.texlive) scheme-full
       dvisvgm dvipng # for preview and export as html
 
       # for multifile projects
       standalone import
 
-      wrapfig amsmath ulem hyperref capt-of;
-      # (setq org-latex-compiler "lualatex")
-      # (setq org-preview-latex-default-process dvisvgm)
+      wrapfig amsmath ulem hyperref capt-of accsupp;
+      #(setq org-latex-compiler "lualatex")
+      #(setq org-preview-latex-default-process dvisvgm)
   });
 in
 { # home-manager

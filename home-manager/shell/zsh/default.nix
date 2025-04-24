@@ -25,7 +25,7 @@ in {
       syntaxHighlighting.enable = true;
 
       # .zshrc
-      initExtra = ''
+      initContent = ''
         PROMPT="%F{blue}%m %~%b "$'\n'"%(?.%F{green}%Bλ%b |.%F{red}?) %f"
         bindkey '^R' history-incremental-search-backward
         bindkey '^ ' autosuggest-accept

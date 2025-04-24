@@ -28,13 +28,15 @@ in
     shell = pkgs.zsh;
     groups = [ "docker" ];
   };
+  
   virtualisation.docker.enable = true;
-
+  hardware.nvidia-container-toolkit.enable = true;
   boot.kernelPackages = pkgs.linuxPackages_xanmod_latest;
   time.hardwareClockInLocalTime = true;
 
   programs = {
     firefox.enable = true;
+    thunderbird.enable = true;
     tmux.enable = true;
     hyprland.enable = false;
   };

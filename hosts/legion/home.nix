@@ -45,6 +45,7 @@
     discord
     vesktop
     element-desktop
+    signal-desktop-bin
 
     eduvpn-client
     spotify
