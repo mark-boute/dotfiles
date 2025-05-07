@@ -87,7 +87,8 @@ in
 
       # cora dependencies
       z3
-      jdk23
+      # jdk23
+      (pkgs.jdk21.override { enableJavaFX = true; })
       gradle-completion
       cmake
       unzip
