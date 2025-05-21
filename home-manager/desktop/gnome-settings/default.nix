@@ -24,6 +24,41 @@ in {
       '';
     };
 
+    # shortcuts = {
+    #   mail = {
+    #     enable = mkOption {
+    #       type = types.bool;
+    #       default = true;
+    #       description = ''
+    #         Enable the mail shortcut.
+    #       '';
+    #     };
+    #     command = mkOption {
+    #       type = types.str;
+    #       default = "thunderbird";
+    #       description = ''
+    #         The command to run when the mail shortcut is pressed.
+    #       '';
+    #     };
+    #   };
+    #   terminal = {
+    #     enable = mkOption {
+    #       type = types.bool;
+    #       default = true;
+    #       description = ''
+    #         Enable the terminal shortcut.
+    #       '';
+    #     };
+    #     command = mkOption {
+    #       type = types.str;
+    #       default = "kxg";
+    #       description = ''
+    #         The command to run when the terminal shortcut is pressed.
+    #       '';
+    #     };
+    #   };
+    # };
+
   };
 
   config = mkIf cfg.enable {
@@ -79,9 +114,15 @@ in {
       };
 
       "org/gnome/settings-daemon/plugins/media-keys" = {
+        email = [ "<Super>m" ];
         decrease-text-size = [ "<Control><Alt>minus" ];
         increase-text-size = [ "<Control><Alt>equal" ];
         www = [ "<Super>w" ];
+        custom-keybinding = [ 
+          "org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0"
+          "org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom1"
+          "org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom2"
+        ];
       };
 
       "org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0" = {
@@ -91,9 +132,15 @@ in {
       };
 
       "org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom1" = {
-        binding = "<Super>e";
-        command = "nautilus";
-        name = "Files";
+        binding = "<Super>c";
+        command = "code";
+        name = "Code";
+      };
+
+      "org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom2" = {
+        binding = "<Super>u";
+        command = "authenticator";
+        name = "Authenticator";
       };
 
       "org/gnome/desktop/peripherals/keyboard" = {
