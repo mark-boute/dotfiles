@@ -44,6 +44,7 @@
     wget
     zoxide
     git
+    fd
     xdg-utils
   ];
 

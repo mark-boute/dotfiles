@@ -32,25 +32,26 @@
     #   echo "Hello, ${config.home.username}!"
     # '')
     vscode
-    kitty
+    nixd
+    authenticator
+    eduvpn-client
 
     gh
     glab
+
+    opencpn
     
     # office suite
-    libreoffice
     onlyoffice-bin
 
     # communication
     discord
-    vesktop
-    element-desktop
     signal-desktop-bin
 
-    eduvpn-client
     spotify
 
     lunar-client
+    gnomeExtensions.cloudflare-warp-toggle
   ];
 
   programs.git = {

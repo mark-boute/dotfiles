@@ -1,7 +1,3 @@
-# Edit this configuration file to define what should be installed on
-# your system.  Help is available in the configuration.nix(5) man page
-# and in the NixOS manual (accessible by running ‘nixos-help’).
-
 {
   config,
   pkgs,
@@ -60,10 +56,10 @@ in
     };
   };
 
-  systemd = {
-    packages = [ pkgs.cloudflare-warp ];
-    targets.multiuser.wants = [ "warp-svc.service" ];
-  };
+  # systemd = {
+  #   packages = [ pkgs.cloudflare-warp ];
+  #   targets.multiuser.wants = [ "warp-svc.service" ];
+  # };
 
   environment.systemPackages =
     with pkgs;
@@ -71,15 +67,10 @@ in
       powertop
       nvtopPackages.full
 
-      cloudflare-warp
+      # cloudflare-warp
 
-      gnomeExtensions.cloudflare-warp-indicator # currently only available on GNOME 45
-
-      gnomeExtensions.cloudflare-warp-toggle
+      # gnomeExtensions.cloudflare-warp-indicator # currently only available on GNOME 45
       # wireguard-tools
-
-      # navigation
-      opencpn
 
       # OOP grading
       p7zip
@@ -87,8 +78,7 @@ in
 
       # cora dependencies
       z3
-      # jdk23
-      (pkgs.jdk21.override { enableJavaFX = true; })
+      jdk23
       gradle-completion
       cmake
       unzip
