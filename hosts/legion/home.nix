@@ -1,10 +1,12 @@
-{ config, pkgs, ... }:
-
+{ pkgs, main-user, ... }:
+let
+  # main-user = "mark";
+in
 {
   # Home Manager needs a bit of information about you and the paths it should
   # manage.
-  home.username = "mark";
-  home.homeDirectory = "/home/mark";
+  home.username = main-user;
+  home.homeDirectory = "/home/${main-user}";
   imports = [ ../../home-manager ];
 
   modules = {
@@ -13,7 +15,14 @@
     # eww.enable = true;
     latex.enable = true;
     zsh.enable = true;
+    winapps.enable = true;
     # astrovim.enable = true;
+  };
+
+  sops = {
+    defaultSopsFile = ../../secrets/${main-user}/${main-user}-secrets.yaml;
+    defaultSopsFormat = "yaml";
+    age.keyFile = "/home/${main-user}/.config/sops/age/keys.txt";
   };
 
   # The home.packages option allows you to install Nix packages into your

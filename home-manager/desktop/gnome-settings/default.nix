@@ -1,4 +1,4 @@
-{ inputs, pkgs, lib, config, ... }:
+{ pkgs, lib, config, ... }:
 
 with lib; let 
   cfg = config.modules.gnome-settings;
@@ -24,47 +24,13 @@ in {
       '';
     };
 
-    # shortcuts = {
-    #   mail = {
-    #     enable = mkOption {
-    #       type = types.bool;
-    #       default = true;
-    #       description = ''
-    #         Enable the mail shortcut.
-    #       '';
-    #     };
-    #     command = mkOption {
-    #       type = types.str;
-    #       default = "thunderbird";
-    #       description = ''
-    #         The command to run when the mail shortcut is pressed.
-    #       '';
-    #     };
-    #   };
-    #   terminal = {
-    #     enable = mkOption {
-    #       type = types.bool;
-    #       default = true;
-    #       description = ''
-    #         Enable the terminal shortcut.
-    #       '';
-    #     };
-    #     command = mkOption {
-    #       type = types.str;
-    #       default = "kxg";
-    #       description = ''
-    #         The command to run when the terminal shortcut is pressed.
-    #       '';
-    #     };
-    #   };
-    # };
-
   };
 
   config = mkIf cfg.enable {
 
     home.packages = with pkgs; [
       gnome-tweaks
+      gnomeExtensions.appindicator
     ];
 
     dconf.enable = true;
@@ -73,6 +39,14 @@ in {
       "org/gnome/desktop/interface" = {
         color-scheme = "prefer-dark";
         text-scaling-factor = 1.20;
+      };
+
+      "org/gnome/shell" = {
+        disable-user-extensions = false;
+        enabled-extensions = [
+          "cloudflarewarpindicator@depscian.com"
+          "cloudflare-warp-toggle@khaled.is-a.dev"
+        ];
       };
         
       # set background

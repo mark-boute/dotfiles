@@ -54,23 +54,15 @@ in
       enable = true;
       addprotonup = true;
     };
+    winapps.enable = true;
+    sops.enable = true;
   };
-
-  # systemd = {
-  #   packages = [ pkgs.cloudflare-warp ];
-  #   targets.multiuser.wants = [ "warp-svc.service" ];
-  # };
 
   environment.systemPackages =
     with pkgs;
     [
       powertop
       nvtopPackages.full
-
-      # cloudflare-warp
-
-      # gnomeExtensions.cloudflare-warp-indicator # currently only available on GNOME 45
-      # wireguard-tools
 
       # OOP grading
       p7zip
