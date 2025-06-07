@@ -1,6 +1,7 @@
 { pkgs, lib, config, ... }:
-with lib; let 
+let 
   cfg = config.modules.zsh;
+  inherit (lib) mkEnableOption mkIf;
 in {
   options.modules.zsh = { enable = mkEnableOption "zsh"; };
 
@@ -56,7 +57,8 @@ in {
         #Devops
         g = "git";
         n = "nom";
-	hi = "() { echo $1 ;}"; 
+        v = "nvim";
+	      hi = "() { echo $1 ;}"; 
         nd = "() {nix develop $1 ;}";
         switch = "sudo nixos-rebuild switch --flake ~/dotfiles --fast";
         rebuild = "switch;  notify-send -a NixOS 'Rebuild complete\!'";

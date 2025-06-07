@@ -1,8 +1,8 @@
 { config, main-user, lib, ... }:
 
-with lib; let 
+let 
   cfg = config.modules.winapps; 
-
+  inherit (lib) mkEnableOption mkIf;
 in {
   options.modules.winapps = { 
     enable = mkEnableOption "Winapps configuration file";

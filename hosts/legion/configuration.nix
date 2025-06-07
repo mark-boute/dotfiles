@@ -1,4 +1,5 @@
 {
+  self,
   config,
   pkgs,
   inputs,
@@ -101,6 +102,10 @@ in
     ]
     ++ [
       inputs.zen-browser.packages.${system}.default
+      
+      # Neovim and NVF
+      self.packages.${system}.neovim-mark
+      pkgs.ripgrep
     ];
 
   # Enable numlock on GDM login screen
@@ -121,12 +126,8 @@ in
     pulseaudio.enable = false;
     libinput.enable = true;
 
-    xserver = {
-      # Enable the GNOME Desktop Environment.
-      enable = true;
-      displayManager.gdm.enable = true;
-      desktopManager.gnome.enable = true;
-    };
+    displayManager.gdm.enable = true;
+    desktopManager.gnome.enable = true;
 
     xserver.xkb = {
       # Configure keymap in X11
@@ -141,10 +142,6 @@ in
       pulse.enable = true;
       # If you want to use JACK applications, uncomment this
       #jack.enable = true;
-
-      # use the example session manager (no others are packaged yet so this is enabled by default,
-      # no need to redefine it in your config for now)
-      #media-session.enable = true;
     };
   };
 }

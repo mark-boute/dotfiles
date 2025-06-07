@@ -1,8 +1,8 @@
 { pkgs, lib, config, ... }:
 
-with lib; let 
+let 
   cfg = config.modules.gnome-settings;
-
+  inherit (lib) mkEnableOption mkIf mkOption types;
 in {
   options.modules.gnome-settings = { 
 

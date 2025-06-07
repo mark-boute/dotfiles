@@ -1,5 +1,5 @@
 { config, lib, pkgs, ... }:
-with lib; let
+let
   cfg = config.modules.latex;
 
   tex = (pkgs.texlive.combine {
@@ -13,6 +13,8 @@ with lib; let
       #(setq org-latex-compiler "lualatex")
       #(setq org-preview-latex-default-process dvisvgm)
   });
+
+  inherit (lib) mkEnableOption mkIf;
 in
 { # home-manager
 

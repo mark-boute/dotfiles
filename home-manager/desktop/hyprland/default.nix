@@ -1,6 +1,6 @@
 { pkgs, lib, config, ... }:
 
-with lib; let 
+let 
   cfg = config.modules.hyprland;
 
   importFilesToHome = to: folder: builtins.listToAttrs 
@@ -12,8 +12,7 @@ with lib; let
       (builtins.attrNames (builtins.readDir ./${folder}))
     );
 
-  # importFoldersToHome = to: folders: mkMerge (map (importFilesToHome to) folders);
-
+  inherit (lib) mkEnableOption mkIf mkOption mkMerge;
 in {
   options.modules.hyprland = { 
 

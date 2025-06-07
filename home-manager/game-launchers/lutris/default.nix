@@ -1,7 +1,8 @@
 {pkgs, lib, config, ...}:
 
-with lib; let
+let
   cfg = config.modules.lutris;
+  inherit (lib) mkEnableOption mkIf;
 in {
   options.modules.lutris = {
     enable = mkEnableOption "lutris";

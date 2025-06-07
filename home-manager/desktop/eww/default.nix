@@ -1,5 +1,5 @@
-{ inputs, lib, config, pkgs, ... }:
-with lib; let
+{ lib, config, pkgs, ... }:
+let
     cfg = config.modules.eww;
 
     importFilesToHome = to: folder: builtins.listToAttrs 
@@ -12,6 +12,8 @@ with lib; let
       );
 
     importFoldersToHome = to: folders: lib.mkMerge (map (importFilesToHome to) folders);
+
+    inherit (lib) mkEnableOption mkIf mkMerge;
 in {
 
     options.modules.eww = { 

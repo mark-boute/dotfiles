@@ -1,7 +1,7 @@
-{ inputs, pkgs, config, ... }:
+{ ... }:
 
 {
   imports = [
-    
+
   ];
 }

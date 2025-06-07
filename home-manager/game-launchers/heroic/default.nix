@@ -1,6 +1,7 @@
 {pkgs, lib, config, ...}:
-with lib; let
+let
   cfg = config.modules.heroic;
+  inherit (lib) mkEnableOption mkIf;
 in {
   options.modules.heroic = {
     enable = mkEnableOption "heroic";

@@ -16,7 +16,6 @@ in
     latex.enable = true;
     zsh.enable = true;
     winapps.enable = true;
-    # astrovim.enable = true;
   };
 
   sops = {
@@ -76,6 +75,7 @@ in
       d = "diff";
       l = "log";
       p = "push";
+      u = "pull";
       f = "fetch";
       a = "add";
     };

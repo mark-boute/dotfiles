@@ -13,9 +13,6 @@
     # development tools
     ./development-tools
 
-     # editor
-     ./neovim
-
      # system programs
      ./steam
     ];
