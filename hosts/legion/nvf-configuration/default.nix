@@ -2,6 +2,8 @@
 {
 
   imports = [
+    ./plugins
+
     ./keymaps.nix
     ./lsp-settings.nix
   ];
@@ -11,10 +13,17 @@
       "mapleader" = " ";
     };
 
+    useSystemClipboard = true;
+    git.enable = true;
+    minimap.codewind.enable = true;
+
+    navigation.harpoon.enable = true;
+
     options = {
       shiftwidth = 4;
       tabstop = 4;
       updatetime = 100;
+      termguicolors = true;
     };
 
     theme = {

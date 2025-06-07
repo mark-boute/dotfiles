@@ -4,7 +4,16 @@
     lsp = {
       enable = true;
       formatOnSave = true;
+    };
 
+    treesitter = {
+      enable = true;
+      addDefaultGrammars = true;
+      fold = true;
+      autotagHtml = true;
+      highlight = {
+        enable = true;
+      };
     };
 
     languages = {

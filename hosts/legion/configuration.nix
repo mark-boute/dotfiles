@@ -105,8 +105,14 @@ in
       
       # Neovim and NVF
       self.packages.${system}.neovim-mark
+      pkgs.vimPlugins.nvim-treesitter.withAllGrammars
       pkgs.ripgrep
+
     ];
+
+  fonts.packages = with pkgs; [
+    nerd-fonts.jetbrains-mono
+  ];
 
   # Enable numlock on GDM login screen
   programs.dconf.profiles.gdm.databases = [
