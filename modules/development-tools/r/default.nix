@@ -1,7 +1,8 @@
-{ inputs, pkgs, lib, config, ... }:
+{ pkgs, lib, config, ... }:
 
-with lib; let 
+let 
   cfg = config.modules.development-tools.r;
+  inherit (lib) mkEnableOption mkIf optionals;
 in {
 
   options.modules.development-tools.r = { 

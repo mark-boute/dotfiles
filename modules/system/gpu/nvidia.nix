@@ -1,9 +1,10 @@
-{ config, pkgs, lib, ... }:
+{ config, lib, ... }:
 
 # READ: https://nixos.wiki/wiki/Nvidia
 
-with lib; let 
+let 
   cfg = config.modules.system.gpu.nvidia;
+  inherit (lib) mkEnableOption mkIf types mkOption;
 in {
 
   options.modules.system.gpu.nvidia = {

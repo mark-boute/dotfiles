@@ -1,7 +1,8 @@
-{ inputs, pkgs, lib, config, ... }:
+{ pkgs, lib, config, ... }:
 
-with lib; let 
+let 
   cfg = config.modules.steam;
+  inherit (lib) mkEnableOption mkIf mkMerge optionals types mkOption;
 in {
 
   options.modules.steam = { 

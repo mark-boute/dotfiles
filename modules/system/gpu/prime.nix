@@ -1,8 +1,9 @@
-{ config, pkgs, lib, inputs, ... }:
+{ config, lib, inputs, ... }:
 
-with lib; let 
+let 
   cfg = config.modules.system.gpu.optimus-prime;
   hardware-modules = inputs.nixos-hardware.nixosModules;
+  inherit (lib) mkEnableOption mkIf mkOption types mkForce mkMerge;
 in {
   # This needs device IDs to be set! See:
   # https://github.com/vimjoyer/nixos-gaming-video
@@ -90,6 +91,11 @@ in {
         };
         prime-sync.configuration = {
           imports = [ hardware-modules.common-gpu-nvidia-sync ];
+
+          # fix slowness after waking up from sleep 
+          # (this mode's main use is for high performance use anyways)
+          modules.system.gpu.nvidia.powerManagement = mkForce false;
+          modules.system.gpu.nvidia.finegrained = mkForce false;
         };
         no-prime.configuration = {
           imports = [ hardware-modules.common-gpu-nvidia-nonprime ];

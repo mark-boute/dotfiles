@@ -1,8 +1,8 @@
 { config, lib, main-user, ... }:
 
-with lib; let 
+let 
   cfg = config.modules.sops; 
-
+  inherit (lib) mkEnableOption mkIf;
 in {
   options.modules.sops = { 
     enable = mkEnableOption "SOPS";
