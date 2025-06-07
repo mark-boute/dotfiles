@@ -100,7 +100,7 @@
     packages."x86_64-linux".neovim-mark =
       (inputs.nvf.lib.neovimConfiguration {
         pkgs = nixpkgs.legacyPackages.x86_64-linux;
-        modules = [./hosts/legion/nvf-configuration.nix];
+        modules = [./hosts/legion/nvf-configuration];
       }).neovim;
 
     nixosConfigurations = {
