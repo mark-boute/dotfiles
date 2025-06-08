@@ -7,11 +7,16 @@
   cfg = config.modules.zsh;
   inherit (lib) mkEnableOption mkIf;
 in {
-  options.modules.zsh = {enable = mkEnableOption "zsh";};
+  options.modules.zsh = {
+    enable = mkEnableOption "zsh";
+
+    useStarship = mkEnableOption "starship";
+  };
 
   config = mkIf cfg.enable {
     home.packages = [
       pkgs.zsh
+
       pkgs.libnotify # dependecy for notify-send
       pkgs.zoxide # the better cd
       pkgs.fzf # zoxide dependecy
@@ -20,9 +25,14 @@ in {
     ];
 
     programs.starship = {
-      enable = true;
+      enable = cfg.useStarship;
       settings = {
         add_newline = true;
+
+        git_status = {
+          format = "([[$all_status$ahead_behind]]($style) )";
+          style = "orange";
+        };
       };
     };
 
@@ -38,10 +48,10 @@ in {
 
       # .zshrc
       initContent = ''
+        source ~/.config/zsh/.p10k.zsh
         bindkey '^R' history-incremental-search-backward
         bindkey '^ ' autosuggest-accept
 
-        eval "$(starship init zsh)"
         eval "$(zoxide init zsh)"
       '';
 
@@ -82,8 +92,12 @@ in {
 
       # Source all plugins, nix-style
       plugins = [
-        # add prompt; i.e. starship or powerlevel10k
-
+        # to be replaced with ohmyposh
+        {
+          name = "powerlevel10k";
+          src = pkgs.zsh-powerlevel10k;
+          file = "share/zsh-powerlevel10k/powerlevel10k.zsh-theme";
+        }
         {
           name = "auto-ls";
           src = pkgs.fetchFromGitHub {

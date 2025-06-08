@@ -29,9 +29,16 @@
       enable = true;
       vim-fugitive.enable = true;
     };
-    minimap.minimap-vim.enable = true;
+    assistant.copilot.enable = true;
 
+    minimap.minimap-vim.enable = true;
+    autopairs.nvim-autopairs.enable = true;
     navigation.harpoon.enable = true;
+
+    utility.oil-nvim.enable = true;
+    filetree.nvimTree = {
+      enable = true;
+    };
 
     clipboard = {
       enable = true;
@@ -39,16 +46,20 @@
     };
 
     options = {
-      shiftwidth = 4;
       tabstop = 4;
+      shiftwidth = 0;
       updatetime = 100;
       termguicolors = true;
     };
 
     theme = {
       enable = true;
-      name = "nord";
-      style = "dark";
+      name = "onedark";
+      style = "warmer";
+    };
+
+    mini = {
+      icons.enable = true;
     };
 
     visuals = {
@@ -59,6 +70,7 @@
 
     statusline.lualine = {
       enable = true;
+      theme = "onedark";
     };
 
     telescope.enable = true;
