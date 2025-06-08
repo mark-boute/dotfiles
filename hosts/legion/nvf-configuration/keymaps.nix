@@ -1,5 +1,4 @@
-{ ... }:
-{
+{...}: {
   config.vim.keymaps = [
     {
       key = "<leader>cd";
@@ -39,5 +38,14 @@
       desc = "Help tags";
     }
 
+    # Harpoon within Telescope
+    {
+      key = "<leader>fl";
+      mode = "n";
+      lua = true;
+      action = "function() require('telescope_functions').toggle_telescope(require('harpoon'):list()) end";
+      silent = true;
+      desc = "Open Harpoonlist in Telescope";
+    }
   ];
 }

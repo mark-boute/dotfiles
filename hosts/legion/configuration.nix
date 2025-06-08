@@ -4,12 +4,9 @@
   pkgs,
   inputs,
   ...
-}:
-
-let
+}: let
   username = "mark";
-in
-{
+in {
   imports = [
     # Include the results of the hardware scan.
     ./hardware-configuration.nix
@@ -23,9 +20,9 @@ in
     userName = username;
     description = "Mark Boute";
     shell = pkgs.zsh;
-    groups = [ "docker" ];
+    groups = ["docker"];
   };
-  
+
   virtualisation.docker.enable = true;
   hardware.nvidia-container-toolkit.enable = true;
   boot.kernelPackages = pkgs.linuxPackages_xanmod_latest;
@@ -59,8 +56,7 @@ in
     sops.enable = true;
   };
 
-  environment.systemPackages =
-    with pkgs;
+  environment.systemPackages = with pkgs;
     [
       powertop
       nvtopPackages.full
@@ -80,8 +76,7 @@ in
 
       vscode-fhs
       (vscode-with-extensions.override {
-        vscodeExtensions =
-          with vscode-extensions;
+        vscodeExtensions = with vscode-extensions;
           [
             bbenoist.nix
             # ms-python.python
@@ -102,12 +97,11 @@ in
     ]
     ++ [
       inputs.zen-browser.packages.${system}.default
-      
+
       # Neovim and NVF
       self.packages.${system}.neovim-mark
-      pkgs.vimPlugins.nvim-treesitter.withAllGrammars
-      pkgs.ripgrep
-
+      #pkgs.vimPlugins.nvim-treesitter.withAllGrammars
+      #pkgs.ripgrep
     ];
 
   fonts.packages = with pkgs; [

@@ -1,6 +1,6 @@
-{ pkgs, ... }:
-{
+{...}: {
   imports = [
-    ./nvim-highlight-colors.nix
+    ./lazy.nix
   ];
 }
+

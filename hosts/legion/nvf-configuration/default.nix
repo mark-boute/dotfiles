@@ -1,23 +1,42 @@
-{ ... }:
-{
-
+{pkgs, ...}: {
   imports = [
     ./plugins
+    ./nvim/lua
 
     ./keymaps.nix
     ./lsp-settings.nix
   ];
 
   config.vim = {
+    extraPackages = with pkgs;
+      [
+        ripgrep
+      ]
+      ++ (with pkgs.vimPlugins; [
+        nvim-treesitter.withAllGrammars
+      ])
+      ++ [
+        # pkgs from inputs
+      ];
+
+    additionalRuntimePaths = [./nvim];
+
     globals = {
       "mapleader" = " ";
     };
 
-    useSystemClipboard = true;
-    git.enable = true;
-    minimap.codewind.enable = true;
+    git = {
+      enable = true;
+      vim-fugitive.enable = true;
+    };
+    minimap.minimap-vim.enable = true;
 
     navigation.harpoon.enable = true;
+
+    clipboard = {
+      enable = true;
+      providers.wl-copy.enable = true;
+    };
 
     options = {
       shiftwidth = 4;
