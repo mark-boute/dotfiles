@@ -1,19 +1,30 @@
-{ pkgs, lib, config, ... }:
-let 
+{
+  pkgs,
+  lib,
+  config,
+  ...
+}: let
   cfg = config.modules.zsh;
   inherit (lib) mkEnableOption mkIf;
 in {
-  options.modules.zsh = { enable = mkEnableOption "zsh"; };
+  options.modules.zsh = {enable = mkEnableOption "zsh";};
 
   config = mkIf cfg.enable {
     home.packages = [
       pkgs.zsh
-      pkgs.libnotify            # dependecy for notify-send
-      pkgs.zoxide               # the better cd
-      pkgs.fzf                  # zoxide dependecy
-      pkgs.nix-output-monitor   # colorful nix build outputs
-      pkgs.eza                  # better ls
+      pkgs.libnotify # dependecy for notify-send
+      pkgs.zoxide # the better cd
+      pkgs.fzf # zoxide dependecy
+      pkgs.nix-output-monitor # colorful nix build outputs
+      pkgs.eza # better ls
     ];
+
+    programs.starship = {
+      enable = true;
+      settings = {
+        add_newline = true;
+      };
+    };
 
     programs.zsh = {
       enable = true;
@@ -27,13 +38,14 @@ in {
 
       # .zshrc
       initContent = ''
-        PROMPT="%F{blue}%m %~%b "$'\n'"%(?.%F{green}%Bλ%b |.%F{red}?) %f"
         bindkey '^R' history-incremental-search-backward
         bindkey '^ ' autosuggest-accept
+
+        eval "$(starship init zsh)"
         eval "$(zoxide init zsh)"
       '';
 
-      # basically aliases for directories: 
+      # basically aliases for directories:
       # `cd ~dotfiles` will cd into ~/dotfiles
       dirHashes = {
         dotfiles = "$HOME/dotfiles";
@@ -58,18 +70,20 @@ in {
         g = "git";
         n = "nom";
         v = "nvim";
-	      hi = "() { echo $1 ;}"; 
+        hi = "() { echo $1 ;}";
         nd = "() {nix develop $1 ;}";
         switch = "sudo nixos-rebuild switch --flake ~/dotfiles --fast";
         rebuild = "switch;  notify-send -a NixOS 'Rebuild complete\!'";
         update = "sudo nix flake update --flake ~/dotfiles; switch; notify-send -a NixOS 'System updated\!'";
         #Programs
-	      cora = "~/.cora/bin/cora";
-	      cat = "bat -p";
+        cora = "~/.cora/bin/cora";
+        cat = "bat -p";
       };
 
       # Source all plugins, nix-style
       plugins = [
+        # add prompt; i.e. starship or powerlevel10k
+
         {
           name = "auto-ls";
           src = pkgs.fetchFromGitHub {
