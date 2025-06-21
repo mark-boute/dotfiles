@@ -29,10 +29,9 @@ in {
   time.hardwareClockInLocalTime = true;
 
   programs = {
-    firefox.enable = true;
     thunderbird.enable = true;
     tmux.enable = true;
-    hyprland.enable = false;
+    hyprland.enable = true;
   };
 
   modules = {
@@ -56,14 +55,13 @@ in {
     sops.enable = true;
   };
 
+  # environment.sessionVariables.NIXOS_OZONE_WL = "1";
   environment.systemPackages = with pkgs;
     [
+      # kitty
+
       powertop
       nvtopPackages.full
-
-      # OOP grading
-      p7zip
-      virtualenv
 
       # cora dependencies
       z3
@@ -97,11 +95,7 @@ in {
     ]
     ++ [
       inputs.zen-browser.packages.${system}.default
-
-      # Neovim and NVF
       self.packages.${system}.neovim-mark
-      #pkgs.vimPlugins.nvim-treesitter.withAllGrammars
-      #pkgs.ripgrep
     ];
 
   fonts.packages = with pkgs; [
