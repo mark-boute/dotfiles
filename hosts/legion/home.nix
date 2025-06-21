@@ -11,7 +11,14 @@ in
 
   modules = {
     gnome-settings.enable = true;
-    # hyprland = { enable = true; style = "nord"; };
+    hyprland = { 
+      enable = true; 
+      configuration = "cappuccino";
+      super-key = "SUPER";
+      shared = {
+        keybinds.enable-all = true;
+      };
+    };
     # eww.enable = true;
     latex.enable = true;
     zsh.enable = true;

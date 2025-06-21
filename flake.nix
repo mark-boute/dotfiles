@@ -11,22 +11,27 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    nvf = {
+    quickshell = {  # dekstop toolkit for Hyprland
+      url = "git+https://git.outfoxxed.me/outfoxxed/quickshell";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
+    nvf = {  # neovim configuration framework
       url = "github:notashelf/nvf";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    zen-browser = {
+    zen-browser = {  # Firefox-based modern browser
       url = "github:0xc000022070/zen-browser-flake";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    winapps = {
+    winapps = {  # Windows applications on NixOS
       url = "github:winapps-org/winapps";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    sops-nix = {
+    sops-nix = {  # secrets management
       url = "github:Mic92/sops-nix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
