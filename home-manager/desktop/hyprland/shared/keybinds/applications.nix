@@ -2,7 +2,7 @@
 
 let 
   cfg = config.modules.hyprland.shared.keybinds.applications; 
-  inherit (lib) mkEnableOption mkOption mkIf;
+  inherit (lib) mkEnableOption mkIf;
 in {
   options.modules.hyprland.shared.keybinds.applications = { 
     enable = mkEnableOption "Window management keybinds";
@@ -10,11 +10,9 @@ in {
   };
 
   config = mkIf cfg.enable {
-    wayland.windowManager.hyprland.settings.bind = [
-      # terminal
-      "$mod, T, exec, kitty"
-      # browser
-      "$mod, W, exec, zen"
+    wayland.windowManager.hyprland.settings.bindd = [
+      "$mod, T, Open kitty terminal, exec, kitty"
+      "$mod, W, Open browser, exec, zen"
     ];
   };
 }

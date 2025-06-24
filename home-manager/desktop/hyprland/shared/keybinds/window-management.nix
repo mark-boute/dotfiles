@@ -22,36 +22,48 @@ in {
   };
 
   config = mkIf cfg.enable {
-    wayland.windowManager.hyprland.settings.bind = [
+    wayland.windowManager.hyprland.settings.bindd = [
       # General window management keybinds
-      "$mod, x, closewindow"
-      "$mod, q, killactive"
-      "$mod, space, togglefloating"
-      "$mod, f, fullscreen, 0"
+      "$mod, x, Close window, closewindow"
+      "$mod, q, Close window, killactive"
+      "$mod, space, Toggle floating, togglefloating"
+      "$mod, f, Toggle fullsreen, fullscreen, 0"
 
 
       # Change focus with keyboard
-      "$mod, left, movefocus, l"
-      "$mod, right, movefocus, r"
-      "$mod, up, movefocus, u"
-      "$mod, down, movefocus, d"
-
-      # Resize windows with keyboard
-      "$mod ${cfg.keyboard-resize-extra-key}, left, resizeactive, -25 0"
-      "$mod ${cfg.keyboard-resize-extra-key}, right, resizeactive, 25 0"
-      "$mod ${cfg.keyboard-resize-extra-key}, up, resizeactive, 0 -25"
-      "$mod ${cfg.keyboard-resize-extra-key}, down, resizeactive, 0 25"
+      "$mod, left, Focus window to the left, movefocus, l"
+      "$mod, right, Focus window to the right, movefocus, r"
+      "$mod, up, Focus window above, movefocus, u"
+      "$mod, down, Focus window below, movefocus, d"
 
       # Move windows with keyboard
-      "$mod ${cfg.keyboard-move-extra-key}, left, movewindow, l"
-      "$mod ${cfg.keyboard-move-extra-key}, right, movewindow, r"
-      "$mod ${cfg.keyboard-move-extra-key}, up, movewindow, u"
-      "$mod ${cfg.keyboard-move-extra-key}, down, movewindow, d"
+      "$mod ${cfg.keyboard-move-extra-key}, left, Move window to the left, movewindow, l"
+      "$mod ${cfg.keyboard-move-extra-key}, right, Move window to the right, movewindow, r"
+      "$mod ${cfg.keyboard-move-extra-key}, up, Move window up, movewindow, u"
+      "$mod ${cfg.keyboard-move-extra-key}, down, Move window down, movewindow, d"
 
-      # Move/Resize windows with mouse (LMB for move, RMB for resize)
-      "$mod, mouse_left, movewindow"
-      "$mod, mouse_right, resizeactive"
+      # Cycle windows and bring new_active to top
+      "$mod, Tab, Cycle to next window and move to top, cyclenext"
+      "$mod, Tab, Cycle to next window and move to top, bringactivetotop"
+    ];
 
+    wayland.windowManager.hyprland.settings.binddm = [
+      "$mod, mouse:272, Move window (LMB), movewindow"
+      "$mod, mouse:273, Resize window (RMB), resizeactive"
+    ];
+
+    wayland.windowManager.hyprland.settings.binds.drag_threshold = 10;
+
+    wayland.windowManager.hyprland.settings.binddc = [
+      "$mod, mouse:272, Toggle floating, togglefloating"
+    ];
+
+    wayland.windowManager.hyprland.settings.bindde = [  # Repeat when held
+      # Resize windows with keyboard
+      "$mod ${cfg.keyboard-resize-extra-key}, left, Grow window left, resizeactive, -25 0"
+      "$mod ${cfg.keyboard-resize-extra-key}, right, Grow window right, resizeactive, 25 0"
+      "$mod ${cfg.keyboard-resize-extra-key}, up, Grow window up, resizeactive, 0 -25"
+      "$mod ${cfg.keyboard-resize-extra-key}, down, Grow window down, resizeactive, 0 25"
     ];
   };
 }

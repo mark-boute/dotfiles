@@ -15,8 +15,6 @@ in
     enable-all = mkEnableOption "Enable all Hyprland shared keybinds";
   };
 
-  
-
   config = mkIf cfg.enable-all {
     modules.hyprland.shared.keybinds = {
       applications.enable = true;

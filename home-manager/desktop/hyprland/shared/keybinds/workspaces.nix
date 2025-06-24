@@ -40,9 +40,9 @@ in {
 
     })
     (mkIf (cfg.enable && cfg.enable-scroll-workspace) {
-      wayland.windowManager.hyprland.settings.bind = [
-        "$mod, mouse_up, workspace, e+1"
-        "$mod, mouse_down, workspace, e-1"
+      wayland.windowManager.hyprland.settings.bindd = [
+        "$mod, mouse_up, Move to next workspace, workspace, e+1"
+        "$mod, mouse_down, Move to previous workspace, workspace, e-1"
       ];
     })
   ];
