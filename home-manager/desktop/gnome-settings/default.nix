@@ -2,7 +2,7 @@
 
 let 
   cfg = config.modules.gnome-settings;
-  inherit (lib) mkEnableOption mkIf mkOption types;
+  inherit (lib) mkEnableOption mkIf mkOption types mkMerge;
 in {
   options.modules.gnome-settings = { 
 
@@ -24,17 +24,42 @@ in {
       '';
     };
 
+    shellBlur = mkEnableOption "enable shell blur";
+
   };
 
   config = mkIf cfg.enable {
 
     home.packages = with pkgs; [
       gnome-tweaks
-      gnomeExtensions.appindicator
-    ];
+    ] ++ (with pkgs.gnomeExtensions; [
+      blur-my-shell
+      appindicator
+    ]);
 
     dconf.enable = true;
     dconf.settings = {
+
+      "org/gnome/shell/extensions/blur-my-shell" = {
+        "panel/blur" = cfg.shellBlur;
+        "overview/blur" = cfg.shellBlur;
+        "dash-to-dock/blur" = cfg.shellBlur;
+        "lockscreen/blur" = cfg.shellBlur;
+
+        "applications/blur" = cfg.shellBlur;
+        "applications/sigma" = 15;
+        "applications/brightness" = 1.0;
+        "applications/dynamic-opacity" = false;
+        "applications/opacity" = 150;
+        "applications/whitelist" = [
+          "org.gnome.Console"
+          "org.gnome.Nautilus"
+          "org.gnome.Settings"
+
+          "sportify"
+          "signal"
+        ];
+      };
 
       "org/gnome/desktop/interface" = {
         color-scheme = "prefer-dark";
@@ -46,6 +71,7 @@ in {
         enabled-extensions = [
           "cloudflarewarpindicator@depscian.com"
           "cloudflare-warp-toggle@khaled.is-a.dev"
+          "blur-my-shell@aunetx"
         ];
       };
         

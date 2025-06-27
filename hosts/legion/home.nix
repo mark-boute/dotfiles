@@ -1,7 +1,8 @@
-{ pkgs, main-user, config, ... }:
+{ pkgs, main-user, config, lib, ... }:
 let
   # main-user = "mark";
   wallpaper = config.lib.file.mkOutOfStoreSymlink ../../home-manager/desktop/hyprland/cappuccino/assets/coffee_pixel_art_2560x1600.png;
+  inherit (lib) mkForce;
 in
 {
   # Home Manager needs a bit of information about you and the paths it should
@@ -10,12 +11,19 @@ in
   home.homeDirectory = "/home/${main-user}";
   imports = [ ../../home-manager ];
 
+  xdg.portal.extraPortals = mkForce [
+      pkgs.xdg-desktop-portal-gtk # For both
+      pkgs.xdg-desktop-portal-hyprland # For Hyprland
+      pkgs.xdg-desktop-portal-gnome # For GNOME
+    ];
+
   wayland.windowManager.hyprland.settings.monitor = "eDP-1, 2560x1600@240, 0x0, 1";
   modules = {
     gnome-settings = {
       enable = true;
       background-light = "file://${wallpaper}";
       background-dark = "file://${wallpaper}";
+      shellBlur = true;
     };
     hyprland = { 
       enable = true; 
@@ -132,7 +140,7 @@ in
   #  /etc/profiles/per-user/mark/etc/profile.d/hm-session-vars.sh
   #
   home.sessionVariables = {
-    # EDITOR = "emacs";
+    EDITOR = "nvim";
   };
 
   # Let Home Manager install and manage itself.

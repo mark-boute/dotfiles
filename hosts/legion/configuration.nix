@@ -1,11 +1,13 @@
 {
   self,
+  lib,
   config,
   pkgs,
   inputs,
   ...
 }: let
   username = "mark";
+  inherit (lib) mkForce;
 in {
   imports = [
     # Include the results of the hardware scan.
