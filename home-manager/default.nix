@@ -10,5 +10,6 @@
     
     # standealone
     ./latex
+    ./spotify
   ];
 }

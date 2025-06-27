@@ -11,25 +11,39 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    nvf = {
+    quickshell = {  # dekstop toolkit for Hyprland
+      url = "git+https://git.outfoxxed.me/outfoxxed/quickshell";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
+    nvf = {  # neovim configuration framework
       url = "github:notashelf/nvf";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    zen-browser = {
+    zen-browser = {  # Firefox-based modern browser
       url = "github:0xc000022070/zen-browser-flake";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    winapps = {
+    winapps = {  # Windows applications on NixOS
       url = "github:winapps-org/winapps";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    sops-nix = {
+    sops-nix = {  # secrets management
       url = "github:Mic92/sops-nix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+
+    rose-pine-hyprcursor = {
+      url = "github:ndom91/rose-pine-hyprcursor";
+      inputs.nixpkgs.follows = "nixpkgs";
+      # inputs.hyprlang.follows = "hyprland/hyprlang";
+    };
+
+    catppuccin.url = "github:catppuccin/nix";
+    spicetify-nix.url = "github:Gerg-L/spicetify-nix";
   };
 
   outputs = {
@@ -76,10 +90,12 @@
           inputs.home-manager.nixosModules.home-manager
           {
             home-manager = {
+              backupFileExtension = "backup";
               useUserPackages = true;
               useGlobalPkgs = true;
               sharedModules = [
                 inputs.sops-nix.homeManagerModules.sops
+                inputs.spicetify-nix.homeManagerModules.default
               ];
               extraSpecialArgs = {
                 inherit inputs main-user;

@@ -1,9 +1,14 @@
-{ pkgs, lib, config, ... }:
+{ pkgs, lib, config, inputs, ... }:
 
 let 
   cfg = config.modules.gnome-settings;
   inherit (lib) mkEnableOption mkIf mkOption types;
 in {
+
+  imports = [
+    inputs.catppuccin.homeModules.catppuccin
+  ];
+
   options.modules.gnome-settings = { 
 
     enable = mkEnableOption "gnome-settings"; 
@@ -24,19 +29,70 @@ in {
       '';
     };
 
+    useCatppuccin = mkEnableOption "use catppuccin theme";
+    catppuccinPallete = mkOption {
+      type = types.enum [ "latte" "frappe" "macchiato" "mocha" ];
+      default = "macchiato";
+      description = ''
+        The catppuccin pallete to use for the theme.
+      '';
+    };
+
+    shellBlur = mkEnableOption "enable shell blur";
+
   };
 
   config = mkIf cfg.enable {
 
+    gtk.enable = true;
+    gtk.catppuccin = {
+      enable = cfg.useCatppuccin;
+      flavor = cfg.catppuccinPallete;
+      accent = "rosewater";
+    };
+    catppuccin = {
+      enable = cfg.useCatppuccin;
+      flavor = cfg.catppuccinPallete;
+      accent = "rosewater";
+      gtk = {
+        enable = true;
+        gnomeShellTheme = true;
+      };
+    };
+
     home.packages = with pkgs; [
       gnome-tweaks
-      gnomeExtensions.appindicator
-    ];
+    ] ++ (with pkgs.gnomeExtensions; [
+      blur-my-shell
+      appindicator
+    ]);
 
     dconf.enable = true;
     dconf.settings = {
 
+      "org/gnome/shell/extensions/blur-my-shell" = {
+        "panel/blur" = cfg.shellBlur;
+        "overview/blur" = cfg.shellBlur;
+        "dash-to-dock/blur" = cfg.shellBlur;
+        "lockscreen/blur" = cfg.shellBlur;
+
+        "applications/blur" = cfg.shellBlur;
+        "applications/sigma" = 15;
+        "applications/brightness" = 1.0;
+        "applications/dynamic-opacity" = false;
+        "applications/opacity" = 150;
+        "applications/whitelist" = [
+          "org.gnome.Console"
+          "org.gnome.Nautilus"
+          "org.gnome.Settings"
+
+          "sportify"
+          "signal"
+        ];
+      };
+
       "org/gnome/desktop/interface" = {
+        # gtk-theme = "Adwaita";
         color-scheme = "prefer-dark";
         text-scaling-factor = 1.20;
       };
@@ -46,6 +102,7 @@ in {
         enabled-extensions = [
           "cloudflarewarpindicator@depscian.com"
           "cloudflare-warp-toggle@khaled.is-a.dev"
+          "blur-my-shell@aunetx"
         ];
       };
         

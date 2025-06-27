@@ -1,21 +1,48 @@
-{ pkgs, main-user, ... }:
+{ pkgs, main-user, config, lib, ... }:
 let
   # main-user = "mark";
+  wallpaper = config.lib.file.mkOutOfStoreSymlink ../../home-manager/desktop/hyprland/cappuccino/assets/coffee_pixel_art_2560x1600.png;
+  inherit (lib) mkForce;
 in
 {
   # Home Manager needs a bit of information about you and the paths it should
   # manage.
   home.username = main-user;
   home.homeDirectory = "/home/${main-user}";
-  imports = [ ../../home-manager ];
+  imports = [ 
+    ../../home-manager 
+  ];
 
+  xdg.portal = {
+    extraPortals = mkForce [
+      pkgs.xdg-desktop-portal-gtk # For both
+      pkgs.xdg-desktop-portal-hyprland # For Hyprland
+      pkgs.xdg-desktop-portal-gnome # For GNOME
+    ];
+  };
+
+  wayland.windowManager.hyprland.settings.monitor = "eDP-1, 2560x1600@240, 0x0, 1";
   modules = {
-    gnome-settings.enable = true;
-    # hyprland = { enable = true; style = "nord"; };
+    gnome-settings = {
+      enable = true;
+      useCatppuccin = true;
+      background-light = "file://${wallpaper}";
+      background-dark = "file://${wallpaper}";
+      shellBlur = true;
+    };
+    hyprland = { 
+      enable = true; 
+      configuration = "cappuccino";
+      super-key = "SUPER";
+      shared = {
+        keybinds.enable-all = true;
+      };
+    };
     # eww.enable = true;
     latex.enable = true;
     zsh.enable = true;
     winapps.enable = true;
+    spotify.enable = true;
   };
 
   sops = {
@@ -54,9 +81,7 @@ in
 
     # communication
     discord
-    signal-desktop-bin
-
-    spotify
+    signal-desktop-bin    
 
     lunar-client
     gnomeExtensions.cloudflare-warp-toggle
@@ -119,7 +144,8 @@ in
   #  /etc/profiles/per-user/mark/etc/profile.d/hm-session-vars.sh
   #
   home.sessionVariables = {
-    # EDITOR = "emacs";
+    EDITOR = "nvim";
+    NIXOS_OZONE_WLAN = "1";
   };
 
   # Let Home Manager install and manage itself.
