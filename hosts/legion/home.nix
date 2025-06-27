@@ -9,18 +9,23 @@ in
   # manage.
   home.username = main-user;
   home.homeDirectory = "/home/${main-user}";
-  imports = [ ../../home-manager ];
+  imports = [ 
+    ../../home-manager 
+  ];
 
-  xdg.portal.extraPortals = mkForce [
+  xdg.portal = {
+    extraPortals = mkForce [
       pkgs.xdg-desktop-portal-gtk # For both
       pkgs.xdg-desktop-portal-hyprland # For Hyprland
       pkgs.xdg-desktop-portal-gnome # For GNOME
     ];
+  };
 
   wayland.windowManager.hyprland.settings.monitor = "eDP-1, 2560x1600@240, 0x0, 1";
   modules = {
     gnome-settings = {
       enable = true;
+      useCatppuccin = true;
       background-light = "file://${wallpaper}";
       background-dark = "file://${wallpaper}";
       shellBlur = true;
@@ -37,6 +42,7 @@ in
     latex.enable = true;
     zsh.enable = true;
     winapps.enable = true;
+    spotify.enable = true;
   };
 
   sops = {
@@ -75,9 +81,7 @@ in
 
     # communication
     discord
-    signal-desktop-bin
-
-    spotify
+    signal-desktop-bin    
 
     lunar-client
     gnomeExtensions.cloudflare-warp-toggle
@@ -141,6 +145,7 @@ in
   #
   home.sessionVariables = {
     EDITOR = "nvim";
+    NIXOS_OZONE_WLAN = "1";
   };
 
   # Let Home Manager install and manage itself.

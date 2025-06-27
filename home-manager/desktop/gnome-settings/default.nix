@@ -1,9 +1,14 @@
-{ pkgs, lib, config, ... }:
+{ pkgs, lib, config, inputs, ... }:
 
 let 
   cfg = config.modules.gnome-settings;
-  inherit (lib) mkEnableOption mkIf mkOption types mkMerge;
+  inherit (lib) mkEnableOption mkIf mkOption types;
 in {
+
+  imports = [
+    inputs.catppuccin.homeModules.catppuccin
+  ];
+
   options.modules.gnome-settings = { 
 
     enable = mkEnableOption "gnome-settings"; 
@@ -24,11 +29,36 @@ in {
       '';
     };
 
+    useCatppuccin = mkEnableOption "use catppuccin theme";
+    catppuccinPallete = mkOption {
+      type = types.enum [ "latte" "frappe" "macchiato" "mocha" ];
+      default = "macchiato";
+      description = ''
+        The catppuccin pallete to use for the theme.
+      '';
+    };
+
     shellBlur = mkEnableOption "enable shell blur";
 
   };
 
   config = mkIf cfg.enable {
+
+    gtk.enable = true;
+    gtk.catppuccin = {
+      enable = cfg.useCatppuccin;
+      flavor = cfg.catppuccinPallete;
+      accent = "rosewater";
+    };
+    catppuccin = {
+      enable = cfg.useCatppuccin;
+      flavor = cfg.catppuccinPallete;
+      accent = "rosewater";
+      gtk = {
+        enable = true;
+        gnomeShellTheme = true;
+      };
+    };
 
     home.packages = with pkgs; [
       gnome-tweaks
@@ -62,6 +92,7 @@ in {
       };
 
       "org/gnome/desktop/interface" = {
+        # gtk-theme = "Adwaita";
         color-scheme = "prefer-dark";
         text-scaling-factor = 1.20;
       };

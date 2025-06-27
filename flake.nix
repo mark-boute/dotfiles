@@ -41,6 +41,9 @@
       inputs.nixpkgs.follows = "nixpkgs";
       # inputs.hyprlang.follows = "hyprland/hyprlang";
     };
+
+    catppuccin.url = "github:catppuccin/nix";
+    spicetify-nix.url = "github:Gerg-L/spicetify-nix";
   };
 
   outputs = {
@@ -87,10 +90,12 @@
           inputs.home-manager.nixosModules.home-manager
           {
             home-manager = {
+              backupFileExtension = "backup";
               useUserPackages = true;
               useGlobalPkgs = true;
               sharedModules = [
                 inputs.sops-nix.homeManagerModules.sops
+                inputs.spicetify-nix.homeManagerModules.default
               ];
               extraSpecialArgs = {
                 inherit inputs main-user;
