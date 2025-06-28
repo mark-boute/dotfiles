@@ -51,6 +51,10 @@
     inputs.zen-browser.packages.${pkgs.stdenv.system}.default
     
     pkgs.terraform
+    
+    pkgs.obsidian
+    
+    pkgs.signal-desktop
   ];
 
   programs.git = {
