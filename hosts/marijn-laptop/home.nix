@@ -1,4 +1,4 @@
-{ config, pkgs, ... }:
+{ config, pkgs, inputs, ... }:
 
 {
   # Home Manager needs a bit of information about you and the paths it should
@@ -45,10 +45,16 @@
 
     pkgs.gimp
     pkgs.ffmpeg
-    
-    pkgs.python3
 
     pkgs.rpi-imager
+
+    inputs.zen-browser.packages.${pkgs.stdenv.system}.default
+    
+    pkgs.terraform
+    
+    pkgs.obsidian
+    
+    pkgs.signal-desktop
   ];
 
   programs.git = {

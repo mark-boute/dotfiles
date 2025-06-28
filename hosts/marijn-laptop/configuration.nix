@@ -40,9 +40,11 @@ in
     sudoUser = true;
     userName = username;
     description = "Marijn Meuleman";
-    groups = [ "dialout" ];
+    groups = [ "dialout"  "docker" ];
   };
 
+  virtualisation.docker.enable = true;
+  
   # Enable numlock on GDM login screen
   programs.dconf.profiles.gdm.databases = [{
     settings."org/gnome/desktop/peripherals/keyboard".numlock-state = true;
@@ -98,6 +100,14 @@ in
 
   # Install firefox.
   programs.firefox.enable = true;
+  
+  programs.nix-ld.enable = true;
+
+  programs.nix-ld.libraries = with pkgs; [
+    codeql
+    ruff
+    uv
+  ];
 
   # List services that you want to enable:
 
