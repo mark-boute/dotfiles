@@ -1,4 +1,4 @@
-{ ... }:
+{ inputs, ... }:
 
 {
   imports = [
@@ -11,5 +11,8 @@
     # standealone
     ./latex
     ./spotify
+
+    # modules
+    inputs.catppuccin.homeModules.catppuccin
   ];
 }
