@@ -40,7 +40,7 @@ in {
       enable = true;
 
       # directory to put config files in
-      dotDir = ".config/zsh";
+      # dotDir = config.home.homeDirectory + "/.config/zsh";
 
       enableCompletion = true;
       autosuggestion.enable = true;
@@ -54,12 +54,6 @@ in {
 
         eval "$(zoxide init zsh)"
       '';
-
-      # basically aliases for directories:
-      # `cd ~dotfiles` will cd into ~/dotfiles
-      dirHashes = {
-        dotfiles = "$HOME/dotfiles";
-      };
 
       # Tweak settings for history
       history = {
@@ -76,15 +70,18 @@ in {
         mv = "mv -iv";
         cp = "cp -riv";
         ls = "ls -lah";
+
         #Devops
         g = "git";
         n = "nom";
         v = "nvim";
-        hi = "() { echo $1 ;}";
         nd = "() {nix develop $1 ;}";
-        switch = "sudo nixos-rebuild switch --flake ~/dotfiles --fast";
+
+        # Nix
+        switch = "sudo nixos-rebuild switch --flake ~/dotfiles --no-reexec";
         rebuild = "switch;  notify-send -a NixOS 'Rebuild complete\!'";
         update = "sudo nix flake update --flake ~/dotfiles; switch; notify-send -a NixOS 'System updated\!'";
+
         #Programs
         cora = "~/.cora/bin/cora";
         cat = "bat -p";

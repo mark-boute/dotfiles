@@ -1,25 +1,21 @@
 {
   self,
-  lib,
   config,
   pkgs,
   inputs,
+  main-user,
   ...
 }: let
-  username = "mark";
-  inherit (lib) mkForce;
 in {
   imports = [
-    # Include the results of the hardware scan.
     ./hardware-configuration.nix
     ./nixos-hardware.nix
-    # ./openvpn.nix
   ];
 
   main-user = {
     enable = true;
     sudoUser = true;
-    userName = username;
+    userName = main-user;
     description = "Mark Boute";
     shell = pkgs.zsh;
     groups = ["docker"];
@@ -34,6 +30,7 @@ in {
     thunderbird.enable = true;
     tmux.enable = true;
     hyprland.enable = true;
+    firefox.enable = true;
   };
 
   modules = {
@@ -109,8 +106,13 @@ in {
     }
   ];
 
-  # Enable networking
-  networking.networkmanager.enable = true;
+  networking.networkmanager = {
+    enable = true;
+    plugins = with pkgs; [ 
+      networkmanager-openvpn # support for EduVPN
+    ];
+  };
+
   hardware.bluetooth.enable = true;
   security.rtkit.enable = true;
 

@@ -48,12 +48,6 @@ in {
       enable = true;
       flavor = cfg.catppuccinPallete;
       accent = "rosewater";
-      gtk = {
-        enable = true;
-        gnomeShellTheme = true;
-        flavor = cfg.catppuccinPallete;
-        accent = "rosewater";
-      };
     };
 
     home.packages = with pkgs;

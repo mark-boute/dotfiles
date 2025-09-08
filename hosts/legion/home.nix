@@ -1,16 +1,20 @@
-{ pkgs, main-user, config, lib, ... }:
-let
-  # main-user = "mark";
-  wallpaper = config.lib.file.mkOutOfStoreSymlink ../../home-manager/desktop/hyprland/cappuccino/assets/coffee_pixel_art_2560x1600.png;
-  inherit (lib) mkForce;
-in
 {
+  pkgs,
+  main-user,
+  config,
+  lib,
+  ...
+}: let
+  # main-user = "mark";
+  wallpaper = ../../home-manager/desktop/hyprland/cappuccino/assets/coffee_pixel_art_2560x1600.png;
+  inherit (lib) mkForce;
+in {
   # Home Manager needs a bit of information about you and the paths it should
   # manage.
   home.username = main-user;
   home.homeDirectory = "/home/${main-user}";
-  imports = [ 
-    ../../home-manager 
+  imports = [
+    ../../home-manager
   ];
 
   xdg.portal = {
@@ -30,8 +34,8 @@ in
       background-dark = "file://${wallpaper}";
       shellBlur = true;
     };
-    hyprland = { 
-      enable = true; 
+    hyprland = {
+      enable = true;
       configuration = "cappuccino";
       super-key = "SUPER";
       shared = {
@@ -74,14 +78,15 @@ in
     gh
     glab
 
-    opencpn
-    
+    # opencpn
+
     # office suite
     onlyoffice-bin
 
     # communication
     discord
-    signal-desktop-bin    
+    signal-desktop-bin
+    element-desktop
 
     lunar-client
     gnomeExtensions.cloudflare-warp-toggle
@@ -96,7 +101,7 @@ in
     aliases = {
       s = "status";
       c = "commit";
-      b = "switch";  # yep, this is on purpose
+      b = "switch"; # yep, this is on purpose
       d = "diff";
       l = "log";
       p = "push";
@@ -106,8 +111,8 @@ in
     };
 
     extraConfig = {
-      push = { autoSetupRemote = true; };
-      init = { defaultBranch = "main"; };
+      push = {autoSetupRemote = true;};
+      init = {defaultBranch = "main";};
     };
   };
 
@@ -124,7 +129,6 @@ in
     #   org.gradle.console=verbose
     #   org.gradle.daemon.idletimeout=3600000
     # '';
-
   };
 
   # Home Manager can also manage your environment variables through

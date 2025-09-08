@@ -1,7 +1,6 @@
-{ lib, config, pkgs, inputs, ...}:
-with lib; let 
+{ inputs, ...}:
+let 
   hardware-modules = inputs.nixos-hardware.nixosModules;
-  nvidiaPackage = config.hardware.nvidia.package;
 in {
 
   imports = [
@@ -49,11 +48,7 @@ in {
           START_CHARGE_THRESH_BAT1 = 40; # 40 and bellow it starts to charge
           STOP_CHARGE_THRESH_BAT1 = 80; # 80 and above it stops charging
         };
+      };
     };
-  };
-
-    # enable the open source drivers for nvidia
-#     hardware.nvidia.open = mkOverride 990 (nvidiaPackage ? open && nvidiaPackage ? firmware);
-    # hardware.nvidia.package = config.boot.kernelPackages.nvidiaPackages.beta;
   };
 }
