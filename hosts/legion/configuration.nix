@@ -122,8 +122,9 @@ in {
     pulseaudio.enable = false;
     libinput.enable = true;
 
-    displayManager.gdm.enable = true;
+    displayManager.cosmic-greeter.enable = true;
     desktopManager.gnome.enable = true;
+    desktopManager.cosmic.enable = true;
 
     xserver.xkb = {
       # Configure keymap in X11
