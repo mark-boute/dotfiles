@@ -1,0 +1,223 @@
+{
+  "typescript.updateImportsOnFileMove.enabled": "always",
+  "javascript.updateImportsOnFileMove.enabled": "always",
+  "markdown-preview-enhanced.previewTheme": "none.css",
+  "editor.fontWeight": "400",
+  "editor.fontLigatures": true,
+  "workbench.iconTheme": "catppuccin-macchiato",
+  "editor.fontVariations": false,
+  "editor.minimap.autohide": "mouseover",
+  "editor.minimap.maxColumn": 50,
+  "editor.minimap.renderCharacters": false,
+  "editor.minimap.scale": 2,
+  "markdown-preview-enhanced.codeBlockTheme": "atom-material.css",
+  "markdown-preview-enhanced.revealjsTheme": "none.css",
+  "editor.tokenColorCustomizations": {
+    "[*Light*]": {
+      "textMateRules": [
+        {
+          "scope": "ref.matchtext",
+          "settings": {
+            "foreground": "#000"
+          }
+        }
+      ]
+    },
+    "[*Dark*]": {
+      "textMateRules": [
+        {
+          "scope": "ref.matchtext",
+          "settings": {
+            "foreground": "#fff"
+          }
+        },
+        {
+          "scope": "comment",
+          "settings": {
+            "fontStyle": "italic",
+            "foreground": "#969696"
+          }
+        },
+        {
+          "scope": [
+            "comment.block.documentation",
+            "comment.block.javadoc.java",
+            "punctuation.definition.comment.begin.documentation",
+            "punctuation.definition.comment.end.documentation",
+            "string.quoted.docstring.multi.python"
+          ],
+          "settings": {
+            "foreground": "#2cada7"
+          }
+        }
+      ]
+    }
+  },
+  "window.titleBarStyle": "custom",
+  "window.menuBarVisibility": "visible",
+
+  // Nix
+  "nix.formatterPath": "nixfmt",
+  "nix.enableLanguageServer": true,
+  "nix.serverPath": "nixd",
+  // LSP config can be passed via the ``nix.serverSettings.{lsp}`` as shown below.
+  "nix.serverSettings": {
+    // check https://github.com/nix-community/nixd/blob/main/nixd/docs/configuration.md for all nixd config
+    "nixd": {
+      "formatting": {
+        "command": ["nixfmt"]
+      },
+      "options": {
+        // By default, this entry will be read from `import <nixpkgs> { }`.
+        // You can write arbitrary Nix expressions here, to produce valid "options" declaration result.
+        // Tip: for flake-based configuration, utilize `builtins.getFlake`
+        "nixos": {
+          "expr": "(builtins.getFlake \"/home/mark/dotfiles/flake.nix\").nixosConfigurations.legion.options"
+        },
+        "home-manager": {
+          "expr": "(builtins.getFlake \"/home/mark/dotfiles/flake.nix\").homeConfigurations.mark.options"
+        }
+      }
+    }
+  },
+
+  // LaTeX
+  "latex-workshop.latex.tools": [
+    {
+      "name": "latexmk",
+      "command": "latexmk",
+      "args": [
+        "-synctex=1",
+        "-interaction=nonstopmode",
+        "-file-line-error",
+        "-pdf",
+        "-outdir=%OUTDIR%",
+        "%DOC%"
+      ],
+      "env": {}
+    },
+    {
+      "name": "xelatex",
+      "command": "xelatex",
+      "args": [
+        "-synctex=1",
+        "-interaction=nonstopmode",
+        "-file-line-error",
+        "--aux-directory=out",
+        "--output-directory=out",
+        "%DOC%"
+      ],
+      "env": {}
+    },
+    {
+      "name": "pdflatex",
+      "command": "pdflatex",
+      "args": [
+        "-synctex=1",
+        "-interaction=nonstopmode",
+        "-file-line-error",
+        "--aux-directory=out",
+        "--output-directory=out",
+        "%DOC%"
+      ],
+      "env": {}
+    },
+    {
+      "name": "bibtex",
+      "command": "bibtex",
+      "args": ["%DOCFILE%"],
+      "env": {}
+    }
+  ],
+  "latex-workshop.latex.recipes": [
+    {
+      "name": "pdfLaTeX",
+      "tools": ["pdflatex"]
+    },
+    {
+      "name": "latexmk 🔃",
+      "tools": ["latexmk"]
+    },
+    {
+      "name": "xelatex",
+      "tools": ["xelatex"]
+    },
+    {
+      "name": "pdflatex ➞ bibtex ➞ pdflatex`×2",
+      "tools": ["pdflatex", "bibtex", "pdflatex", "pdflatex"]
+    },
+    {
+      "name": "xelatex ➞ bibtex ➞ xelatex`×2",
+      "tools": ["xelatex", "bibtex", "xelatex", "xelatex"]
+    }
+  ],
+  "latex-workshop.latex.outDir": "%DIR%/out",
+  "latex-workshop.view.pdf.zoom": "page-width",
+
+  // Copilot
+  "github.copilot.enable": {
+    "*": true
+  },
+
+  // Haskell
+  "haskell.manageHLS": "GHCup",
+
+  // Python
+  "[python]": {
+    "diffEditor.ignoreTrimWhitespace": false,
+    "gitlens.codeLens.symbolScopes": ["!Module"],
+    "editor.formatOnType": true,
+    "editor.wordBasedSuggestions": "off",
+    "editor.defaultFormatter": "ms-python.black-formatter"
+  },
+  "python.analysis.extraPaths": [
+    "C:\\Users\\mark\\AppData\\Local\\pypoetry\\Cache\\virtualenvs"
+  ],
+  "python.analysis.packageIndexDepths": [
+    {
+      "name": "sklearn",
+      "depth": 2
+    },
+    {
+      "name": "matplotlib",
+      "depth": 2
+    },
+    {
+      "name": "scipy",
+      "depth": 2
+    },
+    {
+      "name": "django",
+      "depth": 3
+    },
+    {
+      "name": "flask",
+      "depth": 2
+    },
+    {
+      "name": "fastapi",
+      "depth": 2
+    }
+  ],
+
+  "hediet.vscode-drawio.resizeImages": null,
+
+  "redhat.telemetry.enabled": false,
+  "git.autofetch": true,
+  "terminal.integrated.fontFamily": "monospace",
+  "[vue]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "window.customTitleBarVisibility": "auto",
+  "[typescript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "workbench.colorTheme": "Catppuccin Macchiato",
+  "[jsonc]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "svg.preview.mode": "svg",
+  "editor.fontFamily": "JetBrainsMono NF",
+  "hediet.vscode-drawio.appearance": "dark",
+  "github.copilot.nextEditSuggestions.enabled": true
+}

@@ -60,35 +60,28 @@ in {
       powertop
       nvtopPackages.full
 
-      # cora dependencies
-      z3
-      jdk23
-      gradle-completion
-      cmake
-      unzip
-
       nixfmt-rfc-style
 
-      vscode-fhs
-      (vscode-with-extensions.override {
-        vscodeExtensions = with vscode-extensions;
-          [
-            bbenoist.nix
-            # ms-python.python
-            ms-azuretools.vscode-docker
-            ms-vscode-remote.remote-ssh
-            vscjava.vscode-java-pack
-            vscjava.vscode-gradle
-          ]
-          ++ pkgs.vscode-utils.extensionsFromVscodeMarketplace [
-            {
-              name = "remote-ssh-edit";
-              publisher = "ms-vscode-remote";
-              version = "0.47.2";
-              sha256 = "1hp6gjh4xp2m1xlm1jsdzxw9d8frkiidhph6nvl24d0h8z34w49g";
-            }
-          ];
-      })
+      # vscode-fhs
+      # (vscode-with-extensions.override {
+      #   vscodeExtensions = with vscode-extensions;
+      #     [
+      #       bbenoist.nix
+      #       # ms-python.python
+      #       ms-azuretools.vscode-docker
+      #       ms-vscode-remote.remote-ssh
+      #       vscjava.vscode-java-pack
+      #       vscjava.vscode-gradle
+      #     ]
+      #     ++ pkgs.vscode-utils.extensionsFromVscodeMarketplace [
+      #       {
+      #         name = "remote-ssh-edit";
+      #         publisher = "ms-vscode-remote";
+      #         version = "0.47.2";
+      #         sha256 = "1hp6gjh4xp2m1xlm1jsdzxw9d8frkiidhph6nvl24d0h8z34w49g";
+      #       }
+      #     ];
+      # })
     ]
     ++ [
       inputs.zen-browser.packages.${system}.default
@@ -122,9 +115,8 @@ in {
     pulseaudio.enable = false;
     libinput.enable = true;
 
-    displayManager.cosmic-greeter.enable = true;
+    displayManager.gdm.enable = true;
     desktopManager.gnome.enable = true;
-    desktopManager.cosmic.enable = true;
 
     xserver.xkb = {
       # Configure keymap in X11

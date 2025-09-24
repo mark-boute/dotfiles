@@ -1,7 +1,6 @@
 {
   pkgs,
   main-user,
-  config,
   lib,
   ...
 }: let
@@ -70,15 +69,16 @@ in {
     # (pkgs.writeShellScriptBin "my-hello" ''
     #   echo "Hello, ${config.home.username}!"
     # '')
-    vscode
     nixd
+
     authenticator
     eduvpn-client
+    bitwarden-cli
 
     gh
     glab
 
-    # opencpn
+    opencpn
 
     # office suite
     onlyoffice-bin
@@ -90,29 +90,119 @@ in {
 
     lunar-client
     gnomeExtensions.cloudflare-warp-toggle
+
+    # cora dependencies
+    z3
+    jdk21
+    gradle
+    # gradle-completion
+    # cmake
+    # unzip
   ];
 
-  programs.git = {
-    enable = true;
-    userName = "Mark Boute";
-    userEmail = "bmark0702@gmail.com";
-    diff-so-fancy.enable = true;
+  programs = {
+    git = {
+      enable = true;
+      userName = "Mark Boute";
+      userEmail = "bmark0702@gmail.com";
+      diff-so-fancy.enable = true;
 
-    aliases = {
-      s = "status";
-      c = "commit";
-      b = "switch"; # yep, this is on purpose
-      d = "diff";
-      l = "log";
-      p = "push";
-      u = "pull";
-      f = "fetch";
-      a = "add";
+      aliases = {
+        s = "status";
+        c = "commit";
+        b = "switch"; # yep, this is on purpose
+        d = "diff";
+        l = "log";
+        p = "push";
+        u = "pull";
+        f = "fetch";
+        a = "add";
+      };
+
+      extraConfig = {
+        push = {autoSetupRemote = true;};
+        init = {defaultBranch = "main";};
+      };
     };
 
-    extraConfig = {
-      push = {autoSetupRemote = true;};
-      init = {defaultBranch = "main";};
+    vscode = {
+      enable = true;
+      profiles.default = {
+        extensions = with pkgs.vscode-extensions; [
+          github.copilot
+
+          redhat.java
+          vscjava.vscode-java-pack
+
+          catppuccin.catppuccin-vsc
+          # catppuccin.catppuccin-vsc-icons
+
+          bierner.markdown-mermaid
+
+          arrterian.nix-env-selector
+          jnoortheen.nix-ide
+
+          james-yu.latex-workshop
+          tecosaur.latex-utilities
+
+          vue.volar
+          hediet.vscode-drawio
+        ];
+        userSettings = {
+          # editor settings
+          "editor.semanticHighlighting.enabled" = true;
+          "editor.fontFamily" = "JetBrainsMono NF";
+          "editor.fontSize" = 14;
+          "editor.fontLigatures" = true;
+          "editor.cursorBlinking" = "smooth";
+
+          "editor.minimap.autohide" = "mouseover";
+          "editor.minimap.maxColumn" = 50;
+          "editor.minimap.renderCharacters" = false;
+          "editor.minimap.scale" = 2;
+
+          "window.titleBarStyle" = "custom";
+          "window.menuBarVisibility" = "visible";
+
+          "github.copilot.enable" = {"*" = true;};
+          "git.autofetch" = true;
+
+          # theme settings
+          "catppuccin.accentColor" = "rosewater";
+          "workbench.colorTheme" = "Catppuccin Macchiato";
+          "workbench.iconTheme" = "catppuccin-macchiato";
+
+          # nix
+          "nix.formatterPath" = "nixfmt";
+          "nix.enableLanguageServer" = true;
+          "nix.serverPath" = "nixd";
+          "nix.serverSettings" = {
+            "nixd.formatting.command" = ["nixfmt"];
+            "options" = {
+              "nixos.expr" = "(builtins.getFlake \"/home/mark/dotfiles/flake.nix\").nixosConfigurations.legion.options";
+              "home-manager.expr" = "(builtins.getFlake \"/home/mark/dotfiles/flake.nix\").homeConfigurations.mark.options";
+            };
+          };
+
+          # java settings
+          "java.jdt.ls.java.home" = "${pkgs.jdk21}";
+
+          # pdf viewer
+          "latex-workshop.view.pdf.zoom" = "page-width";
+          "latex-workshop.latex.outDir" = "%DIR%/out";
+          "latex-workshop.view.pdf.color.dark.backgroundColor" = "#1e2030";
+          "latex-workshop.view.pdf.color.dark.pageBorderColor" = "#181926";
+          "latex-workshop.view.pdf.color.dark.pageColorsBackground" = "#24273a";
+          "latex-workshop.view.pdf.color.dark.pageColorsForeground" = "#cad3f5";
+
+          # markdown preview
+          "markdown-preview-enhanced.previewTheme" = "none.css";
+          "markdown-preview-enhanced.codeBlockTheme" = "atom-material.css";
+
+          # vscode-drawio
+          "hediet.vscode-drawio.appearance" = "automatic";
+        };
+      };
     };
   };
 
@@ -150,6 +240,7 @@ in {
   home.sessionVariables = {
     EDITOR = "nvim";
     NIXOS_OZONE_WLAN = "1";
+    NIXOS_OZONE_WL = "1";
   };
 
   # Let Home Manager install and manage itself.
