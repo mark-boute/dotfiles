@@ -24,6 +24,7 @@ in {
   virtualisation.docker.enable = true;
   hardware.nvidia-container-toolkit.enable = true;
   boot.kernelPackages = pkgs.linuxPackages_xanmod_latest;
+  boot.extraModulePackages = [ config.boot.kernelPackages.lenovo-legion-module ];
   time.hardwareClockInLocalTime = true;
 
   programs = {
@@ -40,9 +41,9 @@ in {
       cpu = "amd";
       open = true;
       setDeviceIds = true;
-      cpuId = "PCI:1:0:0";
-      gpuId = "PCI:5:0:0";
-      powerManagement = false;
+      integratedGraphicsId = "PCI:6:0:0";
+      dedicatedGraphicsId = "PCI:1:0:0";
+      powerManagement = true;
       finegrained = true;
       nvidiaPackage = config.boot.kernelPackages.nvidiaPackages.beta;
     };
@@ -57,31 +58,11 @@ in {
   # environment.sessionVariables.NIXOS_OZONE_WL = "1";
   environment.systemPackages = with pkgs;
     [
+      lenovo-legion
       powertop
       nvtopPackages.full
 
       nixfmt-rfc-style
-
-      # vscode-fhs
-      # (vscode-with-extensions.override {
-      #   vscodeExtensions = with vscode-extensions;
-      #     [
-      #       bbenoist.nix
-      #       # ms-python.python
-      #       ms-azuretools.vscode-docker
-      #       ms-vscode-remote.remote-ssh
-      #       vscjava.vscode-java-pack
-      #       vscjava.vscode-gradle
-      #     ]
-      #     ++ pkgs.vscode-utils.extensionsFromVscodeMarketplace [
-      #       {
-      #         name = "remote-ssh-edit";
-      #         publisher = "ms-vscode-remote";
-      #         version = "0.47.2";
-      #         sha256 = "1hp6gjh4xp2m1xlm1jsdzxw9d8frkiidhph6nvl24d0h8z34w49g";
-      #       }
-      #     ];
-      # })
     ]
     ++ [
       inputs.zen-browser.packages.${system}.default

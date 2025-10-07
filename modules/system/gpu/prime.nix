@@ -15,7 +15,7 @@ in {
 
     mode = mkOption {
       default = "";
-      type = types.str;
+      type = types.enum [ "" "sync" "reverse-sync" "offload" ];
       description = ''
         The mode to use for NVIDIA Optimus.
         Possible values are:
@@ -34,7 +34,7 @@ in {
 
     cpu = mkOption {
       default = "intel";
-      type = types.str;
+      type = types.enum [ "intel" "amd" ];
       description = ''
         The CPU to use for NVIDIA Optimus.
         Possible values are:
@@ -43,16 +43,16 @@ in {
       '';
     };
 
-    cpuId = mkOption {
-      default = "PCI:0:0:0";
+    integratedGraphicsId = mkOption {
+      default = "PCI:6:0:0";
       type = types.str;
       description = ''
-        The CPU ID to use for NVIDIA Optimus.
+        The IntegradedGPU ID to use for NVIDIA Optimus.
         This is required for the modes to work.
       '';
     };
 
-    gpuId = mkOption {
+    dedicatedGraphicsId = mkOption {
       default = "PCI:1:0:0";
       type = types.str;
       description = ''
@@ -71,6 +71,14 @@ in {
   };
 
   config = mkMerge [
+
+    # add correct cpu videodriver module
+    (mkIf (cfg.enable && cfg.cpu == "intel") { 
+      services.xserver.videoDrivers = [ "modesetting" ];
+    })
+    (mkIf (cfg.enable && cfg.cpu == "amd") { 
+      services.xserver.videoDrivers = [ "amdgpu" ];
+    })
 
     # require nvidia module
     (mkIf cfg.enable { 
@@ -154,16 +162,16 @@ in {
     # set device IDs for intel cpu and nvidia gpu
     (mkIf (cfg.enable && cfg.setDeviceIds && cfg.cpu == "intel") {
       hardware.nvidia.prime = {
-        intelBusId = cfg.cpuId;
-        nvidiaBusId = cfg.gpuId;
+        intelBusId = cfg.integratedGraphicsId;
+        nvidiaBusId = cfg.dedicatedGraphicsId;
       };
     })
 
     # set device IDs for amd cpu and nvidia gpu
     (mkIf (cfg.enable && cfg.setDeviceIds && cfg.cpu == "amd") {
       hardware.nvidia.prime = {
-        amdgpuBusId = cfg.cpuId;
-        nvidiaBusId = cfg.gpuId;
+        amdgpuBusId = cfg.integratedGraphicsId;
+        nvidiaBusId = cfg.dedicatedGraphicsId;
       };
     })
 

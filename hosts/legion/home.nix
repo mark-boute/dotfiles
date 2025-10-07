@@ -78,7 +78,7 @@ in {
     gh
     glab
 
-    opencpn
+    # opencpn
 
     # office suite
     onlyoffice-bin
