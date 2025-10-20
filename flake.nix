@@ -27,6 +27,11 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    winboat = {  # Windows applications on NixOS
+      url = "github:TibixDev/winboat";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
     sops-nix = {  # secrets management
       url = "github:Mic92/sops-nix";
       inputs.nixpkgs.follows = "nixpkgs";

@@ -1,6 +1,7 @@
 {
   self,
   config,
+  system,
   pkgs,
   inputs,
   main-user,
@@ -44,7 +45,7 @@ in {
       integratedGraphicsId = "PCI:6:0:0";
       dedicatedGraphicsId = "PCI:1:0:0";
       powerManagement = true;
-      finegrained = true;
+      finegrained = false;
       nvidiaPackage = config.boot.kernelPackages.nvidiaPackages.beta;
     };
     steam = {
@@ -58,11 +59,17 @@ in {
   # environment.sessionVariables.NIXOS_OZONE_WL = "1";
   environment.systemPackages = with pkgs;
     [
+      # system monitoring
       lenovo-legion
       powertop
+      htop
       nvtopPackages.full
 
       nixfmt-rfc-style
+
+      # winboat
+      inputs.winboat.packages.${system}.winboat
+      freerdp
     ]
     ++ [
       inputs.zen-browser.packages.${system}.default
