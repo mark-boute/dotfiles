@@ -88,10 +88,12 @@ in {
 
     # communication
     discord
+    vesktop
     signal-desktop-bin
     element-desktop
 
     lunar-client
+    prismlauncher
     gnomeExtensions.cloudflare-warp-toggle
 
     # cora dependencies
