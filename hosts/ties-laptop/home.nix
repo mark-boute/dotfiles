@@ -1,7 +1,10 @@
 { config, pkgs, ... }:
 
 {
-  imports = [ ../../home-manager ];
+  imports = [ 
+    ../../home-manager
+    ./ties/git.nix
+  ];
   modules = {
     gnome-settings = {enable = true; 
                       background-dark = file:///nix/store/pn4ahzf7bvws0fa7aifhw7ljksbc69j3-simple-blue-2016-02-19/share/backgrounds/nixos/nix-wallpaper-simple-blue.png; 
@@ -16,7 +19,6 @@
   home.username = "tiesd";
   home.homeDirectory = "/home/tiesd";
   nixpkgs.config.allowUnfree = true;
-
   # wayland.windowManager.hyprland = {
   #   enable = true;
   #   settings = {
@@ -50,6 +52,9 @@
     pkgs.vesktop
     pkgs.brave
     pkgs.onlyoffice-bin
+    pkgs.signal-desktop
+    pkgs.prismlauncher
+    pkgs.google-chrome
   ];
 
   # Home Manager is pretty good at managing dotfiles. The primary way to manage
@@ -66,13 +71,6 @@
     #   org.gradle.daemon.idletimeout=3600000
     # '';
 
-  };
-
-
-  programs.git = {
-    enable = true;
-    userName = "Ties Dirksen";
-    userEmail = "tiesdirksen@gmail.com";
   };
 
   # Home Manager can also manage your environment variables through
