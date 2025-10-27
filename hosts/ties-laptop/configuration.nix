@@ -21,11 +21,11 @@ in
       mode = "offload";
       setDeviceIds = true;
       cpu = "intel";
-      cpuId = "PCI:0:2:0";
-      gpuId = "PCI:1:0:0";
-      # powerManagement = false;
-      finegrained = true;
-      # nvidiaPackage = config.boot.kernelPackages.nvidiaPackages.beta;
+      integratedGraphicsId = "PCI:0:2:0";
+      dedicatedGraphicsId = "PCI:1:0:0";
+      powerManagement = true;
+      finegrained = false;
+      nvidiaPackage = config.boot.kernelPackages.nvidiaPackages.beta;
     };
 
     steam = { enable = true; addprotonup = true; };
