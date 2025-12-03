@@ -42,15 +42,27 @@ in {
     modules.hyprland.cappuccino.enable = true;
 
     programs.kitty.enable = true;
+
     wayland.windowManager.hyprland.enable = true;
     home.sessionVariables.NIXOS_OZONE_WL = "1";
 
     home.packages = with pkgs; [
       hyprpicker
+      hyprlock
+      hypridle
+      hyprsunset
+      hyprpolkitagent
+      hyprlauncher
+
+      pavucontrol # audio management
     ];
 
+    wayland.windowManager.hyprland.systemd.variables = ["--all"];
     wayland.windowManager.hyprland.settings = {
       "$mod" = cfg.super-key;
+
+      exec-once = [ "systemctl --user start hyprpolkitagent" ];
+      env = [ "ELECTRON_OZONE_PLATFORM_HINT,wayland" ]; 
 
       # Move this to a seperate module if we want to expose options
       input = {
@@ -67,7 +79,7 @@ in {
         scroll_method = "2fg"; # Two Fingers for scroll
         touchpad = {
           natural_scroll = true;
-          drag_lock = 0; # Drag-lift with timeout
+          drag_lock = 1; # Drag-lift with timeout
           clickfinger_behavior = true; # 1f:LMB, 2f: RMB, 3f: MMB
         };
       };

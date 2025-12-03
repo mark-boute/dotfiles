@@ -24,14 +24,18 @@ in {
 
   virtualisation.docker.enable = true;
   hardware.nvidia-container-toolkit.enable = true;
-  boot.kernelPackages = pkgs.linuxPackages_xanmod_latest;
+  # boot.kernelPackages = pkgs.linuxPackages_xanmod_latest;
   boot.extraModulePackages = [ config.boot.kernelPackages.lenovo-legion-module ];
   time.hardwareClockInLocalTime = true;
 
   programs = {
     thunderbird.enable = true;
     tmux.enable = true;
-    hyprland.enable = true;
+    hyprland = {
+      enable = true;
+      withUWSM = false;
+      xwayland.enable = true;
+    };
     firefox.enable = true;
   };
 
@@ -46,13 +50,23 @@ in {
       dedicatedGraphicsId = "PCI:1:0:0";
       powerManagement = true;
       finegrained = false;
-      nvidiaPackage = config.boot.kernelPackages.nvidiaPackages.beta;
+      # nvidiaPackage = config.boot.kernelPackages.nvidiaPackages.latest;
+
+      nvidiaPackage = config.boot.kernelPackages.nvidiaPackages.mkDriver {
+        version = "580.65.06";
+        sha256_64bit = "sha256-BLEIZ69YXnZc+/3POe1fS9ESN1vrqwFy6qGHxqpQJP8=";
+        sha256_aarch64 = "sha256-4CrNwNINSlQapQJr/dsbm0/GvGSuOwT/nLnIknAM+cQ=";
+        openSha256 = "sha256-BKe6LQ1ZSrHUOSoV6UCksUE0+TIa0WcCHZv4lagfIgA=";
+        settingsSha256 = "sha256-9PWmj9qG/Ms8Ol5vLQD3Dlhuw4iaFtVHNC0hSyMCU24=";
+        persistencedSha256 = "sha256-ETRfj2/kPbKYX1NzE0dGr/ulMuzbICIpceXdCRDkAxA=";
+
+        ibtSupport = true;
+      };
     };
     steam = {
       enable = true;
       addprotonup = true;
     };
-    winapps.enable = true;
     sops.enable = true;
   };
 
@@ -63,17 +77,18 @@ in {
       lenovo-legion
       powertop
       htop
-      nvtopPackages.full
+      # nvtopPackages.full
 
       nixfmt-rfc-style
 
+      nvchad
+
+      # windown emulation
       # winboat
-      inputs.winboat.packages.${system}.winboat
-      freerdp
+      # freerdp
     ]
     ++ [
-      inputs.zen-browser.packages.${system}.default
-      self.packages.${system}.neovim-mark
+      # self.packages.${pkgs.stdenv.hostPlatform.system}.neovim-mark
     ];
 
   fonts.packages = with pkgs; [
@@ -103,15 +118,6 @@ in {
     pulseaudio.enable = false;
     libinput.enable = true;
 
-    displayManager.gdm.enable = true;
-    desktopManager.gnome.enable = true;
-
-    xserver.xkb = {
-      # Configure keymap in X11
-      layout = "us";
-      variant = "";
-    };
-
     pipewire = {
       enable = true;
       alsa.enable = true;
@@ -119,6 +125,16 @@ in {
       pulse.enable = true;
       # If you want to use JACK applications, uncomment this
       #jack.enable = true;
+    };
+
+    displayManager.gdm.enable = true;
+    desktopManager.gnome.enable = true;
+
+    xserver.enable = true;
+    xserver.xkb = {
+      # Configure keymap in X11
+      layout = "us";
+      variant = "";
     };
   };
 }

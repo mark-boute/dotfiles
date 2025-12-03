@@ -11,8 +11,11 @@ in {
 
   config = mkIf cfg.enable {
     wayland.windowManager.hyprland.settings.bindd = [
+      "$mod, space, Open launcher, exec, hyprlauncher"
       "$mod, T, Open kitty terminal, exec, kitty"
-      "$mod, W, Open browser, exec, zen"
+      "$mod, W, Open browser, exec, zen-beta"
+      "$mod, C, Open VSCode, exec, code"
+      "$mod, E, Open File Browser, exec, nautilus"
     ];
   };
 }

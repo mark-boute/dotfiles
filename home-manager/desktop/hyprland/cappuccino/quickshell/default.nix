@@ -19,17 +19,17 @@ in
 
   config = mkIf cfg.enable {
 
-    home.packages = with pkgs; [
-    ] ++ [
-      inputs.quickshell.packages.${pkgs.system}.default
-    ];
+    programs.quickshell = {
+      enable = true;
+      systemd.enable = true;
+    };
+
+    xdg.configFile."quickshell".source = ./cappuccino;
 
     home.pointerCursor = {
       enable = true;
       name = "catppuccin-macchiato-rosewater-cursors";
       package = pkgs.catppuccin-cursors.macchiatoRosewater;
-      # name = "rose-pine-hyprcursor";
-      # package = inputs.rose-pine-hyprcursor.packages.${pkgs.system}.default;
       size = 24;
       hyprcursor = {
         enable = true;
@@ -38,10 +38,41 @@ in
       gtk.enable = true;
     };
 
-    # instead of using the default config-path (~/.config/quickshell/), read directly from nix-store
-    wayland.windowManager.hyprland.settings = { 
-      exec-once = "qs -p ${builtins.toString ./.}";  # quickshell
-      env = "HYPRCURSOR_THEME,rose-pine-hyprcursor";
+    wayland.windowManager.hyprland.settings = {
+      env = [ "HYPRCURSOR_THEME,rose-pine-hyprcursor" ];
+
+      general = {
+        gaps_in = "5";
+        gaps_out = "0,5,5,5";
+        gaps_workspaces = 50;
+
+        # "col.active_border" = "rgba(125,196,228,1)";
+        # "col.inactive_border" = "rgba(125,196,228,0.5)";
+
+        "col.active_border" = "rgba(244,219,214,1)";
+        "col.inactive_border" = "rgba(244,219,214,0.4)";
+
+        border_size = 2;
+        resize_on_border = true;
+
+        snap.enabled = true;
+      };
+
+      decoration = {
+        rounding = 15;
+
+        shadow = {
+          enabled = true;
+          range = 4;
+        };
+
+        blur = {
+          enabled = true;
+          size = 5;
+          passes = 2;
+        };
+      };
+
     };
   };
 }

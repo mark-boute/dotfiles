@@ -2,14 +2,12 @@
   pkgs,
   main-user,
   lib,
+  inputs,
   ...
 }: let
-  # main-user = "mark";
   wallpaper = ../../home-manager/desktop/hyprland/cappuccino/assets/coffee_pixel_art_2560x1600.png;
   inherit (lib) mkForce;
 in {
-  # Home Manager needs a bit of information about you and the paths it should
-  # manage.
   home.username = main-user;
   home.homeDirectory = "/home/${main-user}";
   imports = [
@@ -19,6 +17,7 @@ in {
   ];
 
   xdg.portal = {
+    enable = true;
     extraPortals = mkForce [
       pkgs.xdg-desktop-portal-gtk # For both
       pkgs.xdg-desktop-portal-hyprland # For Hyprland
@@ -26,7 +25,14 @@ in {
     ];
   };
 
-  wayland.windowManager.hyprland.settings.monitor = "eDP-1, 2560x1600@240, 0x0, 1";
+  wayland.windowManager.hyprland.settings.monitor = [
+    # Laptop panel (internal)
+    "desc:California Institute of Technology 0x1637 0x00006000, 2560x1600@240, 0x0, 1.25"
+
+    # HDMI ultrawide external monitor
+    "desc:Philips Consumer Electronics Company 34M2C3500L UK02514050797, 3440x1440@100, 2048x-160, 1, bitdepth, 10"
+  ];
+
   modules = {
     gnome-settings = {
       enable = true;
@@ -39,14 +45,10 @@ in {
       enable = true;
       configuration = "cappuccino";
       super-key = "SUPER";
-      shared = {
-        keybinds.enable-all = true;
-      };
+      shared.keybinds.enable-all = true;
     };
-    # eww.enable = true;
     latex.enable = true;
     zsh.enable = true;
-    winapps.enable = true;
     spotify.enable = true;
   };
 
@@ -58,56 +60,50 @@ in {
 
   # The home.packages option allows you to install Nix packages into your
   # environment.
-  home.packages = with pkgs; [
-    # # It is sometimes useful to fine-tune packages, for example, by applying
-    # # overrides. You can do that directly here, just don't forget the
-    # # parentheses. Maybe you want to install Nerd Fonts with a limited number of
-    # # fonts?
-    # (pkgs.nerdfonts.override { fonts = [ "FantasqueSansMono" ]; })
+  home.packages = with pkgs;
+    [
+      # # It is sometimes useful to fine-tune packages, for example, by applying
+      # # overrides. You can do that directly here, just don't forget the
+      # # parentheses. Maybe you want to install Nerd Fonts with a limited number of
+      # # fonts?
+      # (pkgs.nerdfonts.override { fonts = [ "FantasqueSansMono" ]; })
 
-    # # You can also create simple shell scripts directly inside your
-    # # configuration. For example, this adds a command 'my-hello' to your
-    # # environment:
-    # (pkgs.writeShellScriptBin "my-hello" ''
-    #   echo "Hello, ${config.home.username}!"
-    # '')
-    nixd
+      nixd
 
-    authenticator
-    eduvpn-client
-    bitwarden-cli
+      # networking and authentication
+      gnomeExtensions.cloudflare-warp-toggle
+      authenticator
+      eduvpn-client
+      bitwarden-cli
 
-    gh
-    glab
-    opencpn
+      gh
+      glab
+      opencpn
 
-    flightgear
+      # gaming
+      # flightgear
+      r2modman      
+      lunar-client
+      prismlauncher
 
-    # office suite
-    onlyoffice-bin
+      # office suite
+      onlyoffice-desktopeditors
+      gimp
 
-    # communication
-    discord
-    vesktop
-    signal-desktop-bin
-    element-desktop
+      # communication
+      discord
+      vesktop
+      signal-desktop-bin
+      # element-desktop
 
-    lunar-client
-    prismlauncher
-    gnomeExtensions.cloudflare-warp-toggle
-
-    # cora dependencies
-    z3
-    jdk21
-    gradle
-    # gradle-completion
-    # cmake
-    # unzip
-  ];
-
-  programs = {
-
-  };
+      # cora dependencies
+      z3
+      jdk21
+      gradle
+    ]
+    ++ [
+      inputs.zen-browser.packages.${pkgs.stdenv.system}.default
+    ];
 
   # Home Manager is pretty good at managing dotfiles. The primary way to manage
   # plain files is through 'home.file'.
@@ -124,37 +120,12 @@ in {
     # '';
   };
 
-  # Home Manager can also manage your environment variables through
-  # 'home.sessionVariables'. These will be explicitly sourced when using a
-  # shell provided by Home Manager. If you don't want to manage your shell
-  # through Home Manager then you have to manually source 'hm-session-vars.sh'
-  # located at either
-  #
-  #  ~/.nix-profile/etc/profile.d/hm-session-vars.sh
-  #
-  # or
-  #
-  #  ~/.local/state/nix/profiles/profile/etc/profile.d/hm-session-vars.sh
-  #
-  # or
-  #
-  #  /etc/profiles/per-user/mark/etc/profile.d/hm-session-vars.sh
-  #
   home.sessionVariables = {
     EDITOR = "nvim";
     NIXOS_OZONE_WLAN = "1";
     NIXOS_OZONE_WL = "1";
   };
 
-  # Let Home Manager install and manage itself.
-  programs.home-manager.enable = true;
-
-  # This value determines the Home Manager release that your configuration is
-  # compatible with. This helps avoid breakage when a new Home Manager release
-  # introduces backwards incompatible changes.
-  #
-  # You should not change this value, even if you update Home Manager. If you do
-  # want to update the value, then make sure to first check the Home Manager
-  # release notes.
-  home.stateVersion = "24.05"; # Please read the comment before changing.
+  programs.home-manager.enable = true; # Let Home Manager install and manage itself.
+  home.stateVersion = "24.05"; # Don't change (dictates initial hm-version)
 }

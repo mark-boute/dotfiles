@@ -6,7 +6,6 @@
     ./game-launchers
     ./editors
     ./shell
-    ./winapps
     
     # standealone
     ./latex

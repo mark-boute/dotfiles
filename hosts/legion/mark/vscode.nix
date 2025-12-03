@@ -59,6 +59,8 @@
             };
           };
 
+          "qt-qml.qmlls.useQmlImportPathEnvVar" = true;
+
           # java settings
           "java.jdt.ls.java.home" = "${pkgs.jdk21}";
 

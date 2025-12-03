@@ -17,28 +17,18 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    nix4nvchad = {
+      url = "github:nix-community/nix4nvchad";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
     zen-browser = {  # Firefox-based modern browser
       url = "github:0xc000022070/zen-browser-flake";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    winapps = {  # Windows applications on NixOS
-      url = "github:winapps-org/winapps";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-
-    winboat = {  # Windows applications on NixOS
-      url = "github:TibixDev/winboat";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-
     sops-nix = {  # secrets management
       url = "github:Mic92/sops-nix";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-
-    quickshell = {  # dekstop toolkit for Hyprland
-      url = "git+https://git.outfoxxed.me/outfoxxed/quickshell";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
@@ -67,19 +57,9 @@
 
           nixpkgs.config.allowUnfree = true;
 
-          # pkgs = import packages {
-          #   inherit system;
-          #   overlays = [
-          #   #  (final: prev: { # https://nixpk.gs/pr-tracker.html?pr=338836
-          #   #    inherit (import nixpkgs-unstable {inherit system;}) xdg-desktop-portal-hyprland;
-          #   #  })
-          #   ];
-
           pkgs-unstable = import nixpkgs-unstable {
             inherit system;
-            config = {
-              allowUnfree = true;
-            };
+            config.allowUnfree = true;
           };
         };
 
@@ -106,7 +86,7 @@
                 inputs.spicetify-nix.homeManagerModules.default
               ];
               extraSpecialArgs = {
-                inherit inputs main-user;
+                inherit inputs system main-user;
 
                 pkgs-unstable = import nixpkgs-unstable {
                   inherit system;
@@ -121,11 +101,13 @@
         ];
       };
   in {
-    packages."x86_64-linux".neovim-mark =
+    packages = {
+      "x86_64-linux".neovim-mark =
       (inputs.nvf.lib.neovimConfiguration {
         pkgs = nixpkgs.legacyPackages.x86_64-linux;
         modules = [./hosts/legion/nvf-configuration];
       }).neovim;
+    };
 
     nixosConfigurations = {
       # mark

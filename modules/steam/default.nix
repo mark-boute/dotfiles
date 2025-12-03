@@ -37,7 +37,7 @@ in {
       environment.systemPackages = with pkgs; [ 
 
       ] ++ optionals cfg.addmangohud [ mangohud ]
-        ++ optionals cfg.addprotonup [ protonup ];
+        ++ optionals cfg.addprotonup [ protonup-ng ];
 
     })
     # seperate module for gamemode to allow for safe override

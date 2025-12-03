@@ -26,7 +26,7 @@ in {
       # General window management keybinds
       "$mod, x, Close window, closewindow"
       "$mod, q, Close window, killactive"
-      "$mod, space, Toggle floating, togglefloating"
+      "$mod, d, Toggle floating, togglefloating"
       "$mod, f, Toggle fullsreen, fullscreen, 0"
 
 
