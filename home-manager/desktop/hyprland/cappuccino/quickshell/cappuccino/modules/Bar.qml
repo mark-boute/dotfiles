@@ -43,8 +43,14 @@ Scope{
 
         // Wrapper for right aligned widgets
         RowLayout {
+
           id: rightWidgetRow;
           spacing: 5;
+
+          width: Math.min(
+            this.implicitWidth, 
+            panel.width / 3
+          ); 
 
           anchors {
             right: parent.right;
@@ -53,7 +59,6 @@ Scope{
           }
           
           Widgets.Systemtray {}
-          // Connections { Layout.preferredWidth: connectionsModule.width; }
           Widgets.Battery {}
         }
         

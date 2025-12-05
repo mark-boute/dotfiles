@@ -25,7 +25,8 @@ Shapes.MenuPill {
   required property ShellScreen screen;
   property HyprlandMonitor monitor: Hyprland.monitorFor(screen);
   id: workspacesWidget;
-  width: Hyprland.workspaces ? Hyprland.workspaces.values.length * 25 + 15 : 0;
+  implicitWidth: workspace.implicitWidth + 20;
+
 
   Row {
     id: workspace;
@@ -44,7 +45,7 @@ Shapes.MenuPill {
         property bool onCurrentMonitor: modelData.monitor === monitor;
 
         width: 20;
-        height: width;
+        height: this.width;
         radius: 100;
 
         color: {

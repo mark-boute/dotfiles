@@ -10,15 +10,9 @@ S.MenuPill {
 
   id: systemtrayWidget;
 
-  width: SystemTray.items ? SystemTray.items.values.length * 25 + 15 : 0;
+  property var items: SystemTray.items;
 
-  // Component.onCompleted: {
-  //   SystemTray.items.valuesChanged.connect(
-  //     function() {
-  //       systemtrayWidget.width = SystemTray.items ? SystemTray.items.values.length * 25 + 15 : 0;
-  //     }
-  //   );
-  // }
+  implicitWidth: trayItem.implicitWidth + 20;
 
   Row {
     id: trayItem;
@@ -30,21 +24,21 @@ S.MenuPill {
     }
 
     Repeater {
-      model: SystemTray.items;
+      model: items;
 
       Rectangle {
 
         required property var modelData;
 
         width: 20;
-        height: width;
+        height: this.width;
         radius: 100;
 
         color: "#24273a";
 
         IconImage {
           
-          anchors.fill: parent;
+          anchors.fill: this.parent;
           source: {
             if (modelData.icon.includes("?path=")) {
               const [name, path] = modelData.icon.split("?path=");
@@ -52,13 +46,13 @@ S.MenuPill {
             }
             return modelData.icon;
           }
-          anchors.centerIn: parent;
+          anchors.centerIn: this.parent;
         }
 
         MouseArea {
-          anchors.fill: parent;
+          anchors.fill: this.parent;
           acceptedButtons: Qt.RightButton;
-          onClicked: modelData.display(parent, 30, 50);
+          onClicked: modelData.display(this.parent, 30, 50);
         }
       }
     }
