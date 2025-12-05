@@ -5,16 +5,6 @@
   ...
 }: let
   cfg = config.modules.hyprland;
-
-  # importFilesToHome = to: folder: builtins.listToAttrs
-  #   (map
-  #     (file: {
-  #       name = "${to}/${file}";
-  #       value = { source = ./. + "/${folder}/${file}"; executable = true; };
-  #     })
-  #     (builtins.attrNames (builtins.readDir ./${folder}))
-  #   );
-
   inherit (lib) mkEnableOption mkIf mkOption types;
 in {
   imports = [
@@ -50,7 +40,7 @@ in {
       hyprpicker
       hyprlock
       hypridle
-      hyprsunset
+      hyprpwcenter
       hyprpolkitagent
       hyprlauncher
 
