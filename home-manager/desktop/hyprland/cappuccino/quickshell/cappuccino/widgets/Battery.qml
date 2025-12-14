@@ -3,30 +3,31 @@ import Quickshell.Widgets
 import Quickshell.Services.UPower
 import QtQuick
 
+import qs
 import qs.shapes as S
 
 S.MenuPill {
   visible: UPower.displayDevice.isLaptopBattery;
 
   id: batteryWidget;
-  width: batteryText.width + 20;
+  implicitWidth: batteryText.implicitWidth + Theme.defaultMargin * 2;
   
   Text {
     id: batteryText;
-    text: UPower.displayDevice.percentage.toFixed(2) * 100 + "%";
+    text: Math.floor(UPower.displayDevice.percentage * 100) + "%";
     font.pixelSize: 14;
     font.weight: Font.DemiBold;
     color: {
       if (UPower.displayDevice.timeToEmpty === 0) {
-        return "#8aadf4";
+        return Theme.current.blue;
       }
       if (UPower.displayDevice.percentage <= 0.2) {
-        return "#ed8796";
+        return Theme.current.red;
       }
       if (UPower.displayDevice.percentage <= 0.4) {
-        return "#f5a97f";
+        return Theme.current.peach;
       }
-      return "#a6da95";
+      return Theme.current.green;
     }
     verticalAlignment: Text.AlignVCenter
     anchors.centerIn: parent;

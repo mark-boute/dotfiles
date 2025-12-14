@@ -26,7 +26,7 @@ in
 
     xdg.configFile."quickshell".source = ./cappuccino;
 
-    home.pointerCursor = {
+    home.pointerCursor = lib.mkForce {
       enable = true;
       name = "catppuccin-macchiato-rosewater-cursors";
       package = pkgs.catppuccin-cursors.macchiatoRosewater;

@@ -1,190 +1,147 @@
+/*--------------------------------------
+--- Network.qml - services by andrel ---
+--------------------------------------*/
+
 pragma Singleton
 
+import QtQuick
 import Quickshell
 import Quickshell.Io
-import QtQuick
 
-Singleton {
-    id: root
+Singleton { id: root
+	readonly property string networkState: status?.state || ""
+	readonly property bool radioState: status?.radio || false
 
-    readonly property list<AccessPoint> networks: []
-    readonly property AccessPoint active: networks.find(n => n.active) ?? null
-    property bool wifiEnabled: true
-    readonly property bool scanning: rescanProc.running
+	property list<var> wirelessNetworks: []
+	property list<var> savedNetworks: []
+	property var status: []
 
-    function enableWifi(enabled: bool): void {
-        const cmd = enabled ? "on" : "off";
-        enableWifiProc.exec(["nmcli", "radio", "wifi", cmd]);
-    }
+	function controlNm(command) {
+		control.exec(command);
+	}
 
-    function toggleWifi(): void {
-        const cmd = wifiEnabled ? "off" : "on";
-        enableWifiProc.exec(["nmcli", "radio", "wifi", cmd]);
-    }
+	function updateWirelessNetworks() {
+		getWirelessNetworks.running = true;
+		getSavedNetworks.running = true
+	}
 
-    function rescanWifi(): void {
-        rescanProc.running = true;
-    }
+	function rescan() {
+		scan.running = true;
+	}
 
-    function connectToNetwork(ssid: string, password: string): void {
-        // TODO: Implement password
-        connectProc.exec(["nmcli", "conn", "up", ssid]);
-    }
+	function radio(toggle) {
+		controlRadio.toggle = toggle? "on" : "off";
+		controlRadio.running = true;
+	}
 
-    function disconnectFromNetwork(): void {
-        if (active) {
-            disconnectProc.exec(["nmcli", "connection", "down", active.ssid]);
-        }
-    }
+	onNetworkStateChanged: {
+		if (networkState === "connected") {
+			getWirelessNetworks.running = true;
+			Notifications.notify("network-wired", "Quickshell", "Network", `Network is ${networkState} to ${status.connection}.`);
+		} else if (networkState.startsWith("connected")) {
+			getWirelessNetworks.running = true
+			Notifications.notify("network-wired", "Quickshell", "Network", `Network is ${networkState}.`)
+		}
+	}
+	onRadioStateChanged: {
+		if (!radioState) getWirelessNetworks.running = true;
+		Notifications.notify("network-wired", "Quickshell", "Network", `Wireless is ${radioState? "enabled" : "disabled"}.`);
+	}
 
-    function getWifiStatus(): void {
-        wifiStatusProc.running = true;
-    }
+	// start the network manager monitor
+	Process {
+		running: true
+		command: ["nmcli", "m"]
+		stdout: SplitParser {
+			onRead: getStatus.running = true;
+		}
+	}
 
-    Process {
-        running: true
-        command: ["nmcli", "m"]
-        stdout: SplitParser {
-            onRead: getNetworks.running = true
-        }
-    }
+	// get network manager status
+	Process { id: getStatus
+		running: true
+		// printf "%s%s\n" "$(nmcli -t -f TYPE,STATE,CONNECTION,IP4-CONNECTIVITY d | head -n1)" ":$(nmcli -t -f WIFI g)"
+		command: ["sh", "-c", 'printf "%s%s\n" "$(nmcli -t -f TYPE,STATE,CONNECTION,IP4-CONNECTIVITY d | head -n1)" ":$(nmcli -t -f WIFI g)"']
+		stdout: StdioCollector {
+			onStreamFinished: {
+				const parts = text.split(":");
+				status = {
+					type: parts[0],
+					state: parts[1],
+					connection: parts[2],
+					connectivity: parts[3],
+					radio: parts[4].trim() === "enabled"
+				};
+			}
+		}
+	}
 
-    Process {
-        id: wifiStatusProc
+	// get a list of saved networks
+	Process { id: getSavedNetworks
+		running: true
+		command: ["nmcli", "-t", "-f", "NAME,TYPE", "c", "s"]
+		stdout: StdioCollector {
+			onStreamFinished: {
+				savedNetworks = text.trim().split("\n").map(line => {
+					const parts = line.split(":");
 
-        running: true
-        command: ["nmcli", "radio", "wifi"]
-        environment: ({
-                LANG: "C.UTF-8",
-                LC_ALL: "C.UTF-8"
-            })
-        stdout: StdioCollector {
-            onStreamFinished: {
-                root.wifiEnabled = text.trim() === "enabled";
-            }
-        }
-    }
+					return {
+						ssid: parts[0],
+						type: parts[1]
+					}
+				});
+			}
+		}
+	}
 
-    Process {
-        id: enableWifiProc
+	// get a list of wireless networks
+	Process { id: getWirelessNetworks
+		running: true
+		command: ["nmcli", "-t", "-f", "SSID,SIGNAL,SECURITY", "d", "w"]
+		stdout: StdioCollector {
+			onStreamFinished: {
+				// clear list
+				wirelessNetworks = [];
 
-        onExited: {
-            root.getWifiStatus();
-            getNetworks.running = true;
-        }
-    }
+				// parse output
+				const nets = text.trim().split("\n").map(line => {
+					const parts = line.split(":");
 
-    Process {
-        id: rescanProc
+					return {
+						ssid: parts[0],
+						signal: parseInt(parts[1], 10),
+						security: parts[2] !== ""
+					}
+				});
 
-        command: ["nmcli", "dev", "wifi", "list", "--rescan", "yes"]
-        onExited: {
-            getNetworks.running = true;
-        }
-    }
+				// deduplicate list
+				const uniqueNets = [];
 
-    Process {
-        id: connectProc
+				for (const net of nets) {	// push network if ssid isn't already in list
+					if (!uniqueNets.some(n => n.ssid === net.ssid)) uniqueNets.push(net);
+				}
 
-        stdout: SplitParser {
-            onRead: getNetworks.running = true
-        }
-        stderr: StdioCollector {
-            onStreamFinished: console.warn("Network connection error:", text)
-        }
-    }
+				// pass deduped list to networks
+				wirelessNetworks = uniqueNets;
+			}
+		}
+	}
 
-    Process {
-        id: disconnectProc
+	// scan for wireless networks
+	Process { id: scan
+		command: ["nmcli", "d", "w", "r"]
+		stdout: StdioCollector {
+			onStreamFinished: getWirelessNetworks.running = true
+		}
+	}
 
-        stdout: SplitParser {
-            onRead: getNetworks.running = true
-        }
-    }
+	// turn the wifi radio on/off
+	Process { id: controlRadio
+		property string toggle: "on"
 
-    Process {
-        id: getNetworks
+		command: ["nmcli", "r", "w", toggle]
+	}
 
-        running: true
-        command: ["nmcli", "-g", "ACTIVE,SIGNAL,FREQ,SSID,BSSID,SECURITY", "d", "w"]
-        environment: ({
-                LANG: "C.UTF-8",
-                LC_ALL: "C.UTF-8"
-            })
-        stdout: StdioCollector {
-            onStreamFinished: {
-                const PLACEHOLDER = "STRINGWHICHHOPEFULLYWONTBEUSED";
-                const rep = new RegExp("\\\\:", "g");
-                const rep2 = new RegExp(PLACEHOLDER, "g");
-
-                const allNetworks = text.trim().split("\n").map(n => {
-                    const net = n.replace(rep, PLACEHOLDER).split(":");
-                    return {
-                        active: net[0] === "yes",
-                        strength: parseInt(net[1]),
-                        frequency: parseInt(net[2]),
-                        ssid: net[3]?.replace(rep2, ":") ?? "",
-                        bssid: net[4]?.replace(rep2, ":") ?? "",
-                        security: net[5] ?? ""
-                    };
-                }).filter(n => n.ssid && n.ssid.length > 0);
-
-                // Group networks by SSID and prioritize connected ones
-                const networkMap = new Map();
-                for (const network of allNetworks) {
-                    const existing = networkMap.get(network.ssid);
-                    if (!existing) {
-                        networkMap.set(network.ssid, network);
-                    } else {
-                        // Prioritize active/connected networks
-                        if (network.active && !existing.active) {
-                            networkMap.set(network.ssid, network);
-                        } else if (!network.active && !existing.active) {
-                            // If both are inactive, keep the one with better signal
-                            if (network.strength > existing.strength) {
-                                networkMap.set(network.ssid, network);
-                            }
-                        }
-                        // If existing is active and new is not, keep existing
-                    }
-                }
-
-                const networks = Array.from(networkMap.values());
-
-                const rNetworks = root.networks;
-
-                const destroyed = rNetworks.filter(rn => !networks.find(n => n.frequency === rn.frequency && n.ssid === rn.ssid && n.bssid === rn.bssid));
-                for (const network of destroyed)
-                    rNetworks.splice(rNetworks.indexOf(network), 1).forEach(n => n.destroy());
-
-                for (const network of networks) {
-                    const match = rNetworks.find(n => n.frequency === network.frequency && n.ssid === network.ssid && n.bssid === network.bssid);
-                    if (match) {
-                        match.lastIpcObject = network;
-                    } else {
-                        rNetworks.push(apComp.createObject(root, {
-                            lastIpcObject: network
-                        }));
-                    }
-                }
-            }
-        }
-    }
-
-    component AccessPoint: QtObject {
-        required property var lastIpcObject
-        readonly property string ssid: lastIpcObject.ssid
-        readonly property string bssid: lastIpcObject.bssid
-        readonly property int strength: lastIpcObject.strength
-        readonly property int frequency: lastIpcObject.frequency
-        readonly property bool active: lastIpcObject.active
-        readonly property string security: lastIpcObject.security
-        readonly property bool isSecure: security.length > 0
-    }
-
-    Component {
-        id: apComp
-
-        AccessPoint {}
-    }
+	// placeholder process to execute arbitrary commands
+	Process { id: control; }
 }

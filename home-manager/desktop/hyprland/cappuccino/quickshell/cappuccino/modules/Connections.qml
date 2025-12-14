@@ -1,6 +1,7 @@
 import Quickshell
 import QtQuick
 
+import qs
 import qs.services as Services
 import qs.shapes as Shapes
 import qs.widgets as Widgets
@@ -8,9 +9,9 @@ import qs.widgets as Widgets
 Rectangle {
   id: connectionsModule;
   width: 30;
-  height: 30;
-  radius: 15;
-  color: Services.Network.connected ? "#a6da95" : "#ed8796";
+  height: Theme.barHeight;
+  radius: Theme.barHeight / 2;
+  color: Services.Network.connected ? Theme.current.green : Theme.current.red;
 
   Shapes.IconImage {
     anchors.centerIn: parent;

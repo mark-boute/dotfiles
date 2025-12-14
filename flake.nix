@@ -42,6 +42,7 @@
 
     catppuccin.url = "github:catppuccin/nix";
     spicetify-nix.url = "github:Gerg-L/spicetify-nix";
+    hyprshutdown.url = "github:hyprwm/hyprshutdown";
   };
 
   outputs = {
@@ -76,6 +77,7 @@
 
           inputs.sops-nix.nixosModules.sops
           inputs.home-manager.nixosModules.home-manager
+          inputs.catppuccin.nixosModules.catppuccin
           {
             home-manager = {
               backupFileExtension = "backup";

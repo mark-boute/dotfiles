@@ -39,6 +39,17 @@ in {
     firefox.enable = true;
   };
 
+  catppuccin = {
+    enable = true;
+    cache.enable = true;
+    flavor = "macchiato";
+    accent = "rosewater";
+
+    cursors.enable = true;
+    grub.enable = true;
+    gtk.icon.enable = true;
+  };
+
   modules = {
     system.gpu.optimus-prime = {
       enable = true;

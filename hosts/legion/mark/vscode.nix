@@ -1,8 +1,8 @@
-{ pkgs, ... }:
+{ pkgs, lib, ... }:
 {
   config.programs.vscode = {
       enable = true;
-      profiles.default = {
+      profiles.default = lib.mkForce {
         extensions = with pkgs.vscode-extensions; [
           github.copilot
 

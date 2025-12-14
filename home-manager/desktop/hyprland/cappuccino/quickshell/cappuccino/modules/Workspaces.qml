@@ -2,6 +2,7 @@ import Quickshell
 import Quickshell.Hyprland
 import QtQuick
 
+import qs
 import qs.shapes as Shapes
 import qs.services as Services
 
@@ -25,16 +26,16 @@ Shapes.MenuPill {
   required property ShellScreen screen;
   property HyprlandMonitor monitor: Hyprland.monitorFor(screen);
   id: workspacesWidget;
-  implicitWidth: workspace.implicitWidth + 20;
+  implicitWidth: workspace.implicitWidth + Theme.defaultSpacing * 2;
 
 
   Row {
     id: workspace;
-    spacing: 5;
+    spacing: Theme.defaultSpacing;
     anchors {
       left: parent.left;
       verticalCenter: parent.verticalCenter;
-      leftMargin: 10;
+      leftMargin: Theme.defaultSpacing;
     }
   
     Repeater {
@@ -44,22 +45,22 @@ Shapes.MenuPill {
         required property HyprlandWorkspace modelData;
         property bool onCurrentMonitor: modelData.monitor === monitor;
 
-        width: 20;
-        height: this.width;
-        radius: 100;
+        height: Theme.barHeight - Theme.defaultSpacing * 2;
+        width: this.height;
+        radius: this.height / 2;
 
         color: {
           if (onCurrentMonitor) {
-            modelData.active ? "#fe640b" : "#f4dbd6";
+            modelData.active ? Theme.latte.peach : Theme.macchiato.rosewater;
           } else {
-            "#8087a2";
+            Theme.macchiato.overlay1;
           }
         } 
 
         Text {
-          text: onCurrentMonitor ? modelData.id : "";
+          text: onCurrentMonitor ? modelData.id : null;
           anchors.centerIn: parent;
-          color: modelData.active ? "#cad3f5" : "#24273a";
+          color: modelData.active ? Theme.latte.base : Theme.macchiato.base;
           font.weight: modelData.active ? Font.ExtraBold : Font.Medium;
         }
 

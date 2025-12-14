@@ -4,41 +4,55 @@ import Quickshell.Services.SystemTray
 import QtQuick.Layouts
 import QtQuick
 
+import qs
 import qs.shapes as S
+import qs.components.menu as Menu
 
-S.MenuPill {
-
+S.MenuDropdownPill {
   id: systemtrayWidget;
 
-  property var items: SystemTray.items;
+  required property QsWindow trayPopupAnchor;
+  property Item currentOpenMenuItem: null;
 
-  implicitWidth: trayItem.implicitWidth + 20;
+  implicitWidth: tray.implicitWidth == 0 ? 0 
+    : tray.implicitWidth + Theme.defaultMargin * 2;
 
-  Row {
-    id: trayItem;
-    spacing: 5;
-    anchors {
-      left: parent.left;
-      verticalCenter: parent.verticalCenter;
-      leftMargin: 10;
+  Menu.MenuView {
+    id: rightclickMenu;
+
+    menuHandle: currentOpenMenuItem ? currentOpenMenuItem.modelData.menu : null;
+
+    onClosed: {
+      currentOpenMenuItem.toggleMenu(true);
     }
 
+    x: 0;
+    y: Theme.barHeight;
+  }
+
+  menuContent: RowLayout {
+    id: tray;
+
+    spacing: Theme.defaultSpacing;
+
     Repeater {
-      model: items;
+      model: SystemTray.items;
 
-      Rectangle {
-
+      Item {
+        id: trayItem;
         required property var modelData;
 
-        width: 20;
-        height: this.width;
-        radius: 100;
+        property bool itemMenuOpen: false;
 
-        color: "#24273a";
+        height: Theme.barHeight - Theme.defaultSpacing * 2;
+        width: this.height;
 
         IconImage {
-          
-          anchors.fill: this.parent;
+          anchors {
+            fill: this.parent;
+            centerIn: this.parent;
+          }
+
           source: {
             if (modelData.icon.includes("?path=")) {
               const [name, path] = modelData.icon.split("?path=");
@@ -46,14 +60,44 @@ S.MenuPill {
             }
             return modelData.icon;
           }
-          anchors.centerIn: this.parent;
+        }
+
+        function toggleMenu(close = false) {
+
+          if (close || trayItem.itemMenuOpen) {
+            itemMenuOpen = false;
+            systemtrayWidget.currentOpenMenuItem = null;
+            return;
+          } 
+
+          if (systemtrayWidget.menuOpen && systemtrayWidget.currentOpenMenuItem != null) {
+            systemtrayWidget.currentOpenMenuItem.itemMenuOpen = false;
+          }
+
+          itemMenuOpen = true;
+          systemtrayWidget.currentOpenMenuItem = trayItem;
+          rightclickMenu.open();
         }
 
         MouseArea {
+          id: mouseArea
           anchors.fill: this.parent;
-          acceptedButtons: Qt.RightButton;
-          onClicked: modelData.display(this.parent, 30, 50);
+          acceptedButtons: Qt.LeftButton | Qt.RightButton | Qt.MiddleButton;
+          onClicked: (mouse) => {
+            switch (mouse.button) {
+              case Qt.LeftButton:
+                modelData.activate();
+                break;
+              case Qt.RightButton:
+                toggleMenu();
+                break;
+              case Qt.MiddleButton:
+                modelData.secondaryActivate();
+                break;
+            }
+          }
         }
+
       }
     }
   }

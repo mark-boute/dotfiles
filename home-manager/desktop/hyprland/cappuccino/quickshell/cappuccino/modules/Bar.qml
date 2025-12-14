@@ -3,7 +3,8 @@ import QtQuick.Layouts
 import Quickshell.Hyprland
 import Quickshell
 
-import "../widgets" as Widgets
+import qs
+import qs.widgets as Widgets
 
 Scope{
 
@@ -13,25 +14,19 @@ Scope{
     delegate: Component {
       PanelWindow {
         id: panel;
-
-        // configurable properties
-        property int widgetHeight: 30;
-        property int verticalMargin: 5;
-        property int horizontalMargin: 5;
-        color: "transparent";
-
-        // calculated properties
         required property var modelData;
         screen: modelData;
+
         anchors { top: true; left: true; right: true; }
-        implicitHeight: widgetHeight + verticalMargin * 2;
+        color: Theme.barColor;
+        implicitHeight: Theme.barHeight + Theme.barVerticalMargin * 2;
 
         // Modules
         Workspaces {
           screen: modelData;
           anchors {
             left: parent.left;
-            leftMargin: horizontalMargin;
+            leftMargin: Theme.barHorizontalMargin;
             verticalCenter: parent.verticalCenter;
           }
         }
@@ -45,7 +40,7 @@ Scope{
         RowLayout {
 
           id: rightWidgetRow;
-          spacing: 5;
+          spacing: Theme.defaultSpacing;
 
           width: Math.min(
             this.implicitWidth, 
@@ -54,12 +49,13 @@ Scope{
 
           anchors {
             right: parent.right;
-            rightMargin: horizontalMargin;
+            rightMargin: Theme.barHorizontalMargin;
             verticalCenter: parent.verticalCenter;
           }
           
-          Widgets.Systemtray {}
+          Widgets.Systemtray { trayPopupAnchor: panel }
           Widgets.Battery {}
+          // Widgets.Network {}
         }
         
       }

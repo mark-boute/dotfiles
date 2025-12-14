@@ -10,6 +10,7 @@ ShellRoot {
   id: root;
 
   Loader {
+    id: barLoader;
     active: true;
     sourceComponent: M.Bar{}
   }

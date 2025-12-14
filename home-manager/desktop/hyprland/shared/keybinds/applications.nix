@@ -16,6 +16,7 @@ in {
       "$mod, W, Open browser, exec, zen-beta"
       "$mod, C, Open VSCode, exec, code"
       "$mod, E, Open File Browser, exec, nautilus"
+      "$mod, U, Open Authenticator, exec, authenticator"
     ];
   };
 }

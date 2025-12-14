@@ -52,6 +52,25 @@ in {
     spotify.enable = true;
   };
 
+  catppuccin = {
+    enable = true;
+    cache.enable = true;
+    flavor = "macchiato";
+    accent = "rosewater";
+
+    bat.enable = true;
+    chromium.enable = true;
+    cursors.enable = true;
+    firefox.enable = true;
+    hyprland.enable = true;
+    kitty.enable = true;
+    hyprlock.enable = true;
+    nvim.enable = true;
+    starship.enable = true;
+    thunderbird.enable = true;
+    vesktop.enable = true;
+  };
+
   sops = {
     defaultSopsFile = ../../secrets/${main-user}/${main-user}-secrets.yaml;
     defaultSopsFormat = "yaml";

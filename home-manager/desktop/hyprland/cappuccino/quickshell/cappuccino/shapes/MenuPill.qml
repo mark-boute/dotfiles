@@ -1,13 +1,15 @@
 import QtQuick
 import Quickshell
 
+import qs
+
 Rectangle {
 
-  height: 30;
-  radius: height / 2;
+  height: Theme.barHeight;
+  radius: this.height / 2;
 
   border.width: 1;
-  border.color: "#181926";
+  border.color: Theme.current.crust;
 
-  color: "#24273a";
+  color: Theme.current.base;
 }

@@ -31,20 +31,22 @@ in {
   config = mkIf cfg.enable {
     modules.hyprland.cappuccino.enable = true;
 
-    programs.kitty.enable = true;
+    programs = {
+      kitty.enable = true;
+      hyprshot = {
+        enable = true;
+        saveLocation = "$HOME/Pictures/Screenshots";
+      };
+    };
 
     wayland.windowManager.hyprland.enable = true;
     home.sessionVariables.NIXOS_OZONE_WL = "1";
 
     home.packages = with pkgs; [
-      hyprpicker
-      hyprlock
-      hypridle
-      hyprpwcenter
+      # hyprpicker
+      # hypridle
+      # hyprlock
       hyprpolkitagent
-      hyprlauncher
-
-      pavucontrol # audio management
     ];
 
     wayland.windowManager.hyprland.systemd.variables = ["--all"];
@@ -56,8 +58,6 @@ in {
 
       # Move this to a seperate module if we want to expose options
       input = {
-        # https://wiki.hypr.land/Configuring/Variables/#input
-
         # Keyboard
         kb_layout = "us";
         numlock_by_default = true;
@@ -74,14 +74,16 @@ in {
         };
       };
 
-      cursor.no_hardware_cursors = 1;
+      bind = [
+        # Screenshots
+        "SUPER     , PRINT, exec, hyprshot -m window"
+        "          , PRINT, exec, hyprshot -m output"
+        "SUPERSHIFT, PRINT, exec, hyprshot -m region"
+      ];
+
       misc.disable_hyprland_logo = true;
     };
 
-    # home.file = mkMerge [
-    #   (importFilesToHome ".config/hypr/scripts" "scripts")
-    #   (importFilesToHome ".config/hypr/" cfg.style)
-    # ];
   };
 }
 
