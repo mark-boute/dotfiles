@@ -47,8 +47,11 @@ in {
       super-key = "SUPER";
       shared.keybinds.enable-all = true;
     };
+    zsh = {
+      enable = true;
+      usePowerlevel10k = true;
+    };
     latex.enable = true;
-    zsh.enable = true;
     spotify.enable = true;
   };
 
@@ -108,6 +111,8 @@ in {
       # office suite
       onlyoffice-desktopeditors
       gimp
+
+      plex-desktop
 
       # communication
       discord

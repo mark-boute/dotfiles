@@ -1,5 +1,12 @@
 { pkgs, lib, ... }:
 {
+  config = {
+    home.packages = with pkgs; [
+      vscode-extensions.github.copilot
+      # jdt-language-server
+    ];
+  };
+
   config.programs.vscode = {
       enable = true;
       profiles.default = lib.mkForce {
@@ -46,6 +53,11 @@
           "catppuccin.accentColor" = "rosewater";
           "workbench.colorTheme" = "Catppuccin Macchiato";
           "workbench.iconTheme" = "catppuccin-macchiato";
+
+          # file associations
+          "workbench.editorAssociations" = {
+            "*.pdf" = "latex-workshop-pdf-hook";
+          };
 
           # nix
           "nix.formatterPath" = "nixfmt";

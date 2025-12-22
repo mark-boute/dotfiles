@@ -35,10 +35,10 @@ MouseArea {
   }
 
   Rectangle {
-    id: focusColoring
-    anchors.fill: parent
-    visible: root.containsMouse || childrenRevealer.expanded
-    color: Theme.current.surface0
+    id: focusColoring;
+    anchors.fill: parent;
+    visible: root.containsMouse || childrenRevealer.expanded;
+    color: Theme.current.surface0;
 
     topLeftRadius: root.first ? Theme.barHeight / 2 : 0;
     topRightRadius: root.first ? Theme.barHeight / 2 : 0;

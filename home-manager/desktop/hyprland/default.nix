@@ -74,6 +74,8 @@ in {
         };
       };
 
+      cursor.no_hardware_cursors = 1;
+
       bind = [
         # Screenshots
         "SUPER     , PRINT, exec, hyprshot -m window"

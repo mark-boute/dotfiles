@@ -17,7 +17,7 @@ Menu{
     border.color: Theme.current.base;
     border.width: 1;
     radius: Theme.barHeight / 2;
-    color: Theme.current.overlay0;
+    color: Theme.current.surface1;
   }
 
   implicitWidth: Math.max(1, systrayMenu.implicitWidth);
