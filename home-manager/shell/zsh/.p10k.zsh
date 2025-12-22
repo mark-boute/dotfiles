@@ -136,10 +136,7 @@
   # Grey Git prompt. This makes stale prompts indistinguishable from up-to-date ones.
   typeset -g POWERLEVEL9K_VCS_FOREGROUND=$grey
   # Allow the branch name to stay grey while icons keep their colors
-  typeset -g POWERLEVEL9K_VCS_CLEAN_FOREGROUND=$grey
-  typeset -g POWERLEVEL9K_VCS_MODIFIED_FOREGROUND=$grey
-  typeset -g POWERLEVEL9K_VCS_STAGED_FOREGROUND=$grey
-  typeset -g POWERLEVEL9K_VCS_UNTRACKED_FOREGROUND=$grey
+  typeset -g POWERLEVEL9K_VCS_{CLEAN,MODIFIED,STAGED,UNTRACKED,CONFLICT}_FOREGROUND=$grey
 
   # Disable async loading indicator to make directories that aren't Git repositories
   # indistinguishable from large Git repositories without known state.
@@ -158,30 +155,25 @@
   typeset -g POWERLEVEL9K_VCS_DIRTY_ICON=
 
   # Force P10k to use your icons instead of the Pure 'dots'
-  typeset -g POWERLEVEL9K_VCS_MODIFIED_VISUAL_IDENTIFIER_EXPANSION='${P9K_VISUAL_IDENTIFIER}'
-  typeset -g POWERLEVEL9K_VCS_STAGED_VISUAL_IDENTIFIER_EXPANSION='${P9K_VISUAL_IDENTIFIER}'
-  typeset -g POWERLEVEL9K_VCS_UNTRACKED_VISUAL_IDENTIFIER_EXPANSION='${P9K_VISUAL_IDENTIFIER}'
+  typeset -g POWERLEVEL9K_VCS_VISUAL_IDENTIFIER_EXPANSION='${P9K_VISUAL_IDENTIFIER}'
 
   # 2. Define specific icons for each state
-  typeset -g POWERLEVEL9K_VCS_MODIFIED_ICON='󰏫'
+  typeset -g POWERLEVEL9K_VCS_MODIFIED_ICON='󰏫 '
   typeset -g POWERLEVEL9K_VCS_MODIFIED_VISUAL_IDENTIFIER_COLOR=$yellow
-  typeset -g POWERLEVEL9K_VCS_MODIFIED_FOREGROUND=$yellow
 
-  typeset -g POWERLEVEL9K_VCS_UNTRACKED_ICON='✚'  # Brand new files
+  typeset -g POWERLEVEL9K_VCS_UNTRACKED_ICON='✚ '
   typeset -g POWERLEVEL9K_VCS_UNTRACKED_VISUAL_IDENTIFIER_COLOR=$red
-  typeset -g POWERLEVEL9K_VCS_UNTRACKED_FOREGROUND=$red
 
-  typeset -g POWERLEVEL9K_VCS_STAGED_ICON=''
+  typeset -g POWERLEVEL9K_VCS_STAGED_ICON=' '
   typeset -g POWERLEVEL9K_VCS_STAGED_VISUAL_IDENTIFIER_COLOR=$green
-  typeset -g POWERLEVEL9K_VCS_STAGED_FOREGROUND=$green
-
-  typeset -g POWERLEVEL9K_VCS_CONFLICT_ICON='✘ '  # 3. Apply different colors
+ 
+  typeset -g POWERLEVEL9K_VCS_CONFLICT_ICON='✘ '
   typeset -g POWERLEVEL9K_VCS_CONFLICT_FOREGROUND=$red
 
   # Show '⇣' if local branch is behind remote.
-  typeset -g POWERLEVEL9K_VCS_INCOMING_CHANGES_ICON=':⇣'
+  typeset -g POWERLEVEL9K_VCS_INCOMING_CHANGES_ICON=' ⇣'
   # Show '⇡' if local branch is ahead of remote.
-  typeset -g POWERLEVEL9K_VCS_OUTGOING_CHANGES_ICON=':⇡'
+  typeset -g POWERLEVEL9K_VCS_OUTGOING_CHANGES_ICON=' ⇡'
   # Don't show the number of commits next to the ahead/behind arrows.
   typeset -g POWERLEVEL9K_VCS_{COMMITS_AHEAD,COMMITS_BEHIND}_MAX_NUM=1
   typeset -g POWERLEVEL9K_VCS_CONTENT_EXPANSION='${P9K_CONTENT} '
