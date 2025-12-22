@@ -76,7 +76,7 @@
   typeset -g POWERLEVEL9K_{LEFT,RIGHT}_{LEFT,RIGHT}_WHITESPACE=  # no surrounding whitespace
   typeset -g POWERLEVEL9K_{LEFT,RIGHT}_SUBSEGMENT_SEPARATOR=' '  # separate segments with a space
   typeset -g POWERLEVEL9K_{LEFT,RIGHT}_SEGMENT_SEPARATOR=        # no end-of-line symbol
-  typeset -g POWERLEVEL9K_VISUAL_IDENTIFIER_EXPANSION=           # no segment icons
+  typeset -g POWERLEVEL9K_VISUAL_IDENTIFIER_EXPANSION='${P9K_VISUAL_IDENTIFIER}'
 
   # Add an empty line before each prompt except the first. This doesn't emulate the bug
   # in Pure that makes prompt drift down whenever you use the Alt-C binding from fzf or similar.
@@ -174,8 +174,6 @@
   typeset -g POWERLEVEL9K_VCS_INCOMING_CHANGES_ICON=' ⇣'
   # Show '⇡' if local branch is ahead of remote.
   typeset -g POWERLEVEL9K_VCS_OUTGOING_CHANGES_ICON=' ⇡'
-  # Don't show the number of commits next to the ahead/behind arrows.
-  typeset -g POWERLEVEL9K_VCS_{COMMITS_AHEAD,COMMITS_BEHIND}_MAX_NUM=1
   typeset -g POWERLEVEL9K_VCS_CONTENT_EXPANSION='${P9K_CONTENT} '
 
   # Grey current time.
