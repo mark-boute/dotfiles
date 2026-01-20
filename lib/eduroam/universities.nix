@@ -13,5 +13,5 @@
   { name = "siegen"; id = 5356; hash = "sha256-qBGoeIWfYvDVZaxK6uEjPdIaKeBll0UYIEtoN8swInk="; }
   { name = "vccs"; id = 11835; hash = "sha256-pNvyctDuxlYODefdGkm+kS/1bbbd5w3bl6/ylYIZFOk="; }
   { name = "strathclyde"; id = 2316; hash = "sha256-oumaKcSRF8RrdQ0dHbNXN8w6Y5YlLNXnuglVq9srvU0="; }
-  { name = "radboud"; id = 4093; hash = "sha256-2pcKln9oRSe0ymUKDuNzSXQLrBE70ghMew+NOV2SRmw="; }
+  { name = "radboud"; id = 4093; hash = "sha256-mFnCPbDWESySo+B2aM10duKoVFp56zX4AN0m0y2cgLk="; }
 ]

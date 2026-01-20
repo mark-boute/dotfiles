@@ -3,5 +3,6 @@
 {
   imports = [
     ./keybinds
+    ./hyprdynamicmonitors.nix
   ];
 }

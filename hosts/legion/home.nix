@@ -27,10 +27,11 @@ in {
 
   wayland.windowManager.hyprland.settings.monitor = [
     # Laptop panel (internal)
-    "desc:California Institute of Technology 0x1637 0x00006000, 2560x1600@240, 0x0, 1.25"
+    "desc:California Institute of Technology 0x1637 0x00006000, 2560x1600@240, 0x0, 1.25" # , bitdepth, 10" #, cm, hdr, sdrbrightness, 1.4, sdrsaturation, 0.8"
 
     # HDMI ultrawide external monitor
     "desc:Philips Consumer Electronics Company 34M2C3500L UK02514050797, 3440x1440@100, 2048x-160, 1, bitdepth, 10"
+    "desc:Samsung Electric Company SAMSUNG, 1920x1080@60, auto, 1, mirror, eDP-1"
   ];
 
   modules = {
@@ -45,11 +46,15 @@ in {
       enable = true;
       configuration = "cappuccino";
       super-key = "SUPER";
-      shared.keybinds.enable-all = true;
+      shared = {
+        keybinds.enable-all = true;
+        hyprdynamicmonitors.enable = true;
+      };
     };
     zsh = {
       enable = true;
       usePowerlevel10k = true;
+      enableNH = true;
     };
     latex.enable = true;
     spotify.enable = true;
@@ -91,6 +96,7 @@ in {
       # (pkgs.nerdfonts.override { fonts = [ "FantasqueSansMono" ]; })
 
       nixd
+      nix-inspect
 
       # networking and authentication
       gnomeExtensions.cloudflare-warp-toggle
@@ -116,7 +122,7 @@ in {
 
       # communication
       discord
-      vesktop
+      # vesktop
       signal-desktop-bin
       # element-desktop
 

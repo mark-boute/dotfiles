@@ -12,6 +12,8 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    nix-flatpak.url = "github:gmodena/nix-flatpak/?ref=latest";
+
     nvf = {  # neovim configuration framework
       url = "github:notashelf/nvf";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -40,9 +42,10 @@
       # inputs.hyprlang.follows = "hyprland/hyprlang";
     };
 
+    hyprdynamicmonitors.url = "github:fiffeek/hyprdynamicmonitors";
+    hyprshutdown.url = "github:hyprwm/hyprshutdown";
     catppuccin.url = "github:catppuccin/nix";
     spicetify-nix.url = "github:Gerg-L/spicetify-nix";
-    hyprshutdown.url = "github:hyprwm/hyprshutdown";
   };
 
   outputs = {
@@ -77,15 +80,16 @@
 
           inputs.sops-nix.nixosModules.sops
           inputs.home-manager.nixosModules.home-manager
+          inputs.nix-flatpak.nixosModules.nix-flatpak
           inputs.catppuccin.nixosModules.catppuccin
           {
             home-manager = {
               backupFileExtension = "backup";
               useUserPackages = true;
               useGlobalPkgs = true;
-              sharedModules = [
-                inputs.sops-nix.homeManagerModules.sops
-                inputs.spicetify-nix.homeManagerModules.default
+              sharedModules = with inputs; [
+                sops-nix.homeManagerModules.sops
+                spicetify-nix.homeManagerModules.default
               ];
               extraSpecialArgs = {
                 inherit inputs system main-user;

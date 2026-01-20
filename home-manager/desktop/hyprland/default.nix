@@ -56,6 +56,8 @@ in {
       exec-once = [ "systemctl --user start hyprpolkitagent" ];
       env = [ "ELECTRON_OZONE_PLATFORM_HINT,wayland" ]; 
 
+      # quirks.prefer_hdr = true;
+
       # Move this to a seperate module if we want to expose options
       input = {
         # Keyboard
@@ -81,6 +83,7 @@ in {
         "SUPER     , PRINT, exec, hyprshot -m window"
         "          , PRINT, exec, hyprshot -m output"
         "SUPERSHIFT, PRINT, exec, hyprshot -m region"
+        "SUPERSHIFT, S, exec, hyprshot -m region"
       ];
 
       misc.disable_hyprland_logo = true;

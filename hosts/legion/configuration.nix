@@ -5,6 +5,7 @@
   pkgs,
   inputs,
   main-user,
+  lib,
   ...
 }: let
 in {
@@ -128,7 +129,19 @@ in {
     printing.enable = true;
     pulseaudio.enable = false;
     libinput.enable = true;
-
+    flatpak = {
+      enable = true;
+      remotes = lib.mkOptionDefault [
+        {
+          name = "flathub-beta"; 
+          location = "https://flathub.org/beta-repo/flathub-beta.flatpakrepo";
+        }
+      ];
+      packages = [
+        { appId = "org.vinegarhq.Sober"; origin = "flathub"; }
+        { appId = "app.eduroam.geteduroam"; origin = "flathub"; }
+      ];
+    };
     pipewire = {
       enable = true;
       alsa.enable = true;

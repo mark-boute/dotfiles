@@ -4,15 +4,15 @@ import Quickshell
 import QtQuick
 
 Singleton {
-  // readonly property SystemPalette colors: SystemPalette { colorGroup: SystemPalette.Active; }
-
-
   id: theme;
-
-  readonly property int barHeight: 30;
-  readonly property int barVerticalMargin: 5;
-  readonly property int barHorizontalMargin: 5;
-  readonly property color barColor: "transparent";
+  // The current Cattpuccin color scheme
+  property var current: macchiato;
+  
+  property color backgroundColor: "#a48e7f";
+  property int barHeight: 30;
+  property int barVerticalMargin: 5;
+  property int barHorizontalMargin: 5;
+  property color barColor: "transparent";
 
   readonly property int defaultMargin: 10;
   readonly property int defaultSpacing: 5;
@@ -78,7 +78,5 @@ Singleton {
     readonly property color mantle: "#1e2030";
     readonly property color crust: "#181926";
   }
-
-  property var current: macchiato;
 
 }

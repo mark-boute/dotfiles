@@ -6,15 +6,12 @@ let
 in {
   options.modules.hyprland.shared.keybinds.hardware-control = { 
     enable = mkEnableOption "Hardware control keybinds";
-
   };
 
   config = mkIf cfg.enable {
 
     services.hyprsunset.enable = true;
-
     home.packages = [
-
       # audio control
       pkgs.pavucontrol
       pkgs.pamixer

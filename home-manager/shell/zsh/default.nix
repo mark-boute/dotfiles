@@ -6,16 +6,54 @@
 }: let
   cfg = config.modules.zsh;
   inherit (lib) mkEnableOption mkIf mkMerge;
+
+  # function converting ~/ to absolute path
+  expandHome = path: lib.optionalString (path != null) (
+    if lib.strings.hasPrefix "~/" path
+      then "${config.home.homeDirectory}${lib.removePrefix "~" path}"
+      else path
+  );
 in {
   options.modules.zsh = {
     enable = mkEnableOption "zsh";
+
+    enableNH = mkEnableOption "home-manager NH shell integration";
+
+    flakePath = lib.mkOption {
+      type = lib.types.nullOr(lib.types.str);
+      default = "~/dotfiles";
+      description = "Path to the dotfiles flake for nh integration.";
+    };
+
+    osFlakePath = lib.mkOption {
+      type = lib.types.nullOr(lib.types.str);
+      default = null;
+      description = "Path to the os flake for nh integration.";
+    };
+
+    homeFlakePath = lib.mkOption {
+      type = lib.types.nullOr(lib.types.str);
+      default = null;
+      description = "Path to the home-manager flake for nh integration.";
+    };
 
     useStarship = mkEnableOption "starship";
     usePowerlevel10k = mkEnableOption "powerlevel10k";
   };
 
   config = mkMerge [
-    (mkIf cfg.useStarship {
+    (mkIf cfg.enableNH {
+      programs.nh = {
+        enable = true;
+        clean.enable = true;
+        clean.extraArgs = "--keep-since 7d --keep 3";
+        flake = expandHome cfg.flakePath;
+        osFlake = expandHome cfg.osFlakePath;
+        homeFlake = expandHome cfg.homeFlakePath;
+      };
+    })
+
+    (mkIf (cfg.useStarship && cfg.enable) {
       programs.starship = {
         enable = cfg.useStarship;
         settings = {
@@ -29,7 +67,7 @@ in {
       };
     })
 
-    (mkIf cfg.usePowerlevel10k {
+    (mkIf (cfg.usePowerlevel10k && cfg.enable) {
       programs.starship.enable = false;
 
       programs.zsh.plugins = [{
@@ -69,6 +107,8 @@ in {
           bindkey '^ ' autosuggest-accept
 
           eval "$(zoxide init zsh)"
+
+          [ "$TERM" = "xterm-kitty" ] && alias s="kitty +kitten ssh"
         '';
 
         # Tweak settings for history
@@ -89,13 +129,24 @@ in {
 
           #Devops
           g = "git";
+          gs = "git status";
+          ga = "git add";
+          gc = "git commit";
+          gp = "git push";
+          gu = "git pull";
+          gd = "git diff";
+          gb = "git switch";
           n = "nom";
           v = "nvim";
           nd = "() {nix develop -c $SHELL $1 ;}";
           ns = "nix-shell --run $SHELL";
-
+          ni = "nix-inspect --expr 'builtins.getFlake (import ${expandHome cfg.flakePath}/flake.nix)'";
+ 
           # Nix
-          switch = "sudo nixos-rebuild switch --flake ~/dotfiles --no-reexec";
+          switch = if cfg.enableNH 
+            then "sudo -v && nh os switch"
+            else "sudo nixos-rebuild switch --flake ${cfg.flakePath} --no-reexec";
+
           rebuild = "switch;  notify-send -a NixOS 'Rebuild complete\!'";
           update = "sudo nix flake update --flake ~/dotfiles; switch; notify-send -a NixOS 'System updated\!'";
 

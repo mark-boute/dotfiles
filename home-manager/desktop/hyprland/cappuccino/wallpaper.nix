@@ -1,4 +1,4 @@
-{ config, lib, ... }:
+{ config, lib, pkgs, ... }:
 
 let
   cfg = config.modules.hyprland.cappuccino;
@@ -14,6 +14,7 @@ in
   config = mkIf cfg.enable {
     services.hyprpaper = {
       enable = true;
+      package = (pkgs.callPackage ./hyprpaper.nix {});
       settings = {
         ipc = true;
 
