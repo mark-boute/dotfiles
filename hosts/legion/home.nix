@@ -29,9 +29,14 @@ in {
     # Laptop panel (internal)
     "desc:California Institute of Technology 0x1637 0x00006000, 2560x1600@240, 0x0, 1.25" # , bitdepth, 10" #, cm, hdr, sdrbrightness, 1.4, sdrsaturation, 0.8"
 
-    # HDMI ultrawide external monitor
+    # HDMI ultrawide external monitor, and vertical LG
     "desc:Philips Consumer Electronics Company 34M2C3500L UK02514050797, 3440x1440@100, 2048x-160, 1, bitdepth, 10"
+    "desc:LG Electronics 24GL600F 0x000505EB,1920x1080@100,5488x-400,1.00000000,transform,1,vrr,0"
+
+    # TV: mirror of internal monitor
     "desc:Samsung Electric Company SAMSUNG, 1920x1080@60, auto, 1, mirror, eDP-1"
+    
+    # "HDMI-A-1, 1920x1080@60.00000, auto, 1, transform, 0, mirror, eDP-2"
   ];
 
   modules = {
@@ -124,7 +129,7 @@ in {
       discord
       # vesktop
       signal-desktop-bin
-      # element-desktop
+      element-desktop
 
       # cora dependencies
       z3

@@ -91,7 +91,7 @@ in {
       htop
       # nvtopPackages.full
 
-      nixfmt-rfc-style
+      nixfmt
 
       nvchad
 

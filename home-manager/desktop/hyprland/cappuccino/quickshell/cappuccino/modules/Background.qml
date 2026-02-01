@@ -24,7 +24,7 @@ PanelWindow {
         id: bg
         // define fill in percentages of cover
         anchors.centerIn: parent
-        width: Math.max(parent.width / 4, parent.height / 2)
+        width: (parent.width / 4 + parent.height / 2) * 0.35
         horizontalAlignment: Image.AlignHCenter
         verticalAlignment: Image.AlignVCenter
         fillMode: Image.PreserveAspectFit

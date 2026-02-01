@@ -5,7 +5,8 @@ import QtQuick
 import Quickshell.Hyprland
 
 import qs
-import qs.modules as M
+import qs.modules as Modules
+import qs.services as Services
 
 ShellRoot {
   id: root;
@@ -15,4 +16,7 @@ ShellRoot {
     active: true;
     sourceComponent: Screen {}
   }
+
+  Modules.SessionLock { id: lock; }
+  Services.GlobalShortcuts { onPressed: lock.locked = true; }
 }

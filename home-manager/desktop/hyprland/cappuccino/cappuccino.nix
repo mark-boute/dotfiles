@@ -26,7 +26,9 @@ in
   config = mkIf cfg.enable {
     modules.hyprland.cappuccino.quickshell.enable = true;
     xdg.configFile."hypr/hyprtoolkit.conf".source = ./hyprtoolkit.conf;
-
+    wayland.windowManager.hyprland.settings.bind = [
+      "SUPER, L, global, quickshell:Lock"
+    ];
 
     catppuccin = mkForce {
       enable = true;

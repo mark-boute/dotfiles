@@ -144,7 +144,7 @@ in {
  
           # Nix
           switch = if cfg.enableNH 
-            then "sudo -v && nh os switch"
+            then "sudo -v && nh os switch -I ${cfg.flakePath}"
             else "sudo nixos-rebuild switch --flake ${cfg.flakePath} --no-reexec";
 
           rebuild = "switch;  notify-send -a NixOS 'Rebuild complete\!'";

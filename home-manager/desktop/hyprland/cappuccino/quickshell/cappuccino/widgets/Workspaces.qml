@@ -4,7 +4,6 @@ import QtQuick
 
 import qs
 import qs.shapes as Shapes
-import qs.services as Services
 
 /*
   A workspace indicator widget.

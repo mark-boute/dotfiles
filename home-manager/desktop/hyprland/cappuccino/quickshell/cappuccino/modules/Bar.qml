@@ -15,8 +15,7 @@ PanelWindow {
   color: Theme.barColor;
   implicitHeight: Theme.barHeight + Theme.barVerticalMargin * 2;
 
-  // Modules
-  Workspaces {
+  Widgets.Workspaces {
     screen: modelData;
     anchors {
       left: parent.left;
