@@ -25,7 +25,6 @@ in {
 
   virtualisation.docker.enable = true;
   hardware.nvidia-container-toolkit.enable = true;
-  boot.kernelPackages = pkgs.linuxPackages_latest;
   boot.extraModulePackages = [ config.boot.kernelPackages.lenovo-legion-module ];
   time.hardwareClockInLocalTime = true;
 
@@ -98,6 +97,8 @@ in {
       # windown emulation
       # winboat
       # freerdp
+
+      uv
     ]
     ++ [
       # self.packages.${pkgs.stdenv.hostPlatform.system}.neovim-mark
@@ -114,12 +115,23 @@ in {
     }
   ];
 
+  hardware.enableRedistributableFirmware = true;
   networking.networkmanager = {
-    enable = true;
+    settings = {
+      device."wifi.scan-rand-mac-address" = "no";
+      connection."wifi.cloned-mac-address" = "permanent";
+    };
+
     plugins = with pkgs; [ 
       networkmanager-openvpn # support for EduVPN
     ];
   };
+
+  programs.nix-ld.enable = true;
+  programs.nix-ld.libraries = with pkgs; [
+    ruff
+    uv
+  ];
 
   hardware.bluetooth.enable = true;
   security.rtkit.enable = true;

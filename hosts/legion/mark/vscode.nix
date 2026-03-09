@@ -1,8 +1,18 @@
 { pkgs, lib, ... }:
+let 
+  # Define Macchiato colors locally for reuse
+  macchiato = {
+    base = "#24273a";
+    mantle = "#1e2030";
+    crust = "#181926";
+    text = "#cad3f5";
+  };
+in
 {
   config = {
     home.packages = with pkgs; [
       vscode-extensions.github.copilot
+      prettypst
       # jdt-language-server
     ];
   };
@@ -26,6 +36,8 @@
 
           james-yu.latex-workshop
           tecosaur.latex-utilities
+
+          myriad-dreamin.tinymist
 
           vue.volar
           hediet.vscode-drawio
@@ -74,15 +86,40 @@
           "qt-qml.qmlls.useQmlImportPathEnvVar" = true;
 
           # java settings
-          "java.jdt.ls.java.home" = "${pkgs.jdk21}";
+          "java.jdt.ls.java.home" = "${pkgs.jdk21}/lib/openjdk";
+          "java.configuration.runtimes" = [
+            {
+              name = "JavaSE-21";
+              path = "${pkgs.jdk21}/lib/openjdk";
+              default = true;
+            }
+          ];
+
+          # c# settings
+          "omnisharp.useModernNet" = true;
+          "omnisharp.dotnetPath" = "${pkgs.omnisharp-roslyn}/bin/omnisharp";
+          "omnisharp.sdkPath" = "${pkgs.dotnet-sdk_10}/lib/dotnet";
+	  
+          # disable the stupid AI chat window
+          "workbench.secondarySideBar.defaultVisibility" = "hidden";
+
+          # typst
+          "tinymist.exportPdf" = "onType";
+          "tinymist.formatterMode" = "typstfmt";
+          "tinymist.lint.enabled" = true;
+          "tinymist.preview.background.enabled" = true;
+
+          "[typst]" = {
+            "editor.formatOnSave" = true;
+          };
 
           # pdf viewer
           "latex-workshop.view.pdf.zoom" = "page-width";
           "latex-workshop.latex.outDir" = "%DIR%/out";
-          "latex-workshop.view.pdf.color.dark.backgroundColor" = "#1e2030";
-          "latex-workshop.view.pdf.color.dark.pageBorderColor" = "#181926";
-          "latex-workshop.view.pdf.color.dark.pageColorsBackground" = "#24273a";
-          "latex-workshop.view.pdf.color.dark.pageColorsForeground" = "#cad3f5";
+          "latex-workshop.view.pdf.color.dark.backgroundColor" = macchiato.mantle;
+          "latex-workshop.view.pdf.color.dark.pageBorderColor" = macchiato.crust;
+          "latex-workshop.view.pdf.color.dark.pageColorsBackground" = macchiato.base;
+          "latex-workshop.view.pdf.color.dark.pageColorsForeground" = macchiato.text;
 
           # markdown preview
           "markdown-preview-enhanced.previewTheme" = "none.css";

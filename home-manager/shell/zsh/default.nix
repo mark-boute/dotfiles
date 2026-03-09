@@ -19,6 +19,9 @@ in {
 
     enableNH = mkEnableOption "home-manager NH shell integration";
 
+    enableDirenv = mkEnableOption "direnv integration";
+    useNixDirenv = mkEnableOption "use nix-direnv instead of direnv";
+
     flakePath = lib.mkOption {
       type = lib.types.nullOr(lib.types.str);
       default = "~/dotfiles";
@@ -50,6 +53,14 @@ in {
         flake = expandHome cfg.flakePath;
         osFlake = expandHome cfg.osFlakePath;
         homeFlake = expandHome cfg.homeFlakePath;
+      };
+    })
+
+    (mkIf cfg.enableDirenv {
+      programs.direnv = {
+        enable = true;
+        enableZshIntegration = true;
+        nix-direnv.enable = cfg.useNixDirenv;
       };
     })
 

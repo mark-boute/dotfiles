@@ -2,8 +2,21 @@
 # your system.  Help is available in the configuration.nix(5) man page
 # and in the NixOS manual (accessible by running ‘nixos-help’).
 
-{ pkgs, ... }:
+{ pkgs, lib, ... }:
 
+let 
+  inherit (lib) mkDefault;
+
+  # pinnedKernel = pkgs.linuxPackages_6_18;
+  latestKernel = pkgs.linuxPackages_latest;
+  pinnedKernel = latestKernel;
+
+  kernelPkg = if pinnedKernel.kernel.version != latestKernel.kernel.version
+      then builtins.trace 
+        "warning: you have pinned your kernel to ${pinnedKernel.kernel.version}, but ${latestKernel.kernel.version} is available." 
+        pinnedKernel
+      else latestKernel;
+in
 {
   nix = {
     settings = {
@@ -25,6 +38,8 @@
   };
 
   boot = {
+    kernelPackages = mkDefault kernelPkg;
+
     tmp.cleanOnBoot = true;
     loader = {
       systemd-boot.enable = false;

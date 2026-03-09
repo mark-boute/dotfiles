@@ -21,9 +21,9 @@ in {
     ];
 
     wayland.windowManager.hyprland.settings = {
-      bindo = [
+      bindl = [
         # Reboot and Shutdown
-        "SUPERSHIFT,Delete,exec,hyprshutdown -t 'Restarting...' --post-cmd 'reboot'"
+        "SUPERCTRL,Delete,exec,hyprshutdown -t 'Restarting...' --post-cmd 'reboot'"
         "SUPER,Delete,exec,hyprshutdown -t 'Shutting down...' --post-cmd 'shutdown -P 0'"
       ];
 

@@ -60,6 +60,8 @@ in {
       enable = true;
       usePowerlevel10k = true;
       enableNH = true;
+      enableDirenv = true;
+      useNixDirenv = true;
     };
     latex.enable = true;
     spotify.enable = true;
@@ -121,14 +123,18 @@ in {
 
       # office suite
       onlyoffice-desktopeditors
-      gimp
+      typst
+      prettypst
+      hledger
+      hledger-ui
+      hledger-web
 
       plex-desktop
 
       # communication
       discord
       # vesktop
-      signal-desktop-bin
+      signal-desktop
       element-desktop
 
       # cora dependencies

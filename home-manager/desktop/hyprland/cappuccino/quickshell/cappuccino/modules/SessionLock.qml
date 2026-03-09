@@ -251,6 +251,16 @@ WlSessionLock {
       ]
 
       transitions: [
+        // This handles the transition from the initial "bright" state to dimmed after 3s
+        Transition {
+          from: ""; to: "dimmed";
+          ColorAnimation { duration: 5000 }
+          NumberAnimation { 
+            targets: [bg, leftText, rightText]; 
+            property: "opacity"; 
+            duration: 5000 
+          }
+        },
         // Instant exit when moving from input back to dimmed (Escape key)
         Transition {
           from: "input"; to: "dimmed";
@@ -259,12 +269,11 @@ WlSessionLock {
             property: "opacity"; 
             duration: 0 
           }
-          // The rest of the screen can still fade slowly over 10s
-          ColorAnimation { duration: 10000 }
+          ColorAnimation { duration: 5000 }
           NumberAnimation { 
             targets: [bg, leftText, rightText]; 
             property: "opacity"; 
-            duration: 10000 
+            duration: 5000 
           }
         },
         // Smooth entrance when going to input
@@ -276,12 +285,6 @@ WlSessionLock {
             duration: 400; 
             easing.type: Easing.OutExpo 
           }
-        },
-        // Default dimmed transition
-        Transition {
-          from: "input"; to: "dimmed";
-          ColorAnimation { duration: 10000 }
-          NumberAnimation { properties: "opacity"; duration: 10000 }
         }
       ]
     }
