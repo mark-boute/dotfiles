@@ -1,8 +1,0 @@
-{ ... }:
-
-{
-  imports = [
-    ./keybinds
-    ./hyprdynamicmonitors.nix
-  ];
-}

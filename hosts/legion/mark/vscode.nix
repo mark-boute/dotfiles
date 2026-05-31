@@ -96,9 +96,9 @@ in
           ];
 
           # c# settings
-          "omnisharp.useModernNet" = true;
-          "omnisharp.dotnetPath" = "${pkgs.omnisharp-roslyn}/bin/omnisharp";
-          "omnisharp.sdkPath" = "${pkgs.dotnet-sdk_10}/lib/dotnet";
+          # "omnisharp.useModernNet" = true;
+          # "omnisharp.dotnetPath" = "${pkgs.omnisharp-roslyn}/bin/omnisharp";
+          # "omnisharp.sdkPath" = "${pkgs.dotnet-sdk_10}/lib/dotnet";
 	  
           # disable the stupid AI chat window
           "workbench.secondarySideBar.defaultVisibility" = "hidden";

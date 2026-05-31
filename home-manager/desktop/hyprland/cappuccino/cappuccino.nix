@@ -6,7 +6,7 @@ let
 in
 {
   imports = [
-    ./wallpaper.nix
+    # ./wallpaper.nix
     ./quickshell
     ./theme.nix
   ];
@@ -25,10 +25,9 @@ in
 
   config = mkIf cfg.enable {
     modules.hyprland.cappuccino.quickshell.enable = true;
-    xdg.configFile."hypr/hyprtoolkit.conf".source = ./hyprtoolkit.conf;
-    wayland.windowManager.hyprland.settings.bind = [
-      "SUPER, L, global, quickshell:Lock"
-    ];
+
+    # xdg.configFile."hypr/hyprtoolkit.conf".source = config.lib.file.mkOutOfStoreSymlink
+    #   "${config.home.homeDirectory}/dotfiles/home-manager/desktop/hyprland/cappuccino/hyprtoolkit.conf";
 
     catppuccin = mkForce {
       enable = true;

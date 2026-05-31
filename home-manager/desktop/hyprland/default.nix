@@ -2,34 +2,40 @@
   pkgs,
   lib,
   config,
+  inputs,
   ...
 }: let
   cfg = config.modules.hyprland;
-  inherit (lib) mkEnableOption mkIf mkOption types;
+  inherit (lib) mkEnableOption mkIf;
+  hyprDir = "${config.home.homeDirectory}/dotfiles/home-manager/desktop/hyprland/hypr";
 in {
   imports = [
-    ./shared
     ./cappuccino
   ];
 
+  # based off:
+  #   https://gitlab.com/nicky.tope/nixos-config/-/blob/main/user/desktop/hyprland/default.nix?ref_type=heads
+
   options.modules.hyprland = {
     enable = mkEnableOption "hyprland";
-
-    configuration = mkOption {
-      type = types.enum ["nord" "cappuccino"];
-      default = "cappuccino";
-      description = "configuration to use";
-    };
-
-    super-key = mkOption {
-      type = types.str;
-      default = "SUPER";
-      description = "Key to use as super key.";
-    };
   };
 
   config = mkIf cfg.enable {
-    modules.hyprland.cappuccino.enable = true;
+
+    # configuration will be done with symlinks to dotfiles, so disable the default config generation
+    wayland.windowManager.hyprland.enable = false;
+
+    xdg.configFile = {
+      "uwsm/env".source = "${config.home.sessionVariablesPackage}/etc/profile.d/hm-session-vars.sh";
+    } // 
+    # write all files in the hypr dir as config files with the same name without taking ownership of the directory itself
+    builtins.listToAttrs (
+      map (name: {
+        name = "hypr/${name}";
+        value.source = config.lib.file.mkOutOfStoreSymlink "${hyprDir}/${name}";
+      }) 
+      (builtins.attrNames (builtins.readDir ./hypr))
+    );
 
     programs = {
       kitty.enable = true;
@@ -39,56 +45,51 @@ in {
       };
     };
 
-    wayland.windowManager.hyprland.enable = true;
-    home.sessionVariables.NIXOS_OZONE_WL = "1";
-
     home.packages = with pkgs; [
-      # hyprpicker
-      # hypridle
+      pavucontrol
+      pamixer
+
       # hyprlock
+      hyprpwcenter
+      hypridle
       hyprpolkitagent
+    ] ++ [
+      inputs.hyprshutdown.packages.${pkgs.stdenv.hostPlatform.system}.default
     ];
 
-    wayland.windowManager.hyprland.systemd.variables = ["--all"];
-    wayland.windowManager.hyprland.settings = {
-      "$mod" = cfg.super-key;
+    services = {
+      hyprsunset.enable = true;
+      hypridle = {
+        enable = true;
+        settings = {
+          general = {
+            lock_cmd = "pidof hyprlock || hyprlock";
+            before_sleep_cmd = "loginctl lock-session";
+            after_sleep_cmd = ''hyprctl dispatch 'hl.dsp.dpms({ state = "on" })' '';
+          };
 
-      exec-once = [ "systemctl --user start hyprpolkitagent" ];
-      env = [ "ELECTRON_OZONE_PLATFORM_HINT,wayland" ]; 
-
-      # quirks.prefer_hdr = true;
-
-      # Move this to a seperate module if we want to expose options
-      input = {
-        # Keyboard
-        kb_layout = "us";
-        numlock_by_default = true;
-
-        # Mouse
-        follow_mouse = 2; # Click window to change focus
-
-        # Touchpad
-        scroll_method = "2fg"; # Two Fingers for scroll
-        touchpad = {
-          natural_scroll = true;
-          drag_lock = 1; # Drag-lift with timeout
-          clickfinger_behavior = true; # 1f:LMB, 2f: RMB, 3f: MMB
+          listener = [
+            # Dim screen after 5 minutes
+            {
+              timeout = 300;
+              on-timeout = "brightnessctl -s set 10%";
+              on-resume = "brightnessctl -r";
+            }
+            # Lock screen after 8 minutes (MUST happen before DPMS off)
+            {
+              timeout = 480;
+              on-timeout = "loginctl lock-session";
+            }
+            # Turn off screen after 10 minutes (after lock is active)
+            {
+              timeout = 600;
+              on-timeout = ''hyprctl dispatch 'hl.dsp.dpms({ state = "off" })' '';
+              on-resume = ''hyprctl dispatch 'hl.dsp.dpms({ state = "on" })' '';
+            }
+          ];
         };
       };
-
-      cursor.no_hardware_cursors = 1;
-
-      bind = [
-        # Screenshots
-        "SUPER     , PRINT, exec, hyprshot -m window"
-        "          , PRINT, exec, hyprshot -m output"
-        "SUPERSHIFT, PRINT, exec, hyprshot -m region"
-        "SUPERSHIFT, S, exec, hyprshot -m region"
-      ];
-
-      misc.disable_hyprland_logo = true;
     };
-
   };
 }
 

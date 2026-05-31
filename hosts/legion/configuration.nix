@@ -33,10 +33,43 @@ in {
     tmux.enable = true;
     hyprland = {
       enable = true;
-      withUWSM = false;
+      withUWSM = true;
       xwayland.enable = true;
     };
+    uwsm = {
+      enable = true;
+      waylandCompositors.hyprland = {
+        prettyName = "Hyprland";
+        comment = "Hyprland compositor managed by UWSM";
+        binPath = "/run/current-system/sw/bin/Hyprland";
+      };
+    };
     firefox.enable = true;
+  };
+
+  xdg.portal = {
+    enable = true;
+    wlr.enable = false;
+    extraPortals = [
+      pkgs.xdg-desktop-portal-gtk # Fallback
+      pkgs.xdg-desktop-portal-hyprland # For Hyprland
+    ];
+
+    config = {
+      common = {
+        default = ["*"];
+        "org.freedesktop.portal.Settings" = ["hyprland"];
+        "org.freedesktop.portal.ScreenCast" = ["hyprland"];
+        "org.freedesktop.portal.Screenshot" = ["hyprland"];
+        "org.freedesktop.impl.portal.Secret" = ["gnome-keyring"];
+        "org.freedesktop.impl.portal.FileChooser" = ["hyprland"];
+        "org.freedesktop.portal.OpenURI" = ["hyprland"];
+      };
+      hyprland = {
+        default = [ "hyprland" ];
+        "org.freedesktop.impl.portal.Settings" = [ "gtk" ];
+      };
+    };
   };
 
   catppuccin = {
@@ -81,9 +114,32 @@ in {
     sops.enable = true;
   };
 
-  # environment.sessionVariables.NIXOS_OZONE_WL = "1";
+  environment.sessionVariables = {
+    NIXOS_OZONE_WL = "1";
+    WLR_NO_HARDWARE_CURSORS = "1";
+    GSETTINGS_SCHEMA_DIR = "${pkgs.gsettings-desktop-schemas}/share/gsettings-schemas/${pkgs.gsettings-desktop-schemas.name}";
+
+    # XDG and Portal integration
+    GTK_USE_PORTAL = "1";
+    NIXOS_XDG_OPEN_USE_PORTAL = "1";
+    XDG_SESSION_TYPE = "wayland";
+    XDG_CURRENT_DESKTOP = "Hyprland";
+
+    # QT Wayland integration
+    QT_QPA_PLATFORM = "wayland";
+    QT_WAYLAND_DISABLE_WINDOWDECORATION = "1";
+
+    # Additional Wayland compatibility
+    MOZ_ENABLE_WAYLAND = "1";
+    _JAVA_AWT_WM_NONREPARENTING = "1";
+    ELECTRON_OZONE_PLATFORM_HINT = "auto";
+
+  };
   environment.systemPackages = with pkgs;
     [
+
+      quickshell
+
       # system monitoring
       lenovo-legion
       powertop
@@ -99,6 +155,7 @@ in {
       # freerdp
 
       uv
+      dotnetCorePackages.sdk_9_0
     ]
     ++ [
       # self.packages.${pkgs.stdenv.hostPlatform.system}.neovim-mark
@@ -116,6 +173,7 @@ in {
   ];
 
   hardware.enableRedistributableFirmware = true;
+  networking.firewall.allowedTCPPorts = [ 25565 ];
   networking.networkmanager = {
     settings = {
       device."wifi.scan-rand-mac-address" = "no";
@@ -134,7 +192,12 @@ in {
   ];
 
   hardware.bluetooth.enable = true;
-  security.rtkit.enable = true;
+  security = {
+    rtkit.enable = true;
+    pam.services = {
+      greetd.enableGnomeKeyring = true;
+    };
+  };
 
   services = {
     cloudflare-warp.enable = true;
@@ -165,6 +228,7 @@ in {
 
     displayManager.gdm.enable = true;
     desktopManager.gnome.enable = true;
+    gnome.gnome-keyring.enable = true;
 
     xserver.enable = true;
     xserver.xkb = {

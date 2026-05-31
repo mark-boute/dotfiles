@@ -23,8 +23,5 @@ in
       background_blur = 50;
     };
 
-
-    wayland.windowManager.hyprland.settings.exec-once = [ "hyprlauncher -d" ];
-
   };
 }

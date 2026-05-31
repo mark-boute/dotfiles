@@ -3,6 +3,7 @@
   config = {
     programs.git = {
       enable = true;
+      signing.format = "ssh";
       settings = {
         user = {
           name = "Mark Boute";
