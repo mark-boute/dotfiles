@@ -1,5 +1,3 @@
--- Base input configuration. Per-device overrides live in device.lua.
-
 hl.config({
   input = {
     kb_layout = "us",

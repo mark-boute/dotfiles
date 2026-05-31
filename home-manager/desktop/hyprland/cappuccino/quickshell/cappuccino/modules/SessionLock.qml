@@ -1,6 +1,7 @@
 import Quickshell;
 import QtQuick;
 import Quickshell.Wayland;
+import Quickshell.Hyprland
 import QtQuick.Shapes;
 import Quickshell.Services.Pam;
 import qs;
@@ -60,10 +61,9 @@ WlSessionLock {
       anchors.fill: parent;
       color: Theme.backgroundColor;
       focus: true;
-
       Timer {
         id: idleTimer;
-        interval: 3000;
+        interval: 5000;
         running: true;
         repeat: false;
         onTriggered: content.state = "dimmed";
@@ -80,7 +80,6 @@ WlSessionLock {
 
         if (content.state !== "input") {
           content.state = "input";
-          idleTimer.stop();
         }
 
         if (feedbackMessage !== "") feedbackMessage = "";
@@ -93,6 +92,8 @@ WlSessionLock {
         } else if (event.key === Qt.Key_Backspace) {
           currentInput = currentInput.substring(0, currentInput.length - 1);
         }
+
+        idleTimer.restart();
       }
 
       // --- Layout ---

@@ -5,22 +5,24 @@ local PUBLIC = XDG .. "/hypr"
 package.path = package.path
   .. ";" .. PUBLIC .. "/?.lua"
 
-
-local function try_require(name)
-  if package.searchpath(name, package.path) then
-    return require(name)
-  end
-  return nil
-end
-
 hl.config({
 	debug = {
 		disable_logs = true,
 	},
 })
 
+local function try_require(name)
+  local ok, module = pcall(require, name)
+  return ok and module or nil
+end
+
+-- Per-user or host overrides added to .config/hypr.
+try_require("monitors")
+
+-- Shared configuration files.
 require("keybinds").register()
 require("appearance")
 require("input")
-try_require("monitors")
+
+-- Startup commands, optionally feeds qs config path for per-host overrides.
 require("exec")(try_require("qs-config"))

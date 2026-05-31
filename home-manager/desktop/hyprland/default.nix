@@ -48,8 +48,8 @@ in {
     home.packages = with pkgs; [
       pavucontrol
       pamixer
+      brightnessctl
 
-      # hyprlock
       hyprpwcenter
       hypridle
       hyprpolkitagent
@@ -63,8 +63,7 @@ in {
         enable = true;
         settings = {
           general = {
-            lock_cmd = "pidof hyprlock || hyprlock";
-            before_sleep_cmd = "loginctl lock-session";
+            lock_cmd = ''hyprctl dispatch 'hl.dsp.global("quickshell:Lock")' '';
             after_sleep_cmd = ''hyprctl dispatch 'hl.dsp.dpms({ state = "on" })' '';
           };
 
@@ -72,13 +71,14 @@ in {
             # Dim screen after 5 minutes
             {
               timeout = 300;
-              on-timeout = "brightnessctl -s set 10%";
-              on-resume = "brightnessctl -r";
+              on-timeout = "hyprctl hyprsunset gamma 50%";
+              on-resume = "hyprctl hyprsunset gamma 100%";
+
             }
             # Lock screen after 8 minutes (MUST happen before DPMS off)
             {
               timeout = 480;
-              on-timeout = "loginctl lock-session";
+              on-timeout = ''hyprctl dispatch 'hl.dsp.global("quickshell:Lock")' '';
             }
             # Turn off screen after 10 minutes (after lock is active)
             {

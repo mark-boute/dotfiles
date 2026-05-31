@@ -23,5 +23,10 @@ Shapes.MenuPill {
     id: mouse;
     acceptedDevices: PointerDevice.Mouse | PointerDevice.TouchPad;
   }
+
+  MouseArea {
+    anchors.fill: parent;
+    onClicked: Hyprland.dispatch(`hl.dsp.dpms({ state = "off" })`);
+  }
 }
 

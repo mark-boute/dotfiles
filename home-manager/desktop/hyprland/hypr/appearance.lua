@@ -1,14 +1,9 @@
--- General appearance: layout, gaps, borders, decoration, animations, cursor,
--- misc. Ported from wayland.windowManager.hyprland.settings in default.nix.
-
 hl.config({
 	general = {
 		gaps_in = 5,
 		gaps_out = {top = 0, left = 5, bottom = 5, right = 5},
-        -- gaps_out = 5,
         gaps_workspaces = 50;
 		border_size = 2,
-
         resize_on_border = true,
 
 		["col.active_border"] = { colors = { "rgba(125,196,228,1)", "rgba(244,219,214,1)" }, angle = 45 },
@@ -38,9 +33,6 @@ hl.config({
 		},
 	},
 
-	-- animations.bezier / animations.animation are no longer config keys in
-	-- 0.55+. Curves are declared with hl.curve(), individual animations with
-	-- hl.animation(). The top-level enable flag is still here.
 	animations = {
 		enabled = true,
 	},
@@ -62,7 +54,6 @@ hl.config({
 	misc = {
 		disable_hyprland_logo = true,
 		disable_splash_rendering = true,
-		-- Suppress "started without start-hyprland" warning when using UWSM
 		disable_watchdog_warning = true,
 	},
 

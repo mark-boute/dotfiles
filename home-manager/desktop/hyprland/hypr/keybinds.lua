@@ -214,35 +214,12 @@ M.binds = {
 	{ keys = "SUPER + mouse:272", desc = "Move window (left click drag)", action = A.drag(), mouse = true },
 	{ keys = "SUPER + mouse:273", desc = "Resize window (right click drag)", action = A.mresize(), mouse = true },
 
-
-	-- { keys = "SUPER + SHIFT + t", desc = "Pin window", action = A.pin() },
-	-- { keys = "SUPER + p", desc = "Float and pin window", action = A.float_and_pin() },
-
 	-- Window resize & move
-	{
-		keys = "SUPER + left",
-		desc = "Move floating window left",
-		action = A.move_xy(-20, 0),
-		repeating = true,
-	},
-	{
-		keys = "SUPER + right",
-		desc = "Move floating window right",
-		action = A.move_xy(20, 0),
-		repeating = true,
-	},
-	{
-		keys = "SUPER + up",
-		desc = "Move floating window up",
-		action = A.move_xy(0, -60),
-		repeating = true,
-	},
-	{
-		keys = "SUPER + down",
-		desc = "Move floating window down",
-		action = A.move_xy(0, 60),
-		repeating = true,
-	},
+	{ keys = "SUPER + left", desc = "Move floating window left", action = A.move_xy(-20, 0), repeating = true },
+	{ keys = "SUPER + right", desc = "Move floating window right", action = A.move_xy(20, 0), repeating = true },
+	{ keys = "SUPER + up", desc = "Move floating window up", action = A.move_xy(0, -60), repeating = true },
+	{ keys = "SUPER + down", desc = "Move floating window down", action = A.move_xy(0, 60), repeating = true },
+
 	{ keys = "SUPER + ALT + h", desc = "Shrink window to previous breakpoint", action = A.resize_step("down") },
 	{ keys = "SUPER + ALT + l", desc = "Grow window to next breakpoint", action = A.resize_step("up") },
 	{ keys = "SUPER + ALT + k", desc = "Resize window up", action = A.resize_xy(0, -20), repeating = true },
@@ -268,9 +245,18 @@ M.binds = {
 
     -- System
 	{ keys = "SUPER + ALT + R", desc = "Reload Hyprland", action = A.exec("hyprctl reload") },
-    { keys = "SUPER + SHIFT + Delete", desc = "Reboot system", action = A.exec("hyprshutdown -t 'Restarting...' --post-cmd 'reboot'") },
-    { keys = "SUPER + Delete", desc = "Power off system", action = A.exec("hyprshutdown -t 'Shutting down...' --post-cmd 'shutdown -P 0'"), {locked = true} },
 	{ keys = "SUPER + L", desc = "Lock screen", action = A.global("quickshell:Lock") },
+    { 
+		keys = "SUPER + SHIFT + Delete", 
+		desc = "Reboot system", 
+		action = A.exec("hyprshutdown -t 'Restarting...' --post-cmd 'reboot'")
+	},
+    { 
+		keys = "SUPER + Delete", 
+		desc = "Power off system", 
+		action = A.exec("hyprshutdown -t 'Shutting down...' --post-cmd 'shutdown -P 0'"), 
+		{locked = true} 
+	},
 
 	-- Screenshots
     { keys = "SUPER + SHIFT + S", desc = "Screenshot (region)", action = A.exec("hyprshot -m region") },
@@ -278,45 +264,36 @@ M.binds = {
     { keys = "SUPER + PRINT", desc = "Screenshot (window)", action = A.exec("hyprshot -m window") },
     { keys = "SUPER + SHIFT + PRINT", desc = "Screenshot (region)", action = A.exec("hyprshot -m region") },
 
+	-- Volume keys
+	{ keys = "XF86AudioMute", desc = "Toggle mute", action = A.exec("pamixer --toggle-mute") },
+	{ keys = "XF86AudioLowerVolume", desc = "Lower volume", action = A.exec("pamixer --decrease 5"), repeating = true },
+	{ keys = "XF86AudioRaiseVolume", desc = "Raise volume", action = A.exec("pamixer --increase 5"), repeating = true },
 
-	-- Media keys
-	{
-		keys = "XF86AudioMute",
-		desc = "Toggle mute",
-		action = A.exec("pamixer --toggle-mute"),
-	},
-	{
-		keys = "XF86AudioLowerVolume",
-		desc = "Lower volume",
-		action = A.exec("pamixer --decrease 5"),
-	},
-	{
-		keys = "XF86AudioRaiseVolume",
-		desc = "Raise volume",
-		action = A.exec("pamixer --increase 5"),
-	},
+	-- Brightness and color temperature keys
 	{
 		keys = "XF86MonBrightnessUp",
 		desc = "Increase brightness",
 		action = A.exec("hyprctl hyprsunset gamma +10"),
+		repeating = true,
 	},
 	{
 		keys = "XF86MonBrightnessDown",
 		desc = "Decrease brightness",
 		action = A.exec("hyprctl hyprsunset gamma -10"),
+		repeating = true,
 	},
     {
         keys = "SUPER + XF86MonBrightnessUp",
         desc = "Increase temperature",
         action = A.exec("hyprctl hyprsunset temperature +250"),
+        repeating = true,
     },
     {
         keys = "SUPER + XF86MonBrightnessDown",
         desc = "Decrease temperature",
         action = A.exec("hyprctl hyprsunset temperature -250"),
+        repeating = true,
     },
-
-
 }
 
 for i = 1, 10 do
@@ -373,9 +350,7 @@ function M.register()
 	end
 end
 
--- Re-export the action helpers so device-keybinds.lua can use them.
 M.A = A
-
 return M
 
 	-- {
