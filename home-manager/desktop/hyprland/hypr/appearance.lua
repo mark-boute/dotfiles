@@ -20,14 +20,14 @@ hl.config({
 		rounding = 15,
 
         shadow = {
-            enabled = true,
+            enabled = false,
             range = 4,
             color = "rgba(0,0,0,0.5)",
         },
 
 		dim_special = 0.0,
 		blur = {
-			enabled = true,
+			enabled = false,
             size = 5,
             passes = 3,
 		},

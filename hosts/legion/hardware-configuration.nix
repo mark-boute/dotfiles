@@ -11,7 +11,7 @@
   boot.initrd.availableKernelModules = [ "nvme" "xhci_pci" "usb_storage" "usbhid" "sd_mod" ];
   boot.initrd.includeDefaultModules = true;
   boot.initrd.kernelModules = [ ];
-  boot.kernelModules = [ "kvm-amd" ];
+  boot.kernelModules = [ "kvm-amd" "nvidia" "nvidia_modeset" "nvidia_uvm" "nvidia_drm" ];
   # boot.extraModulePackages = [ config.boot.kernelPackages.lenovo-legion-module ];
 
   boot.supportedFilesystems = [ "vfat" "ext4" "ntfs" ];

@@ -13,9 +13,6 @@ in {
     ./cappuccino
   ];
 
-  # based off:
-  #   https://gitlab.com/nicky.tope/nixos-config/-/blob/main/user/desktop/hyprland/default.nix?ref_type=heads
-
   options.modules.hyprland = {
     enable = mkEnableOption "hyprland";
   };
@@ -25,11 +22,7 @@ in {
     # configuration will be done with symlinks to dotfiles, so disable the default config generation
     wayland.windowManager.hyprland.enable = false;
 
-    xdg.configFile = {
-      "uwsm/env".source = "${config.home.sessionVariablesPackage}/etc/profile.d/hm-session-vars.sh";
-    } // 
-    # write all files in the hypr dir as config files with the same name without taking ownership of the directory itself
-    builtins.listToAttrs (
+    xdg.configFile = builtins.listToAttrs (
       map (name: {
         name = "hypr/${name}";
         value.source = config.lib.file.mkOutOfStoreSymlink "${hyprDir}/${name}";
@@ -57,6 +50,7 @@ in {
       inputs.hyprshutdown.packages.${pkgs.stdenv.hostPlatform.system}.default
     ];
 
+    # Based on: https://gitlab.com/nicky.tope/nixos-config/-/blob/main/user/desktop/hyprland/default.nix?ref_type=heads
     services = {
       hyprsunset.enable = true;
       hypridle = {
@@ -68,21 +62,17 @@ in {
           };
 
           listener = [
-            # Dim screen after 5 minutes
-            {
+            { # Dim screen after 5 minutes
               timeout = 300;
               on-timeout = "hyprctl hyprsunset gamma 50%";
               on-resume = "hyprctl hyprsunset gamma 100%";
-
             }
-            # Lock screen after 8 minutes (MUST happen before DPMS off)
-            {
-              timeout = 480;
+            { # Lock screen after 10 minutes (MUST happen before DPMS off)
+              timeout = 600;
               on-timeout = ''hyprctl dispatch 'hl.dsp.global("quickshell:Lock")' '';
             }
-            # Turn off screen after 10 minutes (after lock is active)
-            {
-              timeout = 600;
+            { # Turn off screen after 15 minutes (after lock is active)
+              timeout = 900;
               on-timeout = ''hyprctl dispatch 'hl.dsp.dpms({ state = "off" })' '';
               on-resume = ''hyprctl dispatch 'hl.dsp.dpms({ state = "on" })' '';
             }

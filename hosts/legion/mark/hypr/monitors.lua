@@ -2,7 +2,7 @@ local monitors = {
     { 
         -- laptop panel (internal)
         output = "desc:California Institute of Technology 0x1637 0x00006000",
-        mode = "2560x1600@240",
+        mode = "2560x1600@60",
         position = "0x0",
         scale = 1.25,
     },

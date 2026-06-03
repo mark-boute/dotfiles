@@ -33,16 +33,7 @@ in {
     tmux.enable = true;
     hyprland = {
       enable = true;
-      withUWSM = true;
       xwayland.enable = true;
-    };
-    uwsm = {
-      enable = true;
-      waylandCompositors.hyprland = {
-        prettyName = "Hyprland";
-        comment = "Hyprland compositor managed by UWSM";
-        binPath = "/run/current-system/sw/bin/Hyprland";
-      };
     };
     firefox.enable = true;
   };
@@ -51,23 +42,24 @@ in {
     enable = true;
     wlr.enable = false;
     extraPortals = [
-      pkgs.xdg-desktop-portal-gtk # Fallback
-      pkgs.xdg-desktop-portal-hyprland # For Hyprland
+      pkgs.xdg-desktop-portal-gtk
+      pkgs.xdg-desktop-portal-hyprland
+      pkgs.xdg-desktop-portal-gnome
     ];
 
     config = {
       common = {
         default = ["*"];
-        "org.freedesktop.portal.Settings" = ["hyprland"];
-        "org.freedesktop.portal.ScreenCast" = ["hyprland"];
-        "org.freedesktop.portal.Screenshot" = ["hyprland"];
-        "org.freedesktop.impl.portal.Secret" = ["gnome-keyring"];
-        "org.freedesktop.impl.portal.FileChooser" = ["hyprland"];
-        "org.freedesktop.portal.OpenURI" = ["hyprland"];
       };
       hyprland = {
         default = [ "hyprland" ];
         "org.freedesktop.impl.portal.Settings" = [ "gtk" ];
+        "org.freedesktop.impl.portal.FileChooser" = ["gtk"];
+        "org.freedesktop.impl.portal.Secret" = ["gnome-keyring"];
+      };
+
+      gnome = {
+        default = [ "gnome" ];
       };
     };
   };
@@ -88,12 +80,12 @@ in {
       enable = true;
       mode = "offload";
       cpu = "amd";
-      open = true;
+      open = false;
       setDeviceIds = true;
       integratedGraphicsId = "PCI:6:0:0";
       dedicatedGraphicsId = "PCI:1:0:0";
       powerManagement = true;
-      finegrained = false;
+      finegrained = true;
       # nvidiaPackage = config.boot.kernelPackages.nvidiaPackages.latest;
 
       # nvidiaPackage = config.boot.kernelPackages.nvidiaPackages.mkDriver {
@@ -113,6 +105,16 @@ in {
     };
     sops.enable = true;
   };
+
+  services.udev.extraRules = ''
+    # NVIDIA dGPU (PCI 0000:01:00.0)
+    KERNEL=="card*", KERNELS=="0000:01:00.0", SUBSYSTEM=="drm", SUBSYSTEMS=="pci", SYMLINK+="dri/nvidia-dgpu"
+    KERNEL=="renderD*", KERNELS=="0000:01:00.0", SUBSYSTEM=="drm", SUBSYSTEMS=="pci", SYMLINK+="dri/nvidia-dgpu-render"
+
+    # AMD iGPU (PCI 0000:06:00.0)
+    KERNEL=="card*", KERNELS=="0000:06:00.0", SUBSYSTEM=="drm", SUBSYSTEMS=="pci", SYMLINK+="dri/amd-igpu"
+    KERNEL=="renderD*", KERNELS=="0000:06:00.0", SUBSYSTEM=="drm", SUBSYSTEMS=="pci", SYMLINK+="dri/amd-igpu-render"
+  '';
 
   environment.sessionVariables = {
     NIXOS_OZONE_WL = "1";
@@ -138,7 +140,9 @@ in {
   environment.systemPackages = with pkgs;
     [
 
-      quickshell
+      quickshell    
+      # adwaita-qt
+      # adwaita-qt6
 
       # system monitoring
       lenovo-legion
@@ -165,12 +169,16 @@ in {
     nerd-fonts.jetbrains-mono
   ];
 
-  # Enable numlock on GDM login screen
   programs.dconf.profiles.gdm.databases = [
     {
       settings."org/gnome/desktop/peripherals/keyboard".numlock-state = true;
+      settings."org/gnome/desktop/interface" = {
+        gtk-theme = "Adwaita";
+        color-scheme = "prefer-dark";
+      };
     }
   ];
+
 
   hardware.enableRedistributableFirmware = true;
   networking.firewall.allowedTCPPorts = [ 25565 ];

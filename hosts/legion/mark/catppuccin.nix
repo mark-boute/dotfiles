@@ -7,8 +7,10 @@
     accent = "rosewater";
     cursors.enable = true;
 
+    hyprland.enable = true;
     hyprlock.enable = true;
     hyprtoolkit.enable = true;
+    qt5ct.enable = true;
 
     kitty.enable = true;
     starship.enable = true;

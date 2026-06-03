@@ -86,6 +86,7 @@ in {
         enable = true;
         open = cfg.open;
         powerManagement = cfg.powerManagement;
+        finegrained = cfg.finegrained;
         nvidiaPackage = cfg.nvidiaPackage;
       };
     })
@@ -139,19 +140,17 @@ in {
         };
       };
 
-      # hardware.nvidia.powerManagement.finegrained = mkDefault true;
-
       # add a special boot entry NVIDIA Sync mode for gaming
       specialisation = {
         gaming.configuration = {
           programs.gamemode.enable = true;
 
-          hardware.nvidia.powerManagement.finegrained = false;
+          hardware.nvidia.powerManagement.finegrained = mkForce false;
           hardware.nvidia = {
-            prime.sync.enable = lib.mkForce true;
+            prime.sync.enable = mkForce true;
             prime.offload = {
-              enable = lib.mkForce false;
-              enableOffloadCmd = lib.mkForce false;
+              enable = mkForce false;
+              enableOffloadCmd = mkForce false;
             };
           };
 

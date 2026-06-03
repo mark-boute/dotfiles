@@ -14,7 +14,7 @@ in {
 
     ./mark/git.nix
     ./mark/vscode.nix
-    ./mark/hyprmonitors.nix
+    ./mark/hypr-extra-config.nix
     ./mark/catppuccin.nix
   ];
   gtk.gtk4.theme = config.gtk.theme;
@@ -101,6 +101,8 @@ in {
     EDITOR = "nvim";
     NIXOS_OZONE_WLAN = "1";
     NIXOS_OZONE_WL = "1";
+    QT_QPA_PLATFORMTHEME = "qt5ct";
+    QT_STYLE_OVERRIDE = "adwaita-dark";
   };
 
   programs.home-manager.enable = true; # Let Home Manager install and manage itself.

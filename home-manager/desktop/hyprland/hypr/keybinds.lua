@@ -31,13 +31,9 @@ local A = {}
 A.exec = function(c)
 	return { exec = c }
 end
--- Launch a graphical app via `uwsm app --` so it gets its own scope in
--- app-graphical.slice with a fresh NOTIFY_SOCKET. Required for terminals
--- (and anything that may run sd_notify-emitting children like podman/conmon)
--- to avoid sd_notify MAINPID hijack tearing down the compositor.
--- See uwsm#67.
+
 A.exec_app = function(c)
-	return { exec = "uwsm app -- " .. c }
+	return { exec = "systemd-run --user --scope --slice=app.slice " .. c }
 end
 A.global = function(c)
 	return {

@@ -18,10 +18,27 @@ in {
     #   rtw89
     # ];
 
-    boot.kernelParams = [ "amd_pstate=active" ];
+    boot = {
+      kernelParams = [ 
+        "amd_pstate=active"
+      ];
+    };
 
-    # powerManagement.enable = true;
-    # powerManagement.powertop.enable = true;
+  # This is next up to try out. note that PCIE_ASPM_ON_BAT = "powersupersave"; should be changed. Read tlp docs on that variable first. 
+  # boot = {
+  #     kernelParams = [ 
+  #       "amd_pstate=active"
+  #       "nvidia-drm.modeset=1"
+  #       "nvidia-drm.fbdev=1"
+  #       "acpi_osi=Linux" # Bypasses the buggy [\_SB.PCI0.GPP0.PEGP.GPS.NVD1] ACPI bug
+  #     ];
+
+  #     extraModprobeConfig = ''
+  #       options nvidia "NVreg_DynamicPowerManagement=0x02"
+  #       options snd_hda_intel power_save=1 power_save_controller=Y # Silences the Nvidia Audio link loop
+  #     '';
+  #   };
+
     services = {
       power-profiles-daemon.enable = false;
       tlp = {
@@ -33,20 +50,18 @@ in {
           CPU_ENERGY_PERF_POLICY_ON_AC = "performance";
           CPU_ENERGY_PERF_POLICY_ON_BAT = "balance_power";
 
-          # CPU_MIN_PERF_ON_AC = 0;
-          # CPU_MAX_PERF_ON_AC = 100;
-          # CPU_MIN_PERF_ON_BAT = 0;
-          # CPU_MAX_PERF_ON_BAT = 20;
+          PCIE_ASPM_ON_AC = "default";
+          PCIE_ASPM_ON_BAT = "powersupersave";
+
+          USB_AUTOSUSPEND = 1;
 
           DEVICES_TO_DISABLE_ON_STARTUP= "bluetooth wwan";
           DEVICES_TO_DISABLE_ON_LAN_CONNECT= "wifi wwan";
           DEVICES_TO_DISABLE_ON_WIFI_CONNECT= "wwan";
-
           DEVICES_TO_ENABLE_ON_LAN_DISCONNECT= "wifi";
 
-          #Optional helps save long term battery health
-          START_CHARGE_THRESH_BAT1 = 40; # 40 and bellow it starts to charge
-          STOP_CHARGE_THRESH_BAT1 = 80; # 80 and above it stops charging
+          START_CHARGE_THRESH_BAT1 = 40;
+          STOP_CHARGE_THRESH_BAT1 = 80;
         };
       };
     };
