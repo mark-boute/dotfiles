@@ -101,8 +101,8 @@ in {
     EDITOR = "nvim";
     NIXOS_OZONE_WLAN = "1";
     NIXOS_OZONE_WL = "1";
+    ELECTRON_OZONE_PLATFORM_HINT = "wayland";
     QT_QPA_PLATFORMTHEME = "qt5ct";
-    QT_STYLE_OVERRIDE = "adwaita-dark";
   };
 
   programs.home-manager.enable = true; # Let Home Manager install and manage itself.

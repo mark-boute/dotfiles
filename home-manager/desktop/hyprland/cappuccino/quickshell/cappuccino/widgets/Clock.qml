@@ -14,6 +14,7 @@ Shapes.MenuPill {
     text: mouse.hovered ? Services.SystemClock.datetime : Services.SystemClock.time;
     anchors.centerIn: parent;
     color: Theme.current.rosewater;
+    font.pixelSize: 15;
     font.weight: Font.Medium;
   }
 

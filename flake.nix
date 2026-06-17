@@ -46,6 +46,11 @@
     hyprshutdown.url = "github:hyprwm/hyprshutdown";
     catppuccin.url = "github:catppuccin/nix";
     spicetify-nix.url = "github:Gerg-L/spicetify-nix";
+
+    nix-index-database = {
+      url = "github:nix-community/nix-index-database";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs = {
@@ -82,6 +87,7 @@
           inputs.home-manager.nixosModules.home-manager
           inputs.nix-flatpak.nixosModules.nix-flatpak
           inputs.catppuccin.nixosModules.catppuccin
+          inputs.nix-index-database.nixosModules.nix-index-database
           {
             home-manager = {
               backupFileExtension = "backup";

@@ -60,7 +60,8 @@ Shapes.MenuPill {
           text: onCurrentMonitor ? modelData.id : null;
           anchors.centerIn: parent;
           color: modelData.active ? Theme.latte.base : Theme.macchiato.base;
-          font.weight: modelData.active ? Font.ExtraBold : Font.Medium;
+          font.pixelSize: 12;
+          font.weight: modelData.active ? Font.Bold : Font.Medium;
         }
 
         MouseArea {

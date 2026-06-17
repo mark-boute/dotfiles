@@ -19,10 +19,17 @@ end
 hl.env("XDG_CURRENT_DESKTOP", "Hyprland")
 hl.env("XDG_SESSION_TYPE", "wayland")
 hl.env("XDG_SESSION_DESKTOP", "Hyprland")
-hl.env("QT_AUTO_SCREEN_SCALE_FACTOR", "1")
+
+-- hl.env("QT_AUTO_SCREEN_SCALE_FACTOR", os.getenv("QT_AUTO_SCREEN_SCALE_FACTOR") or "1")
 hl.env("QT_QPA_PLATFORM", "wayland;xcb")
-hl.env("QT_WAYLAND_DISABLE_WINDOWDECORATION", "1")
-hl.env("QT_QPA_PLATFORMTHEME", "qt5ct")
+hl.env("QT_WAYLAND_DISABLE_WINDOWDECORATION", os.getenv("QT_WAYLAND_DISABLE_WINDOWDECORATION") or "1")
+hl.env("QT_QPA_PLATFORMTHEME", os.getenv("QT_QPA_PLATFORMTHEME") or "qt5ct")
+hl.env("QT_STYLE_OVERRIDE", os.getenv("QT_STYLE_OVERRIDE") or "adwaita-dark")
+
+hl.env("GTK_THEME", "catppuccin-macchiato-rosewater-standard-default")
+
+hl.env("ELECTRON_OZONE_PLATFORM_HINT", "wayland")
+hl.config({ xwayland = { force_zero_scaling = true } })
 
 -- Per-user or host overrides added to .config/hypr.
 try_require("monitors")

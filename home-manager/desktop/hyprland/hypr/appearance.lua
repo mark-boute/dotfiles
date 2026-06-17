@@ -1,13 +1,13 @@
 hl.config({
 	general = {
-		gaps_in = 5,
+		gaps_in = 2,
 		gaps_out = {top = 0, left = 5, bottom = 5, right = 5},
         gaps_workspaces = 50;
 		border_size = 2,
         resize_on_border = true,
 
-		["col.active_border"] = { colors = { "rgba(125,196,228,1)", "rgba(244,219,214,1)" }, angle = 45 },
-		["col.inactive_border"] = { colors = { "rgba(125,196,228,0.5)", "rgba(244,219,214,0.4)" }, angle = 45 },
+		["col.active_border"] = { colors = { "rgba(245, 169, 127, 1)", "rgba(244,219,214,1)" }, angle = 45 },
+		["col.inactive_border"] = { colors = { "rgba(245, 169, 127, .4)", "rgba(244,219,214,0.4)" }, angle = 135 },
 		layout = "dwindle",
 
         snap = {

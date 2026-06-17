@@ -1,13 +1,16 @@
 {
-  self,
   config,
-  system,
   pkgs,
-  inputs,
   main-user,
   lib,
   ...
 }: let
+  wallpaper = ../../home-manager/desktop/hyprland/cappuccino/assets/coffee_pixel_art_2560x1600.png;
+  customGrubTheme = pkgs.runCommand "catppuccin-macchiato-grub-coffee" {} ''
+    cp -r ${pkgs.catppuccin-grub}/share/grub/themes/catppuccin-macchiato-grub-theme $out
+    chmod -R u+w $out
+    cp ${wallpaper} $out/background.png
+  '';
 in {
   imports = [
     ./hardware-configuration.nix
@@ -44,34 +47,32 @@ in {
     extraPortals = [
       pkgs.xdg-desktop-portal-gtk
       pkgs.xdg-desktop-portal-hyprland
-      pkgs.xdg-desktop-portal-gnome
     ];
 
     config = {
       common = {
-        default = ["*"];
+        default = [ "gtk" ];
       };
       hyprland = {
-        default = [ "hyprland" ];
-        "org.freedesktop.impl.portal.Settings" = [ "gtk" ];
-        "org.freedesktop.impl.portal.FileChooser" = ["gtk"];
-        "org.freedesktop.impl.portal.Secret" = ["gnome-keyring"];
-      };
+        default = [ "hyprland" "gtk" ];
 
-      gnome = {
-        default = [ "gnome" ];
+        "org.freedesktop.portal.FileChooser" = ["gtk"];
+        "org.freedesktop.portal.OpenURI" = [ "gtk" ];
+
+        "org.freedesktop.impl.portal.Secret" = ["gnome-keyring"];
       };
     };
   };
 
   catppuccin = {
     enable = true;
+    autoEnable = true;
     cache.enable = true;
     flavor = "macchiato";
     accent = "rosewater";
 
     cursors.enable = true;
-    grub.enable = true;
+    grub.enable = false;
     gtk.icon.enable = true;
   };
 
@@ -118,14 +119,11 @@ in {
 
   environment.sessionVariables = {
     NIXOS_OZONE_WL = "1";
-    WLR_NO_HARDWARE_CURSORS = "1";
     GSETTINGS_SCHEMA_DIR = "${pkgs.gsettings-desktop-schemas}/share/gsettings-schemas/${pkgs.gsettings-desktop-schemas.name}";
 
     # XDG and Portal integration
     GTK_USE_PORTAL = "1";
     NIXOS_XDG_OPEN_USE_PORTAL = "1";
-    XDG_SESSION_TYPE = "wayland";
-    XDG_CURRENT_DESKTOP = "Hyprland";
 
     # QT Wayland integration
     QT_QPA_PLATFORM = "wayland";
@@ -140,9 +138,7 @@ in {
   environment.systemPackages = with pkgs;
     [
 
-      quickshell    
-      # adwaita-qt
-      # adwaita-qt6
+      quickshell  
 
       # system monitoring
       lenovo-legion
@@ -151,8 +147,6 @@ in {
       # nvtopPackages.full
 
       nixfmt
-
-      nvchad
 
       # windown emulation
       # winboat
@@ -173,7 +167,7 @@ in {
     {
       settings."org/gnome/desktop/peripherals/keyboard".numlock-state = true;
       settings."org/gnome/desktop/interface" = {
-        gtk-theme = "Adwaita";
+        gtk-theme = "catppuccin-macchiato-rosewater-standard-default";
         color-scheme = "prefer-dark";
       };
     }
@@ -192,6 +186,10 @@ in {
       networkmanager-openvpn # support for EduVPN
     ];
   };
+
+  boot.loader.grub.theme = customGrubTheme;
+
+  programs.nix-index-database.comma.enable = true;
 
   programs.nix-ld.enable = true;
   programs.nix-ld.libraries = with pkgs; [
@@ -222,7 +220,6 @@ in {
       ];
       packages = [
         { appId = "org.vinegarhq.Sober"; origin = "flathub"; }
-        { appId = "app.eduroam.geteduroam"; origin = "flathub"; }
       ];
     };
     pipewire = {

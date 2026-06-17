@@ -18,6 +18,11 @@ in {
       theme = spicePkgs.themes.catppuccin;
       colorScheme = "macchiato";
       wayland = true;
+      spotifyLaunchFlags = "--enable-features=UseOzonePlatform --ozone-platform=wayland";
+    
+      # spotifyPackage = pkgs.spotify.override {
+        # commandLineArgs = "--enable-features=UseOzonePlatform --ozone-platform=wayland";
+      # };
     };
   };
 }

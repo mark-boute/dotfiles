@@ -36,9 +36,6 @@
     navigation.harpoon.enable = true;
 
     utility.oil-nvim.enable = true;
-    filetree.nvimTree = {
-      enable = true;
-    };
 
     clipboard = {
       enable = true;
@@ -54,8 +51,8 @@
 
     theme = {
       enable = true;
-      name = "onedark";
-      style = "warmer";
+      name = "catppuccin";
+      style = "macchiato";
     };
 
     mini = {
@@ -70,7 +67,7 @@
 
     statusline.lualine = {
       enable = true;
-      theme = "onedark";
+      theme = "catppuccin";
     };
 
     telescope.enable = true;
