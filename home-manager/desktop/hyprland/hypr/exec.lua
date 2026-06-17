@@ -13,7 +13,8 @@ return function(qs_config)
     end)
 
     hl.on("config.reloaded", function()
-        hl.dsp.focus({ workspace = 1 })
+        hl.exec_cmd("notify-send -i preferences-system 'Hyprland' 'Config reloaded'")
+        -- hl.dsp.focus({ workspace = 1 })
     end)
 end
 

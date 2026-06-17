@@ -241,24 +241,24 @@ M.binds = {
 
     -- System
 	{ keys = "SUPER + ALT + R", desc = "Reload Hyprland", action = A.exec("hyprctl reload") },
-	{ keys = "SUPER + L", desc = "Lock screen", action = A.global("quickshell:Lock") },
-    { 
-		keys = "SUPER + SHIFT + Delete", 
-		desc = "Reboot system", 
+	{ keys = "SUPER + Escape", desc = "Lock screen", action = A.global("quickshell:Lock") },
+	{ keys = "SUPER + SHIFT + Escape", desc = "Log out", action = A.exec("hyprshutdown -t 'Logging out...' --post-cmd 'hyprctl dispatch exit'") },
+    {
+		keys = "SUPER + SHIFT + Delete",
+		desc = "Reboot system",
 		action = A.exec("hyprshutdown -t 'Restarting...' --post-cmd 'reboot'")
 	},
-    { 
-		keys = "SUPER + Delete", 
-		desc = "Power off system", 
-		action = A.exec("hyprshutdown -t 'Shutting down...' --post-cmd 'shutdown -P 0'"), 
-		{locked = true} 
+    {
+		keys = "SUPER + Delete",
+		desc = "Power off system",
+		action = A.exec("hyprshutdown -t 'Shutting down...' --post-cmd 'shutdown -P 0'"),
+		{locked = true}
 	},
 
 	-- Screenshots
-    { keys = "SUPER + SHIFT + S", desc = "Screenshot (region)", action = A.exec("hyprshot -m region") },
-    { keys = "PRINT", desc = "Screenshot (output)", action = A.exec("hyprshot -m output") },
-    { keys = "SUPER + PRINT", desc = "Screenshot (window)", action = A.exec("hyprshot -m window") },
-    { keys = "SUPER + SHIFT + PRINT", desc = "Screenshot (region)", action = A.exec("hyprshot -m region") },
+    { keys = "SUPER + SHIFT + S", desc = "Screenshot (region)",  action = A.exec("hyprshot -m region -o ~/Pictures/Screenshots") },
+    { keys = "PRINT",             desc = "Screenshot (output)",  action = A.exec("hyprshot -m output -o ~/Pictures/Screenshots") },
+    { keys = "SUPER + PRINT",     desc = "Screenshot (window)",  action = A.exec("hyprshot -m window -o ~/Pictures/Screenshots") },
 
 	-- Volume keys
 	{ keys = "XF86AudioMute", desc = "Toggle mute", action = A.exec("pamixer --toggle-mute") },
@@ -266,16 +266,19 @@ M.binds = {
 	{ keys = "XF86AudioRaiseVolume", desc = "Raise volume", action = A.exec("pamixer --increase 5"), repeating = true },
 
 	-- Brightness and color temperature keys
+	-- Note: if brightnessctl doesn't control your backlight (e.g. NVIDIA routing
+	-- issue), revert to the hyprsunset gamma approach below:
+	--   A.exec("hyprctl hyprsunset gamma +10")  /  A.exec("hyprctl hyprsunset gamma -10")
 	{
 		keys = "XF86MonBrightnessUp",
 		desc = "Increase brightness",
-		action = A.exec("hyprctl hyprsunset gamma +10"),
+		action = A.exec("brightnessctl set 5%+ --min-value=1"),
 		repeating = true,
 	},
 	{
 		keys = "XF86MonBrightnessDown",
 		desc = "Decrease brightness",
-		action = A.exec("hyprctl hyprsunset gamma -10"),
+		action = A.exec("brightnessctl set 5%- --min-value=1"),
 		repeating = true,
 	},
     {

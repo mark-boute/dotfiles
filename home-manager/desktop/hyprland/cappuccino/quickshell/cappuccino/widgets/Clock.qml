@@ -18,16 +18,9 @@ Shapes.MenuPill {
     font.weight: Font.Medium;
   }
 
-  // https://doc.qt.io/qt-6/qtquick-statesanimations-animations.html
-
   HoverHandler {
     id: mouse;
     acceptedDevices: PointerDevice.Mouse | PointerDevice.TouchPad;
-  }
-
-  MouseArea {
-    anchors.fill: parent;
-    onClicked: Hyprland.dispatch(`hl.dsp.dpms({ state = "off" })`);
   }
 }
 
