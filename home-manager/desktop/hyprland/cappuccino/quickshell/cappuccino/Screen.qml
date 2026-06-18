@@ -17,6 +17,7 @@ Scope {
 
       Modules.Bar { modelData: screen.modelData; }
       Modules.Background { modelData: screen.modelData; }
+      Modules.NotificationOverlay { modelData: screen.modelData; }
     }
   }
 }
