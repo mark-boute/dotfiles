@@ -35,11 +35,20 @@ Singleton {
     }
   }
 
+  function getActions(notifId) {
+    var n = root._notifMap[notifId];
+    var actions = (n && n.actions) ? n.actions : [];
+    console.log("[service] getActions notifId=" + notifId + " found=" + !!n + " actionCount=" + actions.length);
+    return actions;
+  }
+
   NotificationServer {
     id: server;
     keepOnReload: true;
+    actionsSupported: true;
 
     onNotification: notif => {
+      console.log("[service] received notifId=" + notif.id + " actions=" + notif.actions.length + " summary=" + notif.summary);
       // Replace in-place if the app re-sent the same notification ID.
       for (var i = 0; i < toastModel.count; i++) {
         if (toastModel.get(i).notifId === notif.id) {

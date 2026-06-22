@@ -149,7 +149,12 @@ PanelWindow {
         easing.type: Easing.Linear;
       }
 
-      Component.onCompleted: holdTimer.start();
+      property var notifActions: Services.NotificationService.getActions(toast.notifId);
+
+      Component.onCompleted: {
+        console.log("[toast] notifId=" + toast.notifId + " actions=" + JSON.stringify(notifActions) + " count=" + notifActions.length);
+        holdTimer.start();
+      }
 
       ColumnLayout {
         id: toastContent;
@@ -157,9 +162,13 @@ PanelWindow {
         anchors {
           left: parent.left;
           right: closeBtn.left;
-          verticalCenter: parent.verticalCenter;
+          // When actions are present, anchor to top rather than centering vertically
+          // so the action row sits flush with the bottom padding.
+          top: toast.notifActions.length > 0 ? parent.top : undefined;
+          verticalCenter: toast.notifActions.length > 0 ? undefined : parent.verticalCenter;
           leftMargin: 14;
           rightMargin: 4;
+          topMargin: toast.notifActions.length > 0 ? 10 : 0;
         }
 
         Text {
@@ -187,6 +196,53 @@ PanelWindow {
           color: Theme.current.overlay1;
           font.pixelSize: 11;
           Layout.fillWidth: true;
+        }
+
+        Row {
+          visible: toast.notifActions.length > 0;
+          spacing: 6;
+          Layout.fillWidth: true;
+          Layout.topMargin: 6;
+          Layout.bottomMargin: 2;
+
+          Repeater {
+            model: toast.notifActions;
+
+            delegate: Rectangle {
+              id: actionBtn;
+              required property var modelData;
+
+              implicitWidth: actionLabel.implicitWidth + 16;
+              height: 22;
+              radius: 11;
+              color: actionHover.hovered ? Theme.current.surface2 : Theme.current.surface1;
+
+              Behavior on color { ColorAnimation { duration: 100 } }
+
+              Text {
+                id: actionLabel;
+                text: actionBtn.modelData.text;
+                color: actionHover.hovered ? Theme.current.text : Theme.current.subtext0;
+                font.pixelSize: 11;
+                font.weight: Font.Medium;
+                anchors.centerIn: parent;
+
+                Behavior on color { ColorAnimation { duration: 100 } }
+              }
+
+              HoverHandler { id: actionHover; }
+
+              TapHandler {
+                onTapped: {
+                  holdTimer.stop();
+                  dismissTimer.stop();
+                  fadeAnim.stop();
+                  actionBtn.modelData.invoke();
+                  Services.NotificationService.dismiss(toast.notifId);
+                }
+              }
+            }
+          }
         }
       }
 

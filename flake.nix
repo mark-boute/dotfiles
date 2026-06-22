@@ -87,7 +87,7 @@
           inputs.home-manager.nixosModules.home-manager
           inputs.nix-flatpak.nixosModules.nix-flatpak
           inputs.catppuccin.nixosModules.catppuccin
-          inputs.nix-index-database.nixosModules.nix-index-database
+          inputs.nix-index-database.nixosModules.default
           {
             home-manager = {
               backupFileExtension = "backup";

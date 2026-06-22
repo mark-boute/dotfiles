@@ -13,6 +13,12 @@ local monitors = {
         position = "2048x-160",
         scale = 1,
     },
+    {
+        output = "desc:Lenovo Group Limited LEN T22i-10 V5NB5377",
+        mode = "1920x1080@60",
+        position = "2048x-160",
+        scale = 1,
+    },
     { output = "", mode = "preferred", position = "auto", scale = 1, mirror = "desc:California Institute of Technology 0x1637 0x00006000" },
 }
 
