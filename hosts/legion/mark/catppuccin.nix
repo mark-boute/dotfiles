@@ -1,4 +1,13 @@
-{pkgs, ...}:
+{pkgs, lib, config, ...}:
+let
+  # catppuccin's qtct conf omits icon_theme, so Qt apps resolve no named icons.
+  qtctConf = pkgs.writeText "qtct.conf" ''
+    [Appearance]
+    color_scheme_path=${pkgs.catppuccin-qt5ct}/catppuccin-${config.catppuccin.flavor}-${config.catppuccin.accent}.conf
+    custom_palette=true
+    icon_theme=Papirus-Dark
+  '';
+in
 {
   catppuccin = {
     enable = true;
@@ -34,7 +43,7 @@
   gtk = {
     enable = true;
     theme = {
-      name = "catppuccin-macchiato-rosewater-standard-default";
+      name = "catppuccin-macchiato-rosewater-standard";
       package = pkgs.catppuccin-gtk.override {
         accents = [ "rosewater" ];
         size = "standard";
@@ -46,11 +55,21 @@
     gtk4.extraConfig.gtk-application-prefer-dark-theme = 1;
   };
 
+  # GNOME (gnome-tweaks / Settings) rewrites these as real files at runtime,
+  # which collides with home-manager's backup-on-activate. Force overwrite so
+  # activation never aborts trying to back up to an already-existing *.backup.
+  xdg.configFile."gtk-4.0/settings.ini".force = true;
+  xdg.configFile."gtk-4.0/gtk.css".force = true;
+
   qt = {
     enable = true;
     platformTheme.name = "qtct";
     style.name = "kvantum";
   };
+
+  # mkForce overrides catppuccin's own `.source` for these confs.
+  xdg.configFile."qt5ct/qt5ct.conf".source = lib.mkForce qtctConf;
+  xdg.configFile."qt6ct/qt6ct.conf".source = lib.mkForce qtctConf;
 
   home.packages = with pkgs; [
     libsForQt5.qt5ct
@@ -60,6 +79,6 @@
   ];
 
   home.sessionVariables = {
-    GTK_THEME = "catppuccin-macchiato-rosewater-standard-default";
+    GTK_THEME = "catppuccin-macchiato-rosewater-standard";
   };
 }

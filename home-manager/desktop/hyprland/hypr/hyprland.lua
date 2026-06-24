@@ -26,7 +26,7 @@ hl.env("QT_WAYLAND_DISABLE_WINDOWDECORATION", os.getenv("QT_WAYLAND_DISABLE_WIND
 hl.env("QT_QPA_PLATFORMTHEME", os.getenv("QT_QPA_PLATFORMTHEME") or "qt5ct")
 hl.env("QT_STYLE_OVERRIDE", os.getenv("QT_STYLE_OVERRIDE") or "adwaita-dark")
 
-hl.env("GTK_THEME", "catppuccin-macchiato-rosewater-standard-default")
+hl.env("GTK_THEME", "catppuccin-macchiato-rosewater-standard")
 
 hl.env("ELECTRON_OZONE_PLATFORM_HINT", "wayland")
 hl.config({ xwayland = { force_zero_scaling = true } })

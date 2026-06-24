@@ -5,11 +5,16 @@
   lib,
   ...
 }: let
-  wallpaper = ../../home-manager/desktop/hyprland/cappuccino/assets/coffee_pixel_art_2560x1600.png;
-  customGrubTheme = pkgs.runCommand "catppuccin-macchiato-grub-coffee" {} ''
-    cp -r ${pkgs.catppuccin-grub}/share/grub/themes/catppuccin-macchiato-grub-theme $out
+  grubLogo = ../../home-manager/desktop/hyprland/cappuccino/assets/coffee_pixel.png;
+  logoSize = 600;
+  resizeFactor = 0.25; # fraction of the original size
+  customGrubTheme = pkgs.runCommand "catppuccin-macchiato-grub-coffee" {nativeBuildInputs = [pkgs.imagemagick];} ''
+    cp -r ${pkgs.catppuccin-grub.override {flavor = "macchiato";}} $out
     chmod -R u+w $out
-    cp ${wallpaper} $out/background.png
+    magick ${grubLogo} -resize ${toString (builtins.floor (resizeFactor * 100))}% $out/logo.png
+    substituteInPlace $out/theme.txt \
+      --replace "left = 50%-50" "left = 50%-${toString (builtins.floor (logoSize * resizeFactor / 2))}" \
+      --replace "top = 50%-50" "top = 50%-${toString (builtins.floor (logoSize * resizeFactor / 2))}"
   '';
 in {
   imports = [
@@ -167,7 +172,7 @@ in {
     {
       settings."org/gnome/desktop/peripherals/keyboard".numlock-state = true;
       settings."org/gnome/desktop/interface" = {
-        gtk-theme = "catppuccin-macchiato-rosewater-standard-default";
+        gtk-theme = "catppuccin-macchiato-rosewater-standard";
         color-scheme = "prefer-dark";
       };
     }

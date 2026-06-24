@@ -200,8 +200,12 @@ M.binds = {
     { keys = "SUPER + Q", desc = "Close focused window", action = A.kill() },
     {
 		keys = "SUPER + SHIFT + Q",
-		desc = "Force kill active window",
-		action = A.exec("kill -9 $(hyprctl activewindow -j | jq -r '.pid')"),
+		desc = "Force kill active window (only SIGKILLs when it's the process's last window)",
+		action = A.exec(
+			"pid=$(hyprctl activewindow -j | jq -r '.pid'); "
+				.. "n=$(hyprctl clients -j | jq --argjson p \"$pid\" '[.[] | select(.pid==$p)] | length'); "
+				.. "if [ \"$n\" -le 1 ]; then kill -9 \"$pid\"; else hyprctl dispatch killactive; fi"
+		),
 	},
 	{ keys = "SUPER + F", desc = "Fullscreen", action = A.fullscreen("fullscreen") },
 	{ keys = "SUPER + SHIFT + F", desc = "Fake fullscreen", action = A.fullscreen("maximized") },

@@ -1,6 +1,8 @@
 import QtQuick
 import QtQuick.Layouts
 import Quickshell
+import Quickshell.Services.Notifications
+
 
 import qs
 import qs.services as Services
@@ -14,266 +16,268 @@ PanelWindow {
   required property var modelData;
   screen: modelData;
 
-  visible: true;
-  color: "transparent";
-  exclusiveZone: 0;
-
-  anchors { top: true; left: true; right: true; }
-
   readonly property int toastWidth:    320;
   readonly property int toastRadius:   14;
-  readonly property int toastPadding:  16;
+  readonly property int toastPadding:  15;
   readonly property int spacing:       5;
   readonly property int rightOffset:   10;
   readonly property int topOffset:     5;
-  readonly property int holdDelay:     10000;
-  readonly property int fadeDuration:  5000;
   readonly property int slideInMs:     220;
   readonly property int removeMs:      200;
 
-  // Mask: covers only the toast column. Zero height when no toasts → no input
-  // interception anywhere on screen while idle.
-  mask: Region {
-    x: overlay.width - overlay.toastWidth - overlay.rightOffset
-    y: overlay.topOffset
-    width: overlay.toastWidth
-    height: Services.NotificationService.toasts.count > 0
-            ? toastList.contentHeight
-              + Math.max(0, toastList.count - 1) * toastList.spacing
-              + overlay.topOffset
-            : 0
-  }
+  readonly property int contentHeight:  50;
 
-  implicitHeight: Math.max(1,
-                  toastList.contentHeight
-                  + Math.max(0, toastList.count - 1) * toastList.spacing
-                  + topOffset);
+  readonly property int  actionHeight:   26;
+  readonly property int  actionRadius:   8;
+  readonly property int  actionSpacing:  6;
+  readonly property int  actionHPadding: 12;
+  readonly property int  actionFontSize: 11;
+  readonly property int  actionIconSize: 14;
 
-  ListView {
-    id: toastList;
-    width: overlay.toastWidth;
-    height: contentHeight;
-    interactive: false;
+  visible: true;
+  color: "transparent";
+  exclusionMode: ExclusionMode.Ignore;
+
+  anchors { top: true; right: true; }
+  margins { top: topOffset + Theme.barHeight + Theme.defaultMargin; right: rightOffset; }
+
+  implicitWidth: toastWidth;
+  implicitHeight: Math.max(1, column.implicitHeight);
+
+  ColumnLayout {
+    id: column;
+    width: parent.width;
     spacing: overlay.spacing;
-    anchors { top: parent.top; right: parent.right; rightMargin: overlay.rightOffset; topMargin: overlay.topOffset; }
 
-    model: Services.NotificationService.toasts;
+    Repeater {
+      model: Services.NotificationService.trackedNotifications;
+      delegate: Rectangle {
+        id: card;
+        required property var modelData;
 
-    add: Transition {
-      ParallelAnimation {
-        NumberAnimation { property: "opacity"; from: 0; to: 1; duration: overlay.slideInMs - 20; easing.type: Easing.OutCubic }
-        NumberAnimation { property: "x"; from: 12; to: 0; duration: overlay.slideInMs; easing.type: Easing.OutCubic }
-      }
-    }
+        property int fadeMs: Services.NotificationService.fadeDuration;
+        Behavior on opacity {
+          NumberAnimation { duration: card.fadeMs; easing.type: Easing.OutCubic }
+        }
 
-    remove: Transition {
-      ParallelAnimation {
-        NumberAnimation { property: "opacity"; to: 0; duration: overlay.removeMs - 40; easing.type: Easing.OutCubic }
-        NumberAnimation { property: "x"; to: 12; duration: overlay.removeMs - 40; easing.type: Easing.OutCubic }
-        NumberAnimation { property: "height"; to: 0; duration: overlay.removeMs; easing.type: Easing.OutCubic }
-      }
-    }
-
-    displaced: Transition {
-      NumberAnimation { property: "y"; duration: overlay.removeMs - 20; easing.type: Easing.OutCubic }
-    }
-
-    delegate: Rectangle {
-      id: toast;
-      required property int    notifId;
-      required property string summary;
-      required property string body;
-      required property string appName;
-      required property int    urgency;
-      required property int    timeout;
-
-      width: overlay.toastWidth;
-      height: toastContent.implicitHeight + overlay.toastPadding;
-      radius: overlay.toastRadius;
-      color: Theme.current.surface0;
-      border.width: 2;
-      border.color: toast.urgency === 2 ? Theme.current.red
-                  : toast.urgency === 0 ? Theme.current.overlay1
-                  : Theme.current.blue;
-
-      // Whether this toast was the last one hovered — used to know when to restart
-      // the hold timer after the cursor leaves, even from another screen's delegate.
-      property bool wasHovered: false;
-
-      HoverHandler {
-        id: toastHover;
-        onHoveredChanged: {
-          if (toastHover.hovered) {
-            Services.NotificationService.hoveredNotifId = toast.notifId;
-          } else if (Services.NotificationService.hoveredNotifId === toast.notifId) {
-            Services.NotificationService.hoveredNotifId = -1;
+        Connections {
+          target: Services.NotificationService;
+          function onFadeOut(notification) {
+            if (notification.id !== card.modelData.id) return;
+            card.fadeMs = Services.NotificationService.fadeDuration;
+            card.opacity = 0;
+          }
+          function onFadeIn(notification) {
+            if (notification.id !== card.modelData.id) return;
+            card.fadeMs = Services.NotificationService.fadeInDuration;
+            card.opacity = 1;
           }
         }
-      }
 
-      // React to hover changes from ANY screen's delegate for this notification.
-      Connections {
-        target: Services.NotificationService;
-        function onHoveredNotifIdChanged() {
-          var hov = Services.NotificationService.hoveredNotifId;
-          if (hov === toast.notifId) {
-            toast.wasHovered = true;
-            holdTimer.stop();
-            dismissTimer.stop();
-            fadeAnim.stop();
-            toast.opacity = 1;
-          } else if (toast.wasHovered) {
-            toast.wasHovered = false;
-            holdTimer.restart();
+        HoverHandler {
+          id: cardHover;
+          onHoveredChanged: cardHover.hovered
+            ? Services.NotificationService.stopTimer(card.modelData)
+            : Services.NotificationService.resetTimer(card.modelData);
+        }
+
+        Layout.fillWidth: true;
+        Layout.preferredHeight: body.implicitHeight + overlay.toastPadding * 2;
+
+        radius: overlay.toastRadius;
+        color: Theme.current.surface0;
+        border.width: 2;
+        border.color: card.modelData.urgency === NotificationUrgency.Critical ? Theme.current.red
+                    : card.modelData.urgency === NotificationUrgency.Normal ? Theme.current.blue
+                    : Theme.current.overlay1;
+
+        ColumnLayout {
+          id: body;
+          anchors {
+            left: parent.left;
+            right: parent.right;
+            top: parent.top;
+            margins: overlay.toastPadding;
           }
-        }
-      }
+          spacing: overlay.actionSpacing;
 
-      Timer {
-        id: holdTimer;
-        interval: overlay.holdDelay;
-        onTriggered: { fadeAnim.restart(); dismissTimer.restart(); }
-      }
+          RowLayout {
+            id: content;
+            Layout.fillWidth: true;
+            Layout.preferredHeight: Math.max(overlay.contentHeight, textColumn.implicitHeight);
+            Layout.rightMargin: 22;
+            spacing: overlay.spacing;
 
-      Timer {
-        id: dismissTimer;
-        interval: overlay.fadeDuration;
-        onTriggered: Services.NotificationService.dismiss(toast.notifId);
-      }
+            Image {
+              id: icon;
+              readonly property int box: overlay.contentHeight - 20;
+              Layout.alignment: Qt.AlignTop;
+              Layout.topMargin: 10;
+              Layout.leftMargin: 4;
+              Layout.rightMargin: 10;
 
-      NumberAnimation {
-        id: fadeAnim;
-        target: toast; property: "opacity";
-        from: 1; to: 0;
-        duration: overlay.fadeDuration;
-        easing.type: Easing.Linear;
-      }
+              Layout.preferredHeight: icon.box;
+              Layout.preferredWidth: icon.implicitHeight > 0
+                                   ? icon.box * icon.implicitWidth / icon.implicitHeight
+                                   : icon.box;
+              fillMode: Image.PreserveAspectFit;
+              visible: source.toString() !== "";
+              source: {
+                if (card.modelData.image) return card.modelData.image;
+                var ic = card.modelData.appIcon;
+                if (!ic) return "";
+                if (ic.startsWith("/") || ic.indexOf("://") !== -1) return ic;
+                return Quickshell.iconPath(ic, true);
+              }
+            }
 
-      property var notifActions: Services.NotificationService.getActions(toast.notifId);
-
-      Component.onCompleted: {
-        console.log("[toast] notifId=" + toast.notifId + " actions=" + JSON.stringify(notifActions) + " count=" + notifActions.length);
-        holdTimer.start();
-      }
-
-      ColumnLayout {
-        id: toastContent;
-        spacing: 2;
-        anchors {
-          left: parent.left;
-          right: closeBtn.left;
-          // When actions are present, anchor to top rather than centering vertically
-          // so the action row sits flush with the bottom padding.
-          top: toast.notifActions.length > 0 ? parent.top : undefined;
-          verticalCenter: toast.notifActions.length > 0 ? undefined : parent.verticalCenter;
-          leftMargin: 14;
-          rightMargin: 4;
-          topMargin: toast.notifActions.length > 0 ? 10 : 0;
-        }
-
-        Text {
-          text: toast.summary;
-          color: Theme.current.text;
-          font.pixelSize: 13;
-          font.weight: Font.DemiBold;
-          elide: Text.ElideRight;
-          Layout.fillWidth: true;
-        }
-
-        Text {
-          visible: toast.body.length > 0;
-          text: toast.body;
-          color: Theme.current.subtext0;
-          font.pixelSize: 12;
-          wrapMode: Text.WordWrap;
-          maximumLineCount: 2;
-          elide: Text.ElideRight;
-          Layout.fillWidth: true;
-        }
-
-        Text {
-          text: toast.appName;
-          color: Theme.current.overlay1;
-          font.pixelSize: 11;
-          Layout.fillWidth: true;
-        }
-
-        Row {
-          visible: toast.notifActions.length > 0;
-          spacing: 6;
-          Layout.fillWidth: true;
-          Layout.topMargin: 6;
-          Layout.bottomMargin: 2;
-
-          Repeater {
-            model: toast.notifActions;
-
-            delegate: Rectangle {
-              id: actionBtn;
-              required property var modelData;
-
-              implicitWidth: actionLabel.implicitWidth + 16;
-              height: 22;
-              radius: 11;
-              color: actionHover.hovered ? Theme.current.surface2 : Theme.current.surface1;
-
-              Behavior on color { ColorAnimation { duration: 100 } }
+            ColumnLayout {
+              id: textColumn;
+              Layout.fillWidth: true;
+              Layout.alignment: Qt.AlignVCenter;
+              spacing: 2;
 
               Text {
-                id: actionLabel;
-                text: actionBtn.modelData.text;
-                color: actionHover.hovered ? Theme.current.text : Theme.current.subtext0;
-                font.pixelSize: 11;
-                font.weight: Font.Medium;
-                anchors.centerIn: parent;
-
-                Behavior on color { ColorAnimation { duration: 100 } }
+                text: card.modelData.summary || "";
+                color: Theme.current.text;
+                font.pixelSize: 13;
+                font.weight: Font.DemiBold;
+                elide: Text.ElideRight;
+                Layout.fillWidth: true;
               }
 
-              HoverHandler { id: actionHover; }
+              Text {
+                id: bodyText;
+                property bool copied: false;
+                visible: card.modelData.body !== "";
+                text: copied ? (card.modelData.body || "").replace("</a>", "</a> 📋")
+                             : (card.modelData.body || "");
+                color: Theme.current.subtext0;
+                font.pixelSize: 12;
+                wrapMode: Text.WordWrap;
+                maximumLineCount: 2;
+                Layout.fillWidth: true;
 
-              TapHandler {
-                onTapped: {
-                  holdTimer.stop();
-                  dismissTimer.stop();
-                  fadeAnim.stop();
-                  actionBtn.modelData.invoke();
-                  Services.NotificationService.dismiss(toast.notifId);
+                textFormat: Text.StyledText;
+                linkColor: Theme.current.sapphire;
+                onLinkActivated: link => Qt.openUrlExternally(link);
+
+                Timer { id: copiedReset; interval: 1500; onTriggered: bodyText.copied = false; }
+
+                MouseArea {
+                  anchors.fill: parent;
+                  acceptedButtons: Qt.RightButton;
+                  cursorShape: bodyText.hoveredLink ? Qt.PointingHandCursor : Qt.ArrowCursor;
+                  onClicked: mouse => {
+                    var link = bodyText.linkAt(mouse.x, mouse.y);
+                    if (!link) return;
+                    Quickshell.execDetached(["wl-copy", link]);
+                    bodyText.copied = true;
+                    copiedReset.restart();
+                  }
+                }
+              }
+
+              Text {
+                visible: card.modelData.appName !== "";
+                text: card.modelData.appName || "";
+                color: Theme.current.overlay1;
+                font.pixelSize: 11;
+                Layout.fillWidth: true;
+              }
+            }
+          }
+
+          Flow {
+            id: actionRow;
+            Layout.fillWidth: true;
+            visible: card.modelData.actions.length > 0;
+            spacing: overlay.actionSpacing;
+
+            Repeater {
+              model: card.modelData.actions;
+              delegate: Rectangle {
+                id: actionBtn;
+                required property var modelData;
+                readonly property bool hasIcon:
+                  card.modelData.hasActionIcons && actionBtn.modelData.identifier !== "";
+
+                implicitWidth: actionContent.implicitWidth + overlay.actionHPadding * 2;
+                implicitHeight: overlay.actionHeight;
+                radius: overlay.actionRadius;
+                color: actionHover.hovered ? Theme.current.surface2 : Theme.current.surface1;
+
+                Behavior on color { ColorAnimation { duration: 100 } }
+
+                Row {
+                  id: actionContent;
+                  anchors.centerIn: parent;
+                  spacing: 5;
+
+                  Image {
+                    id: actionIcon;
+                    visible: actionBtn.hasIcon && source.toString() !== "";
+                    anchors.verticalCenter: parent.verticalCenter;
+                    width: overlay.actionIconSize;
+                    height: overlay.actionIconSize;
+                    sourceSize.width: overlay.actionIconSize;
+                    sourceSize.height: overlay.actionIconSize;
+                    fillMode: Image.PreserveAspectFit;
+                    source: actionBtn.hasIcon
+                          ? Quickshell.iconPath(actionBtn.modelData.identifier, true)
+                          : "";
+                  }
+
+                  Text {
+                    id: actionLabel;
+                    anchors.verticalCenter: parent.verticalCenter;
+                    visible: text.length > 0;
+                    text: actionBtn.modelData.text;
+                    color: actionHover.hovered ? Theme.current.text : Theme.current.subtext0;
+                    font.pixelSize: overlay.actionFontSize;
+                    font.weight: Font.Medium;
+
+                    Behavior on color { ColorAnimation { duration: 100 } }
+                  }
+                }
+
+                HoverHandler { id: actionHover; }
+
+                TapHandler {
+                  onTapped: actionBtn.modelData.invoke();
                 }
               }
             }
           }
         }
-      }
 
-      Rectangle {
-        id: closeBtn;
-        width: 22;
-        height: 22;
-        radius: 11;
-        color: toastHover.hovered ? Theme.current.surface2 : "transparent";
-        anchors { right: parent.right; rightMargin: 6; verticalCenter: parent.verticalCenter; }
-
-        Behavior on color { ColorAnimation { duration: 100 } }
-
-        Text {
-          text: "×";
-          color: toastHover.hovered ? Theme.current.text : Theme.current.overlay1;
-          font.pixelSize: 14;
-          anchors.centerIn: parent;
+        Rectangle {
+          id: closeBtn;
+          width: 22;
+          height: 22;
+          radius: 11;
+          color: closeHover.hovered ? Theme.current.surface2 : "transparent";
+          anchors { right: parent.right; top: parent.top; rightMargin: 6; topMargin: 6; }
 
           Behavior on color { ColorAnimation { duration: 100 } }
-        }
 
-        TapHandler {
-          onTapped: {
-            holdTimer.stop();
-            dismissTimer.stop();
-            fadeAnim.stop();
-            Services.NotificationService.dismiss(toast.notifId);
+          Text {
+            text: "×";
+            color: closeHover.hovered ? Theme.current.text : Theme.current.overlay1;
+            font.pixelSize: 14;
+            anchors.centerIn: parent;
+
+            Behavior on color { ColorAnimation { duration: 100 } }
+          }
+
+          HoverHandler { id: closeHover; }
+
+          TapHandler {
+            onTapped: card.modelData.dismiss();
           }
         }
       }
     }
   }
+
 }
