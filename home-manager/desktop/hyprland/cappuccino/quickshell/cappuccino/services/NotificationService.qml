@@ -79,8 +79,12 @@ Singleton {
     actionsSupported: true;
     actionIconsSupported: true;
     bodySupported: true;
+    bodyMarkupSupported: true;
     bodyHyperlinksSupported: true;
+    bodyImagesSupported: true;
     imageSupported: true;
+
+    persistenceSupported: false;
 
     onNotification: n => {
       n.tracked = true;
