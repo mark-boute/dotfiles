@@ -3,14 +3,9 @@ import QtQuick.Layouts
 import Quickshell
 import Quickshell.Services.Notifications
 
-
 import qs
 import qs.services as Services
 
-// Always-present overlay so Hyprland maintains pointer focus on this surface.
-// Input is gated via `mask` — empty when no toasts, filled when toasts are shown.
-// This avoids the "new surface on visible=true gets no button events until cursor
-// leaves and re-enters" problem with conditionally-visible PanelWindows.
 PanelWindow {
   id: overlay;
   required property var modelData;
@@ -55,6 +50,19 @@ PanelWindow {
         id: card;
         required property var modelData;
 
+        readonly property var clickAction: {
+          var as = card.modelData.actions;
+          for (var i = 0; i < as.length; i++)
+            if (as[i].identifier === "default") return as[i];
+          return as.length === 1 ? as[0] : null;
+        }
+        readonly property var buttonActions: {
+          var as = card.modelData.actions, out = [];
+          for (var i = 0; i < as.length; i++)
+            if (as[i] !== card.clickAction) out.push(as[i]);
+          return out;
+        }
+
         property int fadeMs: Services.NotificationService.fadeDuration;
         Behavior on opacity {
           NumberAnimation { duration: card.fadeMs; easing.type: Easing.OutCubic }
@@ -79,6 +87,15 @@ PanelWindow {
           onHoveredChanged: cardHover.hovered
             ? Services.NotificationService.stopTimer(card.modelData)
             : Services.NotificationService.resetTimer(card.modelData);
+        }
+
+        TapHandler {
+          acceptedButtons: Qt.LeftButton;
+          onTapped: {
+            Services.NotificationService.focusApp(card.modelData);
+            if (card.clickAction) card.clickAction.invoke();
+            else card.modelData.dismiss();
+          }
         }
 
         Layout.fillWidth: true;
@@ -160,20 +177,24 @@ PanelWindow {
 
                 textFormat: Text.StyledText;
                 linkColor: Theme.current.sapphire;
-                onLinkActivated: link => Qt.openUrlExternally(link);
 
                 Timer { id: copiedReset; interval: 1500; onTriggered: bodyText.copied = false; }
 
                 MouseArea {
                   anchors.fill: parent;
-                  acceptedButtons: Qt.RightButton;
+                  acceptedButtons: Qt.LeftButton | Qt.RightButton;
                   cursorShape: bodyText.hoveredLink ? Qt.PointingHandCursor : Qt.ArrowCursor;
+                  onPressed: mouse => { mouse.accepted = bodyText.linkAt(mouse.x, mouse.y) !== ""; }
                   onClicked: mouse => {
                     var link = bodyText.linkAt(mouse.x, mouse.y);
                     if (!link) return;
-                    Quickshell.execDetached(["wl-copy", link]);
-                    bodyText.copied = true;
-                    copiedReset.restart();
+                    if (mouse.button === Qt.RightButton) {
+                      Quickshell.execDetached(["wl-copy", link]);
+                      bodyText.copied = true;
+                      copiedReset.restart();
+                    } else {
+                      Qt.openUrlExternally(link);
+                    }
                   }
                 }
               }
@@ -191,16 +212,17 @@ PanelWindow {
           Flow {
             id: actionRow;
             Layout.fillWidth: true;
-            visible: card.modelData.actions.length > 0;
+            visible: card.buttonActions.length > 0;
             spacing: overlay.actionSpacing;
 
             Repeater {
-              model: card.modelData.actions;
+              model: card.buttonActions;
               delegate: Rectangle {
                 id: actionBtn;
                 required property var modelData;
+                readonly property var notification: card.modelData;
                 readonly property bool hasIcon:
-                  card.modelData.hasActionIcons && actionBtn.modelData.identifier !== "";
+                  actionBtn.notification.hasActionIcons && actionBtn.modelData.identifier !== "";
 
                 implicitWidth: actionContent.implicitWidth + overlay.actionHPadding * 2;
                 implicitHeight: overlay.actionHeight;
@@ -244,7 +266,11 @@ PanelWindow {
                 HoverHandler { id: actionHover; }
 
                 TapHandler {
-                  onTapped: actionBtn.modelData.invoke();
+                  gesturePolicy: TapHandler.ReleaseWithinBounds;
+                  onTapped: {
+                    actionBtn.modelData.invoke();
+                    Services.NotificationService.focusApp(actionBtn.notification);
+                  }
                 }
               }
             }
@@ -273,6 +299,7 @@ PanelWindow {
           HoverHandler { id: closeHover; }
 
           TapHandler {
+            gesturePolicy: TapHandler.ReleaseWithinBounds;
             onTapped: card.modelData.dismiss();
           }
         }

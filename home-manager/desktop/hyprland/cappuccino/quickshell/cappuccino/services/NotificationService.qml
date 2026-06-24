@@ -72,6 +72,15 @@ Singleton {
     }
   }
 
+  function focusApp(notification) {
+    var id = notification.desktopEntry !== "" ? notification.desktopEntry
+                                              : notification.appName;
+    // Trailing .* because class: is a full regex match and the id is often a
+    // prefix of the real class (e.g. "zen" -> "zen-beta" for a browser tab).
+    if (id) Quickshell.execDetached(["hyprctl", "dispatch",
+      "hl.dsp.focus({ window = \"class:(?i)" + id + ".*\" })"]);
+  }
+
   NotificationServer {
     id: server;
 

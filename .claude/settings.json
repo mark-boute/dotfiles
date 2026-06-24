@@ -1,0 +1,7 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(notify-send -a \"Signal\" --hint=string:desktop-entry:signal \"Focus debug 🔎\" \"Click Open while we watch logs.\" -A \"open=Open\")"
+    ]
+  }
+}
