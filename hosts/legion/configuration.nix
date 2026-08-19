@@ -32,6 +32,7 @@ in {
   };
 
   virtualisation.docker.enable = true;
+  virtualisation.docker.enableOnBoot = false; # socket-activated on first use
   hardware.nvidia-container-toolkit.enable = true;
   boot.extraModulePackages = [ config.boot.kernelPackages.lenovo-legion-module ];
   time.hardwareClockInLocalTime = true;
@@ -112,6 +113,8 @@ in {
     sops.enable = true;
   };
 
+  services.fwupd.enable = true; # BIOS/firmware updates via LVFS (fwupdmgr)
+
   services.udev.extraRules = ''
     # NVIDIA dGPU (PCI 0000:01:00.0)
     KERNEL=="card*", KERNELS=="0000:01:00.0", SUBSYSTEM=="drm", SUBSYSTEMS=="pci", SYMLINK+="dri/nvidia-dgpu"
@@ -120,6 +123,14 @@ in {
     # AMD iGPU (PCI 0000:06:00.0)
     KERNEL=="card*", KERNELS=="0000:06:00.0", SUBSYSTEM=="drm", SUBSYSTEMS=="pci", SYMLINK+="dri/amd-igpu"
     KERNEL=="renderD*", KERNELS=="0000:06:00.0", SUBSYSTEM=="drm", SUBSYSTEMS=="pci", SYMLINK+="dri/amd-igpu-render"
+
+    # Pin wakeup off on the dGPU's own functions so a spurious PME from the
+    # card while it sits in D3cold can't resume the machine in a suspend loop.
+    # (The parent root port 0000:00:01.1 is intentionally left alone: the
+    # kernel re-enables its wakeup for runtime-PM, and the leaf rules below are
+    # what actually stop the card from generating the wake event.)
+    ACTION=="add", SUBSYSTEM=="pci", KERNEL=="0000:01:00.0", ATTR{power/wakeup}="disabled"
+    ACTION=="add", SUBSYSTEM=="pci", KERNEL=="0000:01:00.1", ATTR{power/wakeup}="disabled"
   '';
 
   environment.sessionVariables = {
@@ -234,6 +245,19 @@ in {
       pulse.enable = true;
       # If you want to use JACK applications, uncomment this
       #jack.enable = true;
+
+      # The dGPU's HDMI/DP audio (0000:01:00.1) is useless without an external
+      # display, and WirePlumber holding its control device kept the codec at D0,
+      # which in turn kept the dGPU pinned out of D3cold. Disable the card so the
+      # GPU can actually power down on battery.
+      wireplumber.extraConfig."51-disable-nvidia-hdmi-audio" = {
+        "monitor.alsa.rules" = [
+          {
+            matches = [ { "device.name" = "alsa_card.pci-0000_01_00.1"; } ];
+            actions.update-props."device.disabled" = true;
+          }
+        ];
+      };
     };
 
     displayManager.gdm.enable = true;

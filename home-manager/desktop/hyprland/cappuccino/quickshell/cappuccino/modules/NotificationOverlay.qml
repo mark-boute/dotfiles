@@ -15,7 +15,7 @@ PanelWindow {
   readonly property int toastRadius:   14;
   readonly property int toastPadding:  15;
   readonly property int spacing:       5;
-  readonly property int rightOffset:   10;
+  readonly property int sideOffset:    10;
   readonly property int topOffset:     5;
   readonly property int slideInMs:     220;
   readonly property int removeMs:      200;
@@ -33,8 +33,8 @@ PanelWindow {
   color: "transparent";
   exclusionMode: ExclusionMode.Ignore;
 
-  anchors { top: true; right: true; }
-  margins { top: topOffset + Theme.barHeight + Theme.defaultMargin; right: rightOffset; }
+  anchors { top: true; left: true; }
+  margins { top: topOffset + Theme.barHeight + Theme.defaultMargin; left: sideOffset; }
 
   implicitWidth: toastWidth;
   implicitHeight: Math.max(1, column.implicitHeight);
@@ -127,9 +127,9 @@ PanelWindow {
 
             Image {
               id: icon;
-              readonly property int box: overlay.contentHeight - 20;
+              readonly property int box: overlay.contentHeight - 12;
               Layout.alignment: Qt.AlignTop;
-              Layout.topMargin: 10;
+              Layout.topMargin: 6;
               Layout.leftMargin: 4;
               Layout.rightMargin: 10;
 

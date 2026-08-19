@@ -269,20 +269,35 @@ M.binds = {
 	{ keys = "XF86AudioLowerVolume", desc = "Lower volume", action = A.exec("pamixer --decrease 5"), repeating = true },
 	{ keys = "XF86AudioRaiseVolume", desc = "Raise volume", action = A.exec("pamixer --increase 5"), repeating = true },
 
-	-- Brightness and color temperature keys
-	-- Note: if brightnessctl doesn't control your backlight (e.g. NVIDIA routing
-	-- issue), revert to the hyprsunset gamma approach below:
-	--   A.exec("hyprctl hyprsunset gamma +10")  /  A.exec("hyprctl hyprsunset gamma -10")
+	-- Brightness and temperature
+	-- Set both backlights (MUX: panel may be on amdgpu or nvidia), but skip
+	-- nvidia_0 when the dGPU is in D3cold so a keypress doesn't wake it.
 	{
 		keys = "XF86MonBrightnessUp",
 		desc = "Increase brightness",
-		action = A.exec("brightnessctl set 5%+ --min-value=1"),
+		action = A.exec(
+			'sh -c \'brightnessctl -d amdgpu_bl1 set 5%+ --min-value=1; [ "$(cat /sys/bus/pci/devices/0000:01:00.0/power_state)" = D3cold ] || brightnessctl -d nvidia_0 set 5%+ --min-value=1\''
+		),
 		repeating = true,
 	},
 	{
 		keys = "XF86MonBrightnessDown",
 		desc = "Decrease brightness",
-		action = A.exec("brightnessctl set 5%- --min-value=1"),
+		action = A.exec(
+			'sh -c \'brightnessctl -d amdgpu_bl1 set 5%- --min-value=1; [ "$(cat /sys/bus/pci/devices/0000:01:00.0/power_state)" = D3cold ] || brightnessctl -d nvidia_0 set 5%- --min-value=1\''
+		),
+		repeating = true,
+	},
+	{
+		keys = "SHIFT + XF86MonBrightnessUp",
+		desc = "Increase brightness on CPU",
+		action = A.exec("hyprctl hyprsunset gamma +3"),
+		repeating = true,
+	},
+	{
+		keys = "SHIFT + XF86MonBrightnessDown",
+		desc = "Decrease brightness on CPU",
+		action = A.exec("hyprctl hyprsunset gamma -3"),
 		repeating = true,
 	},
     {

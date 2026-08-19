@@ -24,6 +24,10 @@ in {
         "nvidia-drm.modeset=1"
         "nvidia-drm.fbdev=1"
         "acpi_osi=Linux"
+        # firmware spams wake events (GPE 0x10) at the dGPU root port,
+        # yanking it out of D3cold every ~18s; mask until a BIOS fix
+        "acpi_mask_gpe=0x10"
+        "amdgpu.abmlevel=3" # panel adaptive backlight, ~0.5-1.5W
       ];
 
       extraModprobeConfig = ''

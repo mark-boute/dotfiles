@@ -1,0 +1,971 @@
+<!DOCTYPE html>
+<html lang='en'>
+<head>
+<title>PowerTOP report</title>
+<meta http-equiv='content-type' content='text/html;charset=utf-8'>
+
+<script type='text/javascript'>
+
+var powertop = {
+blocks: {
+summary: 'Summary',
+cpuidle: 'CPU Idle',
+cpufreq: 'CPU Frequency',
+software: 'Software Info',
+devinfo: 'Device Info',
+tuning: 'Tuning',
+ahci: 'AHCI'
+},
+cadd: function(idx, c){
+var el = document.getElementById(idx);
+if (el) {
+var cn = el.className;
+if (cn.indexOf(c) != -1)
+return;
+cn += ' ' + c;
+el.className = cn;
+}
+},
+crm: function(id, c){
+var el = document.getElementById(id);
+if (el) {
+var cn = el.className
+while (cn.indexOf(' ' + c) != -1)
+cn = cn.replace(' ' + c,'');
+el.className = cn;
+}
+},
+newbutton: function(id, txt) {
+var x = document.createElement('div');
+x.id = id + '_button';
+x.className = 'nav_button';
+x.textContent = txt;
+x.innerText = txt;
+x.onclick = function() { powertop.toggle(id); };
+return x;
+},
+setupbuttons: function() {
+var t = document.getElementById('main_menu');
+if (t) {
+for (var b in powertop.blocks) {
+t.appendChild(powertop.newbutton(b, powertop.blocks[b]));
+}
+t.appendChild(powertop.newbutton('all', 'All'));
+}
+},
+toggle: function(b) {
+powertop.baseall();
+if (b == 'all') {
+for (var c in powertop.blocks) {
+powertop.crm(c, 'hide');
+}
+} else {
+powertop.crm(b, 'hide');
+}
+powertop.cadd(b + '_button', 'pressed');
+},
+baseall: function() {
+for (var b in powertop.blocks) {
+powertop.cadd(b, 'hide');
+powertop.crm(b + '_button', 'pressed');
+}
+powertop.cadd('all', 'hide');
+powertop.crm('all_button', 'pressed');
+},
+onload: function() {
+powertop.setupbuttons();
+powertop.toggle('summary');
+}
+}
+</script>
+
+<style type='text/css'>
+/* General CSS */
+*{
+margin:0px;
+padding:0px;
+width: auto;
+}
+
+body {
+background-color: #eee; /* Background color */
+color: #222;            /* Font color */
+font-family: Helvetica;
+font-size: 14px;
+}
+
+#main_container{
+margin: 2px auto;
+}
+
+/* Top logo & system table css */
+#main_header{
+min-width: 960px;
+}
+
+img.pwtop_logo{
+float:left;
+height:40%;
+width: 40%;
+padding:20px;
+}
+
+.sys_info
+{
+float: right;
+height:116px;
+width:450px;
+font-size: 12px;
+text-align: left;
+}
+
+th{
+text-align: left;
+}
+
+/* CSS Main Content */
+
+.content_title
+{
+color: #296629;
+padding:0px;
+margin:2px;
+}
+
+#chart_div{
+float: left;
+}
+
+.small
+{
+font-size: 10px;
+}
+
+table.emphasis2
+{
+font-size: 13px;
+max-width:95%;
+}
+
+
+th.emph_title {
+padding:5px;
+}
+
+tr.emph1:nth-child(odd) {
+background: #ffffff;
+}
+
+tr.emph1:nth-child(even) {
+background: #ebebeb;
+}
+
+tr.tune:nth-child(odd) {
+background: #fffcfc;
+}
+tr.tune:nth-child(even) {
+background: #fff0f0;
+}
+
+td.no_wrap:first-child {
+white-space:nowrap;
+}
+
+.side_by_side_left{
+float:left;
+}
+.side_by_side_right{
+float:right;
+}
+
+#device{
+display: inline-block;
+}
+.clear_block{
+clear:both;
+}
+
+td.package{
+background-color: #e0ddfa; /*purple*/
+}
+
+td.core{
+background-color: #d1ddff; /*ccebff; /*blue*/
+}
+
+td.cpu{
+background-color: #ffffeb; /* yellow */
+}
+
+th.title{
+text-align: center;
+/*border-bottom: 1px solid #666;*/
+}
+
+
+li.summary_list
+{
+display: inline;
+padding: 5px;
+background-color: #f6f6f9;
+font-size: 12px;
+}
+
+
+
+/* main menu css*/
+#main_menu {
+clear:both;
+font-weight: bold;
+padding: 5px 0;
+text-align: left;
+background-image: -webkit-gradient(linear, left top, left bottom,
+from(#aaa), to(#eee));
+background: -moz-linear-gradient(top,  #aaa,  #eee);
+}
+
+
+#main_menu div {
+font-size: 12px;
+font-weight: bold;
+color: white;
+}
+
+#main_menu div.nav_button {
+margin: 0 0.2em;
+display: inline;
+cursor: pointer;
+color: #223232;
+font-size: 13px;
+font-weight: bold;
+padding: 5px;
+text-align: center;
+text-decoration: none;
+}
+
+div.pressed {
+border: -webkit-gradient(linear, left top, left bottom,
+from(#b2ffb2), to(#e0ffe0));
+border-width:0px 8px 0px 8px;
+background: #999;
+background-image: -webkit-gradient(linear, left top, left bottom,
+from(#b2ffb2), to(#e0ffe0));
+background: -moz-linear-gradient(top,  #b2ffb2,  #e0ffe0);
+}
+
+div.hide {
+display: none;
+}
+</style>
+</head>
+
+<body onload='powertop.onload();'>
+<div id="main_container">
+<header id="main_header">
+<img alt="PowerTop" class="pwtop_logo" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAbQAAABDCAYAAAD01PBTAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAGsxJREFUeNrsXQt4FNXZ/nLhmutqVdAKMXJHTMhiLGAuLUEfSg2xSFSUgIkkRPQ3QiHxqcRwswQrRq2EBKjhapvU3yCgtaQ+CRGUSyABvNDfRhArqEA2FwjksvnPN0xokpnZPWd2dnd297w851kyt3OZ+c4773e+c8aro6MDODg4ODg4XB3evAk4ODg4ODihcXBwcHBwcELj4ODg4ODQDr68CWxCrPgbTlJwj33l4m81SSbeVBwcHBz2hRcPCqEGElaCSGKYBldXV4PJZILO325MF3uN68LDwyE4OLheJLjOVM2bk4ODg4MTmqMxB4mMENa08vJyKC0tFQispqaG+gKDBw8WiA1JLiEhAUJCQk6TzXkklZJ0ijcxBwcHByc0e6qxDEyExILy8vJgx44dml08LCwMMjIyBHIj6m0T2ZTDiY2Dwz3xzsEbM3tsWkV5ahVJJV3/fizyQhlvURsJzcvLaw/5iXNQmcrEdP1vUsYqRzUIyQuJLKeoqCho6dKlcPr0abvlFRQUJBDbc88910lsGaStVY23kfMyGQwFcQOpa52KfIrJzwwVRVSbXwH5SdU6Hwc/0ywoIeVP1FHZe3aqNtsj6eDVPkMOvxeEQBJV1A+fVyPjc8uCWpIK8V6Q8mnaN5KyO7Wvt7U+egwKievZoMSAQTQqNPYSe2Ta3t6OgR1FFRUVYcnJyXYlsk7U19cDkiYqwOzs7NmE2HCMbo6Pj0+pyoeDBaFiZwUqzlMDo4oysuZXpYY0dQa9ld8oJi3t0eAi96JWhRJb5YByhXbmQ/JEG84lRFDigs+6pK8n9bn+bKmpkyuF7eMbXTExpsMkGTUls7b2DFOd6eiC5xeETZo0iZrMvG+6EXxHD4e+UydD34d+DYFD7oDFixZD9pJsiI+Ph+joaGpiW7hwIURERATVVNe8R8pTSlIwo7KsYuwMbSEmR57HUk53cMfUuqA9xtnxnur+5YJ0wjNIuuggMpOzq2JUViSFgntghlinwyQx9RuuGLaPFUQjSiOdeKGtF2trayuqqamZPX36dKtE5tW/H/SOjIBe946FXqNHgJdf/277J9x4C6yceL/kPKL6hITjcMeOHVO8Pu4zjjPCxo0bpyUlJZWTss3x9fVliYisZSAO5offxhcJNfkZWBWaGxhznQva4x5GezS4y73QkfsUXyr+TcqT6KJqTbGvJ3VKI3WierZceWJ1ATEi1Q9Sa2trMEnVmzZtmm1NlaEK83smBQxb3gK/Z1MEUutJZohdsVNRKUkSKrUlS5bA4cOH4dChQzBr1iyLZUtJSYHk5OQwcm45KWO4nRSKGnIKtfHhtHd+tW5gxHUeYI8u73IknawBFQTobyywWCYIxdVRgCrY3QkNsUp8i2fC1atXg81mczkhs7CnnnpKcPnJwSfkdghYthgCl2VCn19OpLo2ua7FNGbMGFi/fj2cPHkSnnjiCcXrbNmyBUkt6MKFCxWkvLSkxqJQ1JCTLQrNqOJesZSxzpHBQ5zQFEnNYEXRhLrJvdhjoz3YtV90Q1LDOlntP1yd0NA4mCOJUPls3rw5bO7cubL70bXY/8nHIOjVpYJrkRY/f2CSrEKTS4MGDRKI7aOPPhL+L4etW7dCampqIJb3ypUrNKRWxth2jlRoas73tPEzV1eZBgp7dHlCIx3rKh2TWVcCMIL7gKqvd4elr7CSubQHNzc3FxH1E5aWlqaoyvyfSQGfOwYxF+TurOeBdV5fVFQUHDhwABYtWiQQWE/s3LkTCPEGFRYWlpKyh/fr189kgajryBtyFaWxGcixoeQclg7UVgOJY1SRLIquyk0M19WjNDOt2KOruBvhscgLtTJkNkOsIyuuh6iT61L1VySvuC42pybgBN2P40h+dW5iG1b7endYnDiUNlih+fLljGM1NbORPGTZffRwwb2ohswQx1a9hqzCnIICA6GwoABW5+YqKrWVK1YMJseWUhqO5gSlIkDD0QrNHcbPwA2mHRisRD26ekAIK7GgPSKpTEYioyUzkfjKOs8hCedKZNlD1bhSX29NdWqt0GqJQd6p9mRiCGonJFp987906VJ4fX39a4mPPAINDQ3ShhgxVCAztWg5eAQufvRP2Lxli8WxMUt4ev58CAwKgnnz5kn2rXz5ZbgvKiqGKLocPz+/HI069lA7HauVwjMydhz2gE3PtJPhLHu0NOewhDZiTUG10E78rSX5aHrfxHEpFjtAIsrSKn8kNlIGbNdihnJkknMK7aDSbGpfGyafW+zrdaXQMOyXJPQFTtb6TZ5ctyg1NRW+/fZbyb7ekWMhcOULcHF6Mlx6c6MqMmvK/ZPwfySjlStXUo+l9UyPP/44rFu3TjYfdJOaTKaXmpqaLI2n2SswRAt/vFHr+9pZZzdQNnpUi532OE6r++zi7i+WzrdESzLr0n5o34lA75o2gA5VGr7UkKR5X++tU0MqY5TXFivZ2NiYsXfv3rDdu3dL9uGYGYbkC41x041wtXwfM6m1f3Om29+VlZWqCQ3TzJkzIT09XZIPkrFIlnkW2o5lgrWjFRr1XDYc39OBOuP47zOV5ehnRU8QFQVtvdBLkmZHMhBWB2E4JZMmQtBJxKZpX6/nMTRNIvYaGhqCiUHmyLnxMJoRA0A655T1eyRB+EVS06ATsCmtWrUK7rrrLsl18/PzcQJ2DKlXggZtx6KYtIqYitPiwe0Brs7sj0KtOh0XBctqKLn2VqLiWBzt8IIB9LluqaZ9va4JjVFpKL59mM3mjK1btwadOXNGsg8JrGsACM41w3lnmNS6HzvJzNp8NJq0bds2CAwMlL5uZWbi/jwLRaB1OxoY5obREFqhLffKhk6RKzT722MdYwfqTuoM60M7gRrbyVErdbCoNN0uBi0qzjotni29RznaVElTXV0wscQMVDs9IazB+Bup+xbnnWFS637s0gPYnAbdfrus63Hfvn1w/NixwaR+sRp08FaJSiQ9a51ULWW+Wis0d5lQ7QqgDjhidBm7kzordOA4YQlDHxmn8zb2CEKzKRSbcELCrt27FdTZNIvn+o4aDv0DfFW7H63x1enT38LsJ5+AhYueB5OpXvG4zMWZcDshtp7Iz1+H+zM0ULc0HQ+NOquivF+hGpaLRY1ycKgFi7vdYc+jSJy0L68GnU+01mTajbc7P4XmDnPG9u3bZdWZpRVAmtIXQEvFfrjc2Cb83Tx7LpNSE1yOHWbF9Ld3/wbhY8Ph/R0fwJ83boKhw4fA8RPHFY9fvHix1A3yl3egzlQ37cKFCyE2PiCaERolkRooA0M4oXG4IqE52v1dZad6uCTcltDOnz8fYjKZwj788EPJPjlXYyda8wuh5cfui3FcudTO7H60FPDxcu6ybse2tbbDbx+OVzx+ypQpsmNpH3zwAe5PsNGwQjU6poohX05oHO5IaFVOmJZg7/VbOaFpCNWDy9jRY4cvqfBNNwqr5cuec+kyNH18QOZa135Z3I+WCO3KlSuS4y/8VA9r89+QPR7JDEmtJ3AaAtkfa+ODbtTomCqGfC0aFuWYnbPeiDk8CGJACO2z6IzVatyF0DQJJNI7oVEHBsgQSiwGT/SEEpkhWt4qgA6zdC3GXgZ/5uhHS4Q2zig/T/WVV/6oeM6jjz4qOX7//v24b5oOFFrXic00BmbU6L7X8gnVurRHWZv0gDo7nNAYFWGoG7RznUsSmjjOYlBbyQ6zOVyO0PDjnEq4cvQL2e39lyy6Hv3YqdQskZpAQmazYtpQ8Db06dtbcl5TYzMc+Owz2XPG/+IXErcjLuF1/Phx+OHcuViZMtTRvr1ZGtMSo9UMDIasBaFRu3gcYWikDTo0Tv92tV6ddS1PN3rRYFEOzqqzS0+nEINVDFq0sZ4VWpzaG3ru7Lng+vqGwd99952U0BSCQVqPHIP2lnYpmYUOBJ/B/40yxFVFOkP6LRu05ZS5SH5y/Btr1yieM2H8BMnxJ46fwH3hdlRpLO5GWiK1FhhC+3Dz8TPHIVWtPXJVqhtC06tCi9OqrrokNHG17lVqK0n0UThGDfYELnOlSEAywSMCAT7TfYURnHwdvO4Vq+7HDiv/5qXPIyqtl+S8z/YfVDxn9F2jJcef+e4M7gu244NOYwRlKog0VAPD4+NnLmCPHBwW1Jmmz5avzgxH7QrMtT3cHcFyX6H2uflnihdo/Uaq5nz6+HZTZ3JKD5WaHFHSfBfNeM9Y2F95sNs2dDsqnTtq1CipQjtxQovAEFsVWq2KfPG6JbYQGp9QrVt79NT7wsdz6YlMk77e3oQmjDc4oX26vambzeZw7OilCk35O2ftzS2SbX1uu8lipuh+bP5rKbSfOiMhM1y6yhrGR0ZJCA3x+eefw8iRIyXbAwICJNuQuJXywg6f3A80MmsuPKMNaklupXtbIx1Zpglw6M8e3aljd6cxNCSSULkPl6p5tsi1nN7X94Q7zEOTLn3Uwd7ObVdapY1z60CL53S6H/slTpNjE6vp3shI2esKwSwyx1++dElJqqh+ADRQaFUyRFpLYdxxCqqANviAuxv1ixLeBBz26OvFdR/dmtByZTpU2U6+7V/Xgstw7Kvr+JfSOFjTJ0fAGGCAvuu2XD8H/4/buv49sE/fbuc1trVC0rPz4fZBg4R0qOFit7/x/7gNPzYqh+J3C8F09RA8k5F0/Rz8+72dm2S4rM2ae5NGyRjk1t6jXNGjViXhGBTW++MTql0bZeILDQeH3fv6nvB18QqiCiiUIzS5Lv6p8VGQZfwVwKlT3XcU/QoGh4RIjn/44Yfh1WFjAda/Lb1Yl2u8lpcHXZe+P9ncBGeTHoIbSBLyPXkEoMvfNeI2DCxpzF4tufT0+U1w/OJceCQTSLpB2IZ/j/9tO+z43x6kAz7WCI3lUzK1KsilzALhzLBTnpzQXLjTccE+hhbOCounjl7UyN2om77e3RRamtx8F7O5Q7aT7927t7BPLvn28pEc/58fvlE8vmvq6NDWleznL39bmhqlY2UdYn2VwLBQcagC4ViEhcAMtUtg0RhnHVcBukSJ+HFeT4WBPwL26+tpJpG7skJDMpP11ROKMckFUOBEZHntBsJE57bW5m7bTn75teLxWqDtxEnZ7YOH+TBdh6KMtRTkZFBBLlVW8lRDojSdgiM7TVyN5E7en1Ap5jTeDBx2IjOqcVlvFzWcyaSTKbSgGqrlQty/+OILxaWlQkJ/Ljn+4vl6IYqQ5gvTatBy8Ihk288GKN+S0/+STvzGaEisrwYEYFSh0Mos3AOaCdZxKhUadzfqT5mNc9NlyFg8AXp3ObqaV0Po6wmZUX8t3ZUIDRk6UTQcix10h9lsuvXWW+UJTWE5qrFh8usrrs1/0+IyVpjURFWafzwvCfdHjDL2YiK0QKJEsb4aEEA38qKMNrTWgdEEhhgYSZQTmn5QJr5cJrpxHd1pDM1VXjiEvp4Q2TiSmLwxenQ5VkH3sN8y1gm0dw4ZUi2nmhobGwGXw7rtttsk+57/n4WwdfM7ku2bijbD4t9lWcyvZ07efv2tlrH5rztkt4+L6QW+XkHg7dUbWsw/9SC0NsnxkZGRqIbKNVBoArl0ecvWInSe5r7F9bjfXKHpu3PPFRV4rofUmUXVOHxpKfFrAPaoi1P6emth+Y4mNN2MN5ByVJDOPubgwe4Tl/+xZw/MmT1bcjyOud12+83wnzM/dtve0tIGz2akwxuvrVXMa3ZSEuwh1/3qq6/Aq38/+XlpXdD6+Veya0Giu3FcTG9o66i/zpLeXn2IjO4DZ783wen/kyq0ESNGWHU5IkkRsqoCulXuq7oQjcXOjeJFg2kOnEIYv8QI+Ar72tgjae/DQL8QdC65VpanNSAGIhDSoFmcwCmEBmwf7dSS0GpJ2+hubNltP/BJBFp5pMzE5bI9ZYpznRc+L2+vf//gn1BcXKJ4XkBAIOwovaa4DFveAp87lFckEb65tupN2X0xv+kj2WbuuEoIrgEOV7TIkhnJu2bosGEmiiZhHUcz2GocIvHUMeTJJ1Q7FolA74bKJASY6aHtRP1tQUbF5MqEpku4LaGZO8zlkyZNkmw/eOigsKAv2S9J+BHNmwfcIHu9l3KyobyiXPa8zmS1gydk1pCdCx2Xm2XV2ZRH+yqeu3fXVck2JGysp4YPcyiDodASSxmDQYZyo3SoFwPbkiUycRXlZHtPJTQaz4YzCc3tXfVuS2hEvZQPHz68Xi445L333lOMVixc92d0xUjOaW83Q1paGixd/pLiuX1iJyqWB92MpnmLZANBEEkL+kP/AC/ZfV8caZV1NyYkJGC+RRo+zCyEVqtRvqFdAkMM3CgdTmo4hsEyHlYsE8jDCU0dwdgEUQ3SEmidreNTnNCcb61FD5FOvyc2b94MjQ0Nsv7DYUOHQnJKkuIl/7K9GGIIcVWUl0vO9Xs2RaoUfzwvLK2FK4LIKTNE9NQ+wtiZEt5dLz2PkDWMGD789MiRI6vpmoJqgrVAaGKHZdDIyGmUXBxlZ1DHV9i3C6llAduXGfZ4WBOxuLlTHeh2nAH0kZUe4ar3dnNDzZs1a5ZkO0Y7biKkpqS0FmQsgphfjle87k8/1kH600/DveMjIWPhs1BOyA2jJ3FtR3Qrohq7smsPNOW+Cab0xRY/BjoywhfmZfsp7kd19uURaXRjEqkXgzqjfaiNWhML5XGhMgrRY43SSWAZTzOSl55VntIw4goVtAsuG8D6km9agWVM0yMWjHZrQhs1evQpPz+/imnx8ZJ9a9euFeal4adX5NKfXi+AyPFjLV6/seES/OPvH8PT8+fD/Q88cK2nT3pGUGOX334HWg4etXj+4KG9YOHqAIvHbFlzWbIN3ajx8fH1pJx5WrtOxDESo63XYTzeSElofPzMfi9/rONpGCQyw4OaiOVlKtPeKk38nhjL/DOu0NzDUCEnPf1p2X0vLlli8QsvG9ZtggcT7rdLudDN+IetAeAfoBwIgq5GubGz9HnpWL68u8aMMdnBKEPBtiWv1OQbqrGbk0MdqbGOpxV4SpCIuFoFyxfgC+xIZnh9FoWcS7MOIic0F8CYu8eUDxw4cMe8efMk+06ePAm5q3MtLmm1IucVWJ27Gvr2661Jefr7e8GC1f7X3YxmuCrMM+sJdDW+u0E6djZw4ABBnaE7VUWHRTuO5gyFRtMxcpej/UmNZTwNX0A8KUiEhexnEOLR3C1Lrol2sgfYViXxmO/TeXuEkUJHxsyZMxsIsUn2bdu2DXa8v0NY4Ffp3/0P3A+ffXoQ4hN+Db16+6gqAxLZ9Kf6wRulwZIAkJ6k9tNZM6xZ1CR7neXLV2CZcu4Ou9uksjmsvWXOAO1dfzREZG08wFkTqoWvPjswFevAZFjG0+yqRlxYpQnPNCGgPSIJaUFm6GY8DGwTuLNc+JMxzPD1hEqGhYWdqj569LVlS5e+NDc1VbI/OztbWJMxXmasrSuWZq8QEob9by/eBKe/+R5aW9oskhiS16gIX4iWmTQtR2pNjVcImTXC5Sbp0l2ElMEYEVFB6pNnQ3OUWVFDmkcaiiuV1FoxRGvhx55ilE53DeF4GrlfOJ5GS64zcNK1hyyHlcXQLp3P9WFCRmWdL3aEYKjaSSTCTrtQo/bQZgrBg+DrKRUNHzs2hxhcbFpqakxBofQev5STI6w2Ff/gg1avhfO/ErpMB0CCu9zcDLs/fh0eTu0nbAsZ6qs4r0wJP5xtJmR2SXbcbOiwIfC7hQvR1TjHxqawdRyqzIZ8Q51YbleBLogbx9MISeUCfSQdTrquVfqkkxuptBJCNCzt0pXY4kSiclSEaKKnjJ11wtuTKkuMLSE1NbU+NiZGdn8OITV0QdJ8LqZrQnKb+dhjkL0ukKixXkJiJTNcSf+FJ+oJmbVK9vn794c1f1yDec0ZGxFxykmEZGuHW+XkcnOFxm4vWYz3rYByPU5XJ7Us0P8LVpYnTKT2aEKLMBpNqNKys7MbcAK1HF5dswYWLFx47WOgjMS2btklVeXCaMYXZtXLuhn9/PtCYcF6GDhw4FJS/lINOqk6G41R7bm2EJInTajW2xs1y3iaJwWJTNYxqWXRujU5obk4jOPGVfv7B8zOz18HQxVIraKiAh6Mj4f3398JZnMHddq7+ypTWTCSEVWZXDTjNTLrAwX5G2DIkKGbSLlzNGwGW8hFlRFTRlhqrQo5odn+AsQ6Pw3Hfdw+SARdefi9LtBfBGGip5KZRxIa4p7Ie0oDAvyfXJef3xARESF7TFNTEyxbvgymTYuHXbt2wrXvuVhLdED3Iqq5FemNsuNlCH9/P4HMhg0buomUd47GTaCWIOrEDs7R+XpSuL7uyFvF/LQZnrIyPyGPREYVay+gjdyJY3zgwfD21IrfExlZ5O/vH5O/dm391KlTFY87e+4cIbblED9tGhSuXy/MXVNyOW4/cIPidS43dggr5i9PbxDci5bUHCrHrVu24u9SUs45dqi+M9yGtpzvSWMBuhzEVzGehkEicZ5ww5BESELjd8b34qpEVTbZk8LzleDryZWPvPfe6s8+/TT2xd//vig6Kips+YoVgjKTwzlCbBs2bBDSgAEDAJUdjsN1ui2HDRsGH354RfgEDCqwS01mOP+9GU6R/3+psFq+HB5JTISUlJSGgICA2aR8pfaoN7r/SGdD+9FCLYnFWUTqMtD5x0tRiRxmeG5wPC2R1Mkj7p/o6ssV54uh6zXVjioeQ7XLPDHwwxK8UFl4Oj7dvz+Y/OScPXv2ubzXX4fKykqHlwFJ8sUXX4SIsWNryJ8J4ydMOMUfTw4O1wchuK7uV3wZoHXH9pxHVkUIjK+WwwmNDvv37YslP0VHjx4dvHHjRjhaXW33PP38/SAlOQWVWT2S6oSJE/P4neDg4ODghKYJ9n2ybw6SCxJbcXExVH6ivWJDRZacnAzRUdHg7+//OuY38b6JJt76HBwcHJzQNMcnlZVIbBnnzp0L21tZKbgiq21QbbcMuBmi74uGKVOm4NjbaVSDJOXdFxXFiYyDg4ODE5r9Ubl3bwj5QXLD9a7C0BVZffQoNDY1wddffy0c0yT+f8Att8AAcRFkorxg6JAhMIQkDB4hqgxJrJyk0qjo6FLeshwcHByc0JyGvRUVGEASTlIsSSFiQuD2MJJwLKxTxpnE/wspOibmFG9BDg4ODk5oHBwcHBwcivDmTcDBwcHB4Q74fwEGAPNNNssrHc8WAAAAAElFTkSuQmCC"><div class="sys_info">
+<h2 class="content_title"> System Information </h2>
+<table class="emphasis1">
+<tr> <th class="table_sysinfo"> PowerTOP Version </th> <td > 2.15 ran at Thu Jun  4 10:52:53 2026
+ </td> </tr>
+<tr> <th class="table_sysinfo"> Kernel Version </th> <td > Linux version 7.0.10 </td> </tr>
+<tr> <th class="table_sysinfo"> System Name </th> <td > LENOVOLNVNB161216Legion Slim 5 16AHP9 </td> </tr>
+<tr> <th class="table_sysinfo"> CPU Information </th> <td > 16 AMD Ryzen 7 8845HS w/ Radeon 780M Graphics </td> </tr>
+<tr> <th class="table_sysinfo"> OS Information </th> <td > NixOS 26.11 (Zokor) </td> </tr>
+</table>
+</header>
+
+</div>
+<br/><div id="main_menu"> </div>
+<div><br/> <ul>
+<li class="summary_list"> <b> Target: </b> 1 units/s </li><li class="summary_list"> <b> System:  </b> 20.0 wakeup/s </li><li class="summary_list"> <b> CPU:  </b> 1851.8% usage </li><li class="summary_list"> <b> GPU: </b> 0 ops/s </li><li class="summary_list"> <b> GFX: </b> 0 wakeups/s </li><li class="summary_list"> <b> VFS: </b> 0 ops/s </li></ul> </div> <br />
+<div class="clear_block" id="summary">
+<h2 class="content_title"> Top 10 Power Consumers </h2>
+<table class="emphasis2">
+<tr class="emph1"> <th class="emph_title"> Usage </th> <th class="emph_title"> Events/s </th> <th class="emph_title"> Category </th> <th class="emph_title"> Description </th> </tr>
+<tr class="emph1"> <td >   812% </td> <td >  0.09 </td> <td > kWork </td> <td > commit_work </td> </tr>
+<tr class="emph1"> <td >   268% </td> <td >  0.23 </td> <td > kWork </td> <td > drm_sched_run_job_work </td> </tr>
+<tr class="emph1"> <td >   251% </td> <td >  0.01 </td> <td > kWork </td> <td > pm_runtime_work </td> </tr>
+<tr class="emph1"> <td >   227% </td> <td >  0.01 </td> <td > kWork </td> <td > mt792x_pm_wake_work </td> </tr>
+<tr class="emph1"> <td >   110% </td> <td >  0.01 </td> <td > kWork </td> <td > ttm_bo_delayed_delete </td> </tr>
+<tr class="emph1"> <td >  69.3% </td> <td >  0.10 </td> <td > kWork </td> <td > toggle_allocation_gate </td> </tr>
+<tr class="emph1"> <td >  38.2% </td> <td >  0.04 </td> <td > kWork </td> <td > mt792x_pm_power_save_work </td> </tr>
+<tr class="emph1"> <td >  35.7% </td> <td >  0.26 </td> <td > kWork </td> <td > drm_sched_free_job_work </td> </tr>
+<tr class="emph1"> <td >  23.3% </td> <td >  0.02 </td> <td > kWork </td> <td > call_usermodehelper_exec_work </td> </tr>
+<tr class="emph1"> <td >  13.5% </td> <td >  0.00 </td> <td > kWork </td> <td > wb_workfn </td> </tr>
+</table>
+</div>
+<div class="clear_block" id="cpuidle">
+<h2 class="content_title"> Processor Idle State Report </h2>
+<table class="emphasis2 side_by_side_left">
+<tr> <th class="title"> Package </th> <th class="title"> 0 </th> </tr>
+<tr> <td class="package"> POLL </td> <td class="package">   0.0% </td> </tr>
+<tr> <td class="package"> C1 </td> <td class="package">   0.3% </td> </tr>
+<tr> <td class="package"> C2 </td> <td class="package">   7.4% </td> </tr>
+<tr> <td class="package"> C3 </td> <td class="package">  88.3% </td> </tr>
+<tr> <td class="package">  </td> <td class="package">  </td> </tr>
+<tr> <td class="package">  </td> <td class="package">  </td> </tr>
+</table>
+<table class="emphasis2 side_by_side_left">
+<tr> <th class="title">  </th> <th class="title"> Core 0 </th> </tr>
+<tr> <td class="core"> POLL </td> <td class="core">   0.0% </td> </tr>
+<tr> <td class="core"> C1 </td> <td class="core">   0.1% </td> </tr>
+<tr> <td class="core"> C2 </td> <td class="core">   5.7% </td> </tr>
+<tr> <th class="title"> C3 </th> <th class="title">  92.2% </th> </tr>
+<tr> <td class="core">  </td> <td class="core"> Core 1 </td> </tr>
+<tr> <td class="core"> POLL </td> <td class="core">   0.0% </td> </tr>
+<tr> <td class="core"> C1 </td> <td class="core">   1.9% </td> </tr>
+<tr> <th class="title"> C2 </th> <th class="title">   8.5% </th> </tr>
+<tr> <td class="core"> C3 </td> <td class="core">  79.7% </td> </tr>
+<tr> <td class="core">  </td> <td class="core"> Core 2 </td> </tr>
+<tr> <td class="core"> POLL </td> <td class="core">   0.0% </td> </tr>
+<tr> <th class="title"> C1 </th> <th class="title">   0.1% </th> </tr>
+<tr> <td class="core"> C2 </td> <td class="core">  12.0% </td> </tr>
+<tr> <td class="core"> C3 </td> <td class="core">  85.8% </td> </tr>
+<tr> <td class="core">  </td> <td class="core"> Core 3 </td> </tr>
+<tr> <th class="title"> POLL </th> <th class="title">   0.0% </th> </tr>
+<tr> <td class="core"> C1 </td> <td class="core">   0.1% </td> </tr>
+<tr> <td class="core"> C2 </td> <td class="core">   8.6% </td> </tr>
+<tr> <td class="core"> C3 </td> <td class="core">  89.0% </td> </tr>
+<tr> <th class="title">  </th> <th class="title"> Core 4 </th> </tr>
+<tr> <td class="core"> POLL </td> <td class="core">   0.0% </td> </tr>
+<tr> <td class="core"> C1 </td> <td class="core">   0.1% </td> </tr>
+<tr> <td class="core"> C2 </td> <td class="core">   5.4% </td> </tr>
+<tr> <th class="title"> C3 </th> <th class="title">  93.0% </th> </tr>
+<tr> <td class="core">  </td> <td class="core"> Core 5 </td> </tr>
+<tr> <td class="core"> POLL </td> <td class="core">   0.0% </td> </tr>
+<tr> <td class="core"> C1 </td> <td class="core">   0.1% </td> </tr>
+<tr> <th class="title"> C2 </th> <th class="title">   7.1% </th> </tr>
+<tr> <td class="core"> C3 </td> <td class="core">  85.5% </td> </tr>
+<tr> <td class="core">  </td> <td class="core"> Core 6 </td> </tr>
+<tr> <td class="core"> POLL </td> <td class="core">   0.0% </td> </tr>
+</table>
+<table class="emphasis2 side_by_side_left">
+<tr> <th class="title"> &nbsp; </th> <th class="title"> CPU </th> <th class="title"> 0 </th> <th class="title"> CPU </th> <th class="title"> 1 </th> </tr>
+<tr> <th class="title"> POLL </th> <td class="cpu">   0.0% </td> <td class="cpu">    0.0 ms </td> <td class="cpu">   0.0% </td> <td class="cpu">    0.0 ms </td> </tr>
+<tr> <th class="title"> C1 </th> <td class="cpu">   0.1% </td> <td class="cpu">    0.1 ms </td> <td class="cpu">   0.0% </td> <td class="cpu">    0.1 ms </td> </tr>
+<tr> <th class="title"> C2 </th> <td class="cpu">   7.2% </td> <td class="cpu">    0.7 ms </td> <td class="cpu">   4.3% </td> <td class="cpu">    1.7 ms </td> </tr>
+<tr> <th class="title"> C3 </th> <th class="title">  89.5% </th> <th class="title">    3.7 ms </th> <th class="title">  95.0% </th> <th class="title">   14.5 ms </th> </tr>
+<tr> <th class="title"> &nbsp; </th> <td class="cpu"> CPU </td> <td class="cpu"> 2 </td> <td class="cpu"> CPU </td> <td class="cpu"> 3 </td> </tr>
+<tr> <th class="title"> POLL </th> <td class="cpu">   0.0% </td> <td class="cpu">    0.0 ms </td> <td class="cpu">   0.0% </td> <td class="cpu">    0.0 ms </td> </tr>
+<tr> <th class="title"> C1 </th> <td class="cpu">   3.8% </td> <td class="cpu">    0.1 ms </td> <td class="cpu">   0.1% </td> <td class="cpu">    0.0 ms </td> </tr>
+<tr> <th class="title"> C2 </th> <th class="title">  11.9% </th> <th class="title">    0.1 ms </th> <th class="title">   5.2% </th> <th class="title">    1.4 ms </th> </tr>
+<tr> <th class="title"> C3 </th> <td class="cpu">  69.6% </td> <td class="cpu">    3.9 ms </td> <td class="cpu">  89.9% </td> <td class="cpu">   12.2 ms </td> </tr>
+<tr> <th class="title"> &nbsp; </th> <td class="cpu"> CPU </td> <td class="cpu"> 4 </td> <td class="cpu"> CPU </td> <td class="cpu"> 5 </td> </tr>
+<tr> <th class="title"> POLL </th> <td class="cpu">   0.0% </td> <td class="cpu">    0.0 ms </td> <td class="cpu">   0.0% </td> <td class="cpu">    0.0 ms </td> </tr>
+<tr> <th class="title"> C1 </th> <th class="title">   0.1% </th> <th class="title">    0.0 ms </th> <th class="title">   0.0% </th> <th class="title">    0.1 ms </th> </tr>
+<tr> <th class="title"> C2 </th> <td class="cpu">   7.2% </td> <td class="cpu">    0.9 ms </td> <td class="cpu">  16.8% </td> <td class="cpu">    4.5 ms </td> </tr>
+<tr> <th class="title"> C3 </th> <td class="cpu">  89.2% </td> <td class="cpu">    6.4 ms </td> <td class="cpu">  82.3% </td> <td class="cpu">   22.1 ms </td> </tr>
+<tr> <th class="title"> &nbsp; </th> <td class="cpu"> CPU </td> <td class="cpu"> 6 </td> <td class="cpu"> CPU </td> <td class="cpu"> 7 </td> </tr>
+<tr> <th class="title"> POLL </th> <th class="title">   0.0% </th> <th class="title">    0.0 ms </th> <th class="title">   0.0% </th> <th class="title">    0.0 ms </th> </tr>
+<tr> <th class="title"> C1 </th> <td class="cpu">   0.1% </td> <td class="cpu">    0.1 ms </td> <td class="cpu">   0.0% </td> <td class="cpu">    0.0 ms </td> </tr>
+<tr> <th class="title"> C2 </th> <td class="cpu">   7.4% </td> <td class="cpu">    0.9 ms </td> <td class="cpu">   9.8% </td> <td class="cpu">    2.1 ms </td> </tr>
+<tr> <th class="title"> C3 </th> <td class="cpu">  89.0% </td> <td class="cpu">    6.8 ms </td> <td class="cpu">  89.0% </td> <td class="cpu">   18.1 ms </td> </tr>
+<tr> <th class="title"> &nbsp; </th> <th class="title"> CPU </th> <th class="title"> 8 </th> <th class="title"> CPU </th> <th class="title"> 9 </th> </tr>
+<tr> <th class="title"> POLL </th> <td class="cpu">   0.0% </td> <td class="cpu">    0.0 ms </td> <td class="cpu">   0.0% </td> <td class="cpu">    0.0 ms </td> </tr>
+<tr> <th class="title"> C1 </th> <td class="cpu">   0.1% </td> <td class="cpu">    0.1 ms </td> <td class="cpu">   0.0% </td> <td class="cpu">    0.0 ms </td> </tr>
+<tr> <th class="title"> C2 </th> <td class="cpu">   6.3% </td> <td class="cpu">    1.0 ms </td> <td class="cpu">   4.5% </td> <td class="cpu">    2.5 ms </td> </tr>
+<tr> <th class="title"> C3 </th> <th class="title">  91.2% </th> <th class="title">    8.6 ms </th> <th class="title">  94.9% </th> <th class="title">   32.1 ms </th> </tr>
+<tr> <th class="title"> &nbsp; </th> <td class="cpu"> CPU </td> <td class="cpu"> 10 </td> <td class="cpu"> CPU </td> <td class="cpu"> 11 </td> </tr>
+<tr> <th class="title"> POLL </th> <td class="cpu">   0.0% </td> <td class="cpu">    0.0 ms </td> <td class="cpu">   0.0% </td> <td class="cpu">    0.0 ms </td> </tr>
+<tr> <th class="title"> C1 </th> <td class="cpu">   0.1% </td> <td class="cpu">    0.1 ms </td> <td class="cpu">   0.1% </td> <td class="cpu">    0.0 ms </td> </tr>
+<tr> <th class="title"> C2 </th> <th class="title">   8.5% </th> <th class="title">    0.8 ms </th> <th class="title">   5.7% </th> <th class="title">    1.3 ms </th> </tr>
+<tr> <th class="title"> C3 </th> <td class="cpu">  80.7% </td> <td class="cpu">    5.4 ms </td> <td class="cpu">  90.3% </td> <td class="cpu">    9.3 ms </td> </tr>
+<tr> <th class="title"> &nbsp; </th> <td class="cpu"> CPU </td> <td class="cpu"> 12 </td> <td class="cpu"> CPU </td> <td class="cpu"> 13 </td> </tr>
+<tr> <th class="title"> POLL </th> <td class="cpu">   0.0% </td> <td class="cpu">    0.0 ms </td> <td class="cpu">   0.0% </td> <td class="cpu">    0.0 ms </td> </tr>
+<tr> <th class="title"> &nbsp; </th> <th class="title">  </th> <th class="title">  </th> <th class="title">  </th> <th class="title">  </th> </tr>
+<tr> <th class="title">  </th> <td class="cpu">  </td> <td class="cpu">  </td> <td class="cpu">  </td> <td class="cpu">  </td> </tr>
+<tr> <th class="title">  </th> <td class="cpu">  </td> <td class="cpu">  </td> <td class="cpu">  </td> <td class="cpu">  </td> </tr>
+<tr> <th class="title">  </th> <td class="cpu">  </td> <td class="cpu">  </td> <td class="cpu">  </td> <td class="cpu">  </td> </tr>
+<tr> <th class="title">  </th> <th class="title">  </th> <th class="title">  </th> <th class="title">  </th> <th class="title">  </th> </tr>
+<tr> <th class="title">  </th> <td class="cpu">  </td> <td class="cpu">  </td> <td class="cpu">  </td> <td class="cpu">  </td> </tr>
+<tr> <th class="title">  </th> <td class="cpu">  </td> <td class="cpu">  </td> <td class="cpu">  </td> <td class="cpu">  </td> </tr>
+<tr> <th class="title">  </th> <td class="cpu">  </td> <td class="cpu">  </td> <td class="cpu">  </td> <td class="cpu">  </td> </tr>
+<tr> <th class="title">  </th> <th class="title">  </th> <th class="title">  </th> <th class="title">  </th> <th class="title">  </th> </tr>
+<tr> <th class="title">  </th> <td class="cpu">  </td> <td class="cpu">  </td> <td class="cpu">  </td> <td class="cpu">  </td> </tr>
+<tr> <th class="title">  </th> <td class="cpu">  </td> <td class="cpu">  </td> <td class="cpu">  </td> <td class="cpu">  </td> </tr>
+<tr> <th class="title">  </th> <td class="cpu">  </td> <td class="cpu">  </td> <td class="cpu">  </td> <td class="cpu">  </td> </tr>
+<tr> <th class="title">  </th> <th class="title">  </th> <th class="title">  </th> <th class="title">  </th> <th class="title">  </th> </tr>
+<tr> <th class="title">  </th> <td class="cpu">  </td> <td class="cpu">  </td> <td class="cpu">  </td> <td class="cpu">  </td> </tr>
+<tr> <th class="title">  </th> <td class="cpu">  </td> <td class="cpu">  </td> <td class="cpu">  </td> <td class="cpu">  </td> </tr>
+<tr> <th class="title">  </th> <td class="cpu">  </td> <td class="cpu">  </td> <td class="cpu">  </td> <td class="cpu">  </td> </tr>
+<tr> <th class="title">  </th> <th class="title">  </th> <th class="title">  </th> <th class="title">  </th> <th class="title">  </th> </tr>
+<tr> <th class="title">  </th> <td class="cpu">  </td> <td class="cpu">  </td> <td class="cpu">  </td> <td class="cpu">  </td> </tr>
+<tr> <th class="title">  </th> <td class="cpu">  </td> <td class="cpu">  </td> <td class="cpu">  </td> <td class="cpu">  </td> </tr>
+<tr> <th class="title">  </th> <td class="cpu">  </td> <td class="cpu">  </td> <td class="cpu">  </td> <td class="cpu">  </td> </tr>
+<tr> <th class="title">  </th> <th class="title">  </th> <th class="title">  </th> <th class="title">  </th> <th class="title">  </th> </tr>
+<tr> <th class="title">  </th> <td class="cpu">  </td> <td class="cpu">  </td> <td class="cpu">  </td> <td class="cpu">  </td> </tr>
+<tr> <th class="title">  </th> <td class="cpu">  </td> <td class="cpu">  </td> <td class="cpu">  </td> <td class="cpu">  </td> </tr>
+<tr> <th class="title">  </th> <td class="cpu">  </td> <td class="cpu">  </td> <td class="cpu">  </td> <td class="cpu">  </td> </tr>
+</table>
+</div>
+<div class="clear_block" id="cpufreq">
+<h2 class="content_title"> Processor Frequency Report </h2>
+<table class="emphasis2 side_by_side_left">
+<tr> <th class="title"> Package </th> <th class="title"> 0 </th> </tr>
+<tr> <td class="package"> Idle </td> <td class="package">  100.0%  </td> </tr>
+<tr> <td class="package">  </td> <td class="package">  </td> </tr>
+<tr> <td class="package">  </td> <td class="package">  </td> </tr>
+<tr> <td class="package">  </td> <td class="package">  </td> </tr>
+<tr> <td class="package">  </td> <td class="package">  </td> </tr>
+</table>
+<table class="emphasis2 side_by_side_left">
+<tr> <th class="title">  </th> <th class="title"> Core 0 </th> </tr>
+<tr> <td class="core"> Idle </td> <td class="core">  100.0%  </td> </tr>
+<tr> <td class="core">  </td> <td class="core"> Core 1 </td> </tr>
+<tr> <th class="title"> Idle </th> <th class="title">  100.0%  </th> </tr>
+<tr> <td class="core">  </td> <td class="core"> Core 2 </td> </tr>
+<tr> <td class="core"> Idle </td> <td class="core">  100.0%  </td> </tr>
+<tr> <th class="title">  </th> <th class="title"> Core 3 </th> </tr>
+<tr> <td class="core"> Idle </td> <td class="core">  100.0%  </td> </tr>
+<tr> <td class="core">  </td> <td class="core"> Core 4 </td> </tr>
+<tr> <th class="title"> Idle </th> <th class="title">  100.0%  </th> </tr>
+<tr> <td class="core">  </td> <td class="core"> Core 5 </td> </tr>
+<tr> <td class="core"> Idle </td> <td class="core">  100.0%  </td> </tr>
+<tr> <th class="title">  </th> <th class="title"> Core 6 </th> </tr>
+<tr> <td class="core"> Idle </td> <td class="core">  100.0%  </td> </tr>
+<tr> <td class="core">  </td> <td class="core"> Core 7 </td> </tr>
+<tr> <th class="title"> Idle </th> <th class="title">  100.0%  </th> </tr>
+<tr> <td class="core">  </td> <td class="core">  </td> </tr>
+<tr> <td class="core">  </td> <td class="core">  </td> </tr>
+<tr> <th class="title">  </th> <th class="title">  </th> </tr>
+<tr> <td class="core">  </td> <td class="core">  </td> </tr>
+<tr> <td class="core">  </td> <td class="core">  </td> </tr>
+<tr> <th class="title">  </th> <th class="title">  </th> </tr>
+<tr> <td class="core">  </td> <td class="core">  </td> </tr>
+<tr> <td class="core">  </td> <td class="core">  </td> </tr>
+</table>
+<table class="emphasis2 side_by_side_left">
+<tr> <th class="title"> &nbsp; </th> <th class="title"> CPU 0 </th> <th class="title"> CPU 1 </th> </tr>
+<tr> <th class="title"> Idle </th> <td class="cpu">  100.0%  </td> <td class="cpu">  100.0%  </td> </tr>
+<tr> <th class="title"> &nbsp; </th> <td class="cpu"> CPU 2 </td> <td class="cpu"> CPU 3 </td> </tr>
+<tr> <th class="title"> Idle </th> <th class="title">  100.0%  </th> <th class="title">  100.0%  </th> </tr>
+<tr> <th class="title"> &nbsp; </th> <td class="cpu"> CPU 4 </td> <td class="cpu"> CPU 5 </td> </tr>
+<tr> <th class="title"> Idle </th> <td class="cpu">  100.0%  </td> <td class="cpu">  100.0%  </td> </tr>
+<tr> <th class="title"> &nbsp; </th> <th class="title"> CPU 6 </th> <th class="title"> CPU 7 </th> </tr>
+<tr> <th class="title"> Idle </th> <td class="cpu">  100.0%  </td> <td class="cpu">  100.0%  </td> </tr>
+<tr> <th class="title"> &nbsp; </th> <td class="cpu"> CPU 8 </td> <td class="cpu"> CPU 9 </td> </tr>
+<tr> <th class="title"> Idle </th> <th class="title">  100.0%  </th> <th class="title">  100.0%  </th> </tr>
+<tr> <th class="title"> &nbsp; </th> <td class="cpu"> CPU 10 </td> <td class="cpu"> CPU 11 </td> </tr>
+<tr> <th class="title"> Idle </th> <td class="cpu">  100.0%  </td> <td class="cpu">  100.0%  </td> </tr>
+<tr> <th class="title"> &nbsp; </th> <th class="title"> CPU 12 </th> <th class="title"> CPU 13 </th> </tr>
+<tr> <th class="title"> Idle </th> <td class="cpu">  100.0%  </td> <td class="cpu">  100.0%  </td> </tr>
+<tr> <th class="title"> &nbsp; </th> <td class="cpu"> CPU 14 </td> <td class="cpu"> CPU 15 </td> </tr>
+<tr> <th class="title"> Idle </th> <th class="title">  100.0%  </th> <th class="title">  100.0%  </th> </tr>
+<tr> <th class="title">  </th> <td class="cpu">  </td> <td class="cpu">  </td> </tr>
+<tr> <th class="title">  </th> <td class="cpu">  </td> <td class="cpu">  </td> </tr>
+<tr> <th class="title">  </th> <th class="title">  </th> <th class="title">  </th> </tr>
+<tr> <th class="title">  </th> <td class="cpu">  </td> <td class="cpu">  </td> </tr>
+<tr> <th class="title">  </th> <td class="cpu">  </td> <td class="cpu">  </td> </tr>
+<tr> <th class="title">  </th> <th class="title">  </th> <th class="title">  </th> </tr>
+<tr> <th class="title">  </th> <td class="cpu">  </td> <td class="cpu">  </td> </tr>
+<tr> <th class="title">  </th> <td class="cpu">  </td> <td class="cpu">  </td> </tr>
+<tr> <th class="title">  </th> <th class="title">  </th> <th class="title">  </th> </tr>
+<tr> <th class="title">  </th> <td class="cpu">  </td> <td class="cpu">  </td> </tr>
+<tr> <th class="title">  </th> <td class="cpu">  </td> <td class="cpu">  </td> </tr>
+<tr> <th class="title">  </th> <th class="title">  </th> <th class="title">  </th> </tr>
+<tr> <th class="title">  </th> <td class="cpu">  </td> <td class="cpu">  </td> </tr>
+<tr> <th class="title">  </th> <td class="cpu">  </td> <td class="cpu">  </td> </tr>
+<tr> <th class="title">  </th> <th class="title">  </th> <th class="title">  </th> </tr>
+<tr> <th class="title">  </th> <td class="cpu">  </td> <td class="cpu">  </td> </tr>
+</table>
+</div>
+<div class="clear_block" id="software">
+<h2 class="content_title"> Overview of Software Power Consumers </h2>
+<table class="emphasis2">
+<tr class="emph1"> <th class="emph_title"> Usage </th> <th class="emph_title"> Wakeups/s </th> <th class="emph_title"> GPU ops/s </th> <th class="emph_title"> Disk IO/s </th> <th class="emph_title"> GFX Wakeups/s </th> <th class="emph_title"> Category </th> <th class="emph_title"> Description </th> </tr>
+<tr class="emph1"> <td class="no_wrap">  8126 ms/s </td> <td class="no_wrap">  0.09 </td> <td class="no_wrap">  </td> <td class="no_wrap">  </td> <td class="no_wrap">  </td> <td class="no_wrap"> kWork </td> <td class="no_wrap"> commit_work </td> </tr>
+<tr class="emph1"> <td class="no_wrap">  2683 ms/s </td> <td class="no_wrap">  0.23 </td> <td class="no_wrap">  </td> <td class="no_wrap">  </td> <td class="no_wrap">  </td> <td class="no_wrap"> kWork </td> <td class="no_wrap"> drm_sched_run_job_work </td> </tr>
+<tr class="emph1"> <td class="no_wrap">  2512 ms/s </td> <td class="no_wrap">  0.01 </td> <td class="no_wrap">  </td> <td class="no_wrap">  </td> <td class="no_wrap">  </td> <td class="no_wrap"> kWork </td> <td class="no_wrap"> pm_runtime_work </td> </tr>
+<tr class="emph1"> <td class="no_wrap">  2274 ms/s </td> <td class="no_wrap">  0.01 </td> <td class="no_wrap">  </td> <td class="no_wrap">  </td> <td class="no_wrap">  </td> <td class="no_wrap"> kWork </td> <td class="no_wrap"> mt792x_pm_wake_work </td> </tr>
+<tr class="emph1"> <td class="no_wrap">  1105 ms/s </td> <td class="no_wrap">  0.01 </td> <td class="no_wrap">  </td> <td class="no_wrap">  </td> <td class="no_wrap">  </td> <td class="no_wrap"> kWork </td> <td class="no_wrap"> ttm_bo_delayed_delete </td> </tr>
+<tr class="emph1"> <td class="no_wrap"> 693.4 ms/s </td> <td class="no_wrap">  0.10 </td> <td class="no_wrap">  </td> <td class="no_wrap">  </td> <td class="no_wrap">  </td> <td class="no_wrap"> kWork </td> <td class="no_wrap"> toggle_allocation_gate </td> </tr>
+<tr class="emph1"> <td class="no_wrap"> 381.8 ms/s </td> <td class="no_wrap">  0.04 </td> <td class="no_wrap">  </td> <td class="no_wrap">  </td> <td class="no_wrap">  </td> <td class="no_wrap"> kWork </td> <td class="no_wrap"> mt792x_pm_power_save_work </td> </tr>
+<tr class="emph1"> <td class="no_wrap"> 357.5 ms/s </td> <td class="no_wrap">  0.26 </td> <td class="no_wrap">  </td> <td class="no_wrap">  </td> <td class="no_wrap">  </td> <td class="no_wrap"> kWork </td> <td class="no_wrap"> drm_sched_free_job_work </td> </tr>
+<tr class="emph1"> <td class="no_wrap"> 233.4 ms/s </td> <td class="no_wrap">  0.02 </td> <td class="no_wrap">  </td> <td class="no_wrap">  </td> <td class="no_wrap">  </td> <td class="no_wrap"> kWork </td> <td class="no_wrap"> call_usermodehelper_exec_work </td> </tr>
+<tr class="emph1"> <td class="no_wrap"> 134.7 ms/s </td> <td class="no_wrap">  0.00 </td> <td class="no_wrap">  </td> <td class="no_wrap">  </td> <td class="no_wrap">  </td> <td class="no_wrap"> kWork </td> <td class="no_wrap"> wb_workfn </td> </tr>
+<tr class="emph1"> <td class="no_wrap"> 183.1 us/s </td> <td class="no_wrap">   7.5 </td> <td class="no_wrap">  </td> <td class="no_wrap">  </td> <td class="no_wrap">  </td> <td class="no_wrap"> Timer </td> <td class="no_wrap"> tick_nohz_handler </td> </tr>
+<tr class="emph1"> <td class="no_wrap">   6.8 ms/s </td> <td class="no_wrap">  0.00 </td> <td class="no_wrap">  </td> <td class="no_wrap">  </td> <td class="no_wrap">  </td> <td class="no_wrap"> kWork </td> <td class="no_wrap"> flush_memcg_stats_dwork </td> </tr>
+<tr class="emph1"> <td class="no_wrap"> 196.7 us/s </td> <td class="no_wrap">   1.1 </td> <td class="no_wrap">  </td> <td class="no_wrap">  </td> <td class="no_wrap">  </td> <td class="no_wrap"> Interrupt </td> <td class="no_wrap"> [7] sched(softirq) </td> </tr>
+<tr class="emph1"> <td class="no_wrap">   2.7 ms/s </td> <td class="no_wrap">  0.04 </td> <td class="no_wrap">  </td> <td class="no_wrap">  </td> <td class="no_wrap">  </td> <td class="no_wrap"> kWork </td> <td class="no_wrap"> amdgpu_dm_crtc_vblank_control_w </td> </tr>
+<tr class="emph1"> <td class="no_wrap"> 213.8 us/s </td> <td class="no_wrap">   0.8 </td> <td class="no_wrap">  </td> <td class="no_wrap">  </td> <td class="no_wrap">  </td> <td class="no_wrap"> Process </td> <td class="no_wrap"> [PID 5653] /etc/profiles/per-user/mark/bin/zen-beta --name=zen-beta --class=zen-beta  </td> </tr>
+<tr class="emph1"> <td class="no_wrap">  12.5 us/s </td> <td class="no_wrap">   0.6 </td> <td class="no_wrap">  </td> <td class="no_wrap">  </td> <td class="no_wrap">  </td> <td class="no_wrap"> Process </td> <td class="no_wrap"> [PID 16] [rcu_preempt] </td> </tr>
+<tr class="emph1"> <td class="no_wrap">  12.5 us/s </td> <td class="no_wrap">   0.5 </td> <td class="no_wrap">  </td> <td class="no_wrap">  </td> <td class="no_wrap">  </td> <td class="no_wrap"> Process </td> <td class="no_wrap"> [PID 7515] Chrome_ChildIOT </td> </tr>
+<tr class="emph1"> <td class="no_wrap">  80.5 us/s </td> <td class="no_wrap">   0.4 </td> <td class="no_wrap">  </td> <td class="no_wrap">  </td> <td class="no_wrap">  </td> <td class="no_wrap"> Process </td> <td class="no_wrap"> [PID 3479] /nix/store/l4fqcf8a1d1a9p271xl28bi4lhyzcsj0-hyprland-0.55.2/bin/Hyprland --watchdog-fd 4  </td> </tr>
+<tr class="emph1"> <td class="no_wrap">  33.6 us/s </td> <td class="no_wrap">   0.4 </td> <td class="no_wrap">  </td> <td class="no_wrap">  </td> <td class="no_wrap">  </td> <td class="no_wrap"> Process </td> <td class="no_wrap"> [PID 2004] /nix/store/i94r0dhqfgiwv594jbfyb8v8hymjx4ii-cloudflare-warp-2026.3.846.0/bin/warp-svc  </td> </tr>
+<tr class="emph1"> <td class="no_wrap">  28.8 us/s </td> <td class="no_wrap">   0.3 </td> <td class="no_wrap">  </td> <td class="no_wrap">  </td> <td class="no_wrap">  </td> <td class="no_wrap"> Process </td> <td class="no_wrap"> [PID 7477] code </td> </tr>
+<tr class="emph1"> <td class="no_wrap">  24.1 us/s </td> <td class="no_wrap">   0.3 </td> <td class="no_wrap">  </td> <td class="no_wrap">  </td> <td class="no_wrap">  </td> <td class="no_wrap"> Process </td> <td class="no_wrap"> [PID 2174] /nix/store/i94r0dhqfgiwv594jbfyb8v8hymjx4ii-cloudflare-warp-2026.3.846.0/bin/warp-svc  </td> </tr>
+<tr class="emph1"> <td class="no_wrap"> 132.4 us/s </td> <td class="no_wrap">  0.26 </td> <td class="no_wrap">  </td> <td class="no_wrap">  </td> <td class="no_wrap">  </td> <td class="no_wrap"> Process </td> <td class="no_wrap"> [PID 7057] .kitty-wrapped </td> </tr>
+<tr class="emph1"> <td class="no_wrap">  37.5 us/s </td> <td class="no_wrap">  0.24 </td> <td class="no_wrap">  </td> <td class="no_wrap">  </td> <td class="no_wrap">  </td> <td class="no_wrap"> Interrupt </td> <td class="no_wrap"> [10] AMDI0010:00 </td> </tr>
+<tr class="emph1"> <td class="no_wrap"> 604.2 us/s </td> <td class="no_wrap">  0.00 </td> <td class="no_wrap">  </td> <td class="no_wrap">  </td> <td class="no_wrap">  </td> <td class="no_wrap"> Process </td> <td class="no_wrap"> [PID 341] kworker/u64:6 </td> </tr>
+<tr class="emph1"> <td class="no_wrap"> 591.5 us/s </td> <td class="no_wrap">  0.00 </td> <td class="no_wrap">  </td> <td class="no_wrap">  </td> <td class="no_wrap">  </td> <td class="no_wrap"> kWork </td> <td class="no_wrap"> io_ring_exit_work </td> </tr>
+<tr class="emph1"> <td class="no_wrap"> 136.4 us/s </td> <td class="no_wrap">  0.18 </td> <td class="no_wrap">  </td> <td class="no_wrap">  </td> <td class="no_wrap">  </td> <td class="no_wrap"> Process </td> <td class="no_wrap"> [PID 5921] /nix/store/b232dfa4g6xxxncn9fzcc64lbwkr26z0-zen-beta-bin-unwrapped-1.20.1b/lib/zen-bin-1.20.1b/zen -contentproc -isF </td> </tr>
+<tr class="emph1"> <td class="no_wrap">  11.6 us/s </td> <td class="no_wrap">  0.22 </td> <td class="no_wrap">  </td> <td class="no_wrap">  </td> <td class="no_wrap">  </td> <td class="no_wrap"> Process </td> <td class="no_wrap"> [PID 939] [irq/87-SYNA2BA6] </td> </tr>
+<tr class="emph1"> <td class="no_wrap">  19.5 us/s </td> <td class="no_wrap">  0.16 </td> <td class="no_wrap">  </td> <td class="no_wrap">  </td> <td class="no_wrap">  </td> <td class="no_wrap"> Interrupt </td> <td class="no_wrap"> [6] tasklet(softirq) </td> </tr>
+<tr class="emph1"> <td class="no_wrap">  86.2 us/s </td> <td class="no_wrap">  0.13 </td> <td class="no_wrap">  </td> <td class="no_wrap">  </td> <td class="no_wrap">  </td> <td class="no_wrap"> Process </td> <td class="no_wrap"> [PID 7426] code </td> </tr>
+<tr class="emph1"> <td class="no_wrap"> 174.3 us/s </td> <td class="no_wrap">  0.09 </td> <td class="no_wrap">  </td> <td class="no_wrap">  </td> <td class="no_wrap">  </td> <td class="no_wrap"> Process </td> <td class="no_wrap"> [PID 7532] code </td> </tr>
+<tr class="emph1"> <td class="no_wrap">   6.4 us/s </td> <td class="no_wrap">  0.14 </td> <td class="no_wrap">  </td> <td class="no_wrap">  </td> <td class="no_wrap">  </td> <td class="no_wrap"> Timer </td> <td class="no_wrap"> timerfd_tmrproc </td> </tr>
+<tr class="emph1"> <td class="no_wrap">   8.9 us/s </td> <td class="no_wrap">  0.14 </td> <td class="no_wrap">  </td> <td class="no_wrap">  </td> <td class="no_wrap">  </td> <td class="no_wrap"> Process </td> <td class="no_wrap"> [PID 5664] /etc/profiles/per-user/mark/bin/zen-beta --name=zen-beta --class=zen-beta  </td> </tr>
+<tr class="emph1"> <td class="no_wrap">   9.9 us/s </td> <td class="no_wrap">  0.13 </td> <td class="no_wrap">  </td> <td class="no_wrap">  </td> <td class="no_wrap">  </td> <td class="no_wrap"> Process </td> <td class="no_wrap"> [PID 5668] /etc/profiles/per-user/mark/bin/zen-beta --name=zen-beta --class=zen-beta  </td> </tr>
+<tr class="emph1"> <td class="no_wrap"> 342.7 us/s </td> <td class="no_wrap">  0.00 </td> <td class="no_wrap">  </td> <td class="no_wrap">  </td> <td class="no_wrap">  </td> <td class="no_wrap"> Process </td> <td class="no_wrap"> [PID 12] kworker/u64:0 </td> </tr>
+<tr class="emph1"> <td class="no_wrap">  28.6 us/s </td> <td class="no_wrap">  0.12 </td> <td class="no_wrap">  </td> <td class="no_wrap">  </td> <td class="no_wrap">  </td> <td class="no_wrap"> kWork </td> <td class="no_wrap"> dm_handle_vmin_vmax_update </td> </tr>
+<tr class="emph1"> <td class="no_wrap">  38.1 us/s </td> <td class="no_wrap">  0.11 </td> <td class="no_wrap">  </td> <td class="no_wrap">  </td> <td class="no_wrap">  </td> <td class="no_wrap"> Interrupt </td> <td class="no_wrap"> [7] pinctrl_amd </td> </tr>
+<tr class="emph1"> <td class="no_wrap">   7.4 us/s </td> <td class="no_wrap">  0.12 </td> <td class="no_wrap">  </td> <td class="no_wrap">  </td> <td class="no_wrap">  </td> <td class="no_wrap"> Process </td> <td class="no_wrap"> [PID 7438] Chrome_IOThread </td> </tr>
+<tr class="emph1"> <td class="no_wrap">  16.1 us/s </td> <td class="no_wrap">  0.11 </td> <td class="no_wrap">  </td> <td class="no_wrap">  </td> <td class="no_wrap">  </td> <td class="no_wrap"> kWork </td> <td class="no_wrap"> psi_avgs_work </td> </tr>
+<tr class="emph1"> <td class="no_wrap">  35.0 us/s </td> <td class="no_wrap">  0.10 </td> <td class="no_wrap">  </td> <td class="no_wrap">  </td> <td class="no_wrap">  </td> <td class="no_wrap"> Timer </td> <td class="no_wrap"> hrtimer_wakeup </td> </tr>
+<tr class="emph1"> <td class="no_wrap">   3.7 us/s </td> <td class="no_wrap">  0.11 </td> <td class="no_wrap">  </td> <td class="no_wrap">  </td> <td class="no_wrap">  </td> <td class="no_wrap"> Process </td> <td class="no_wrap"> [PID 3657] containerd --config /var/run/docker/containerd/containerd.toml  </td> </tr>
+<tr class="emph1"> <td class="no_wrap"> 183.4 us/s </td> <td class="no_wrap">  0.04 </td> <td class="no_wrap">  </td> <td class="no_wrap">  </td> <td class="no_wrap">  </td> <td class="no_wrap"> Process </td> <td class="no_wrap"> [PID 7081] zsh </td> </tr>
+<tr class="emph1"> <td class="no_wrap">  15.1 us/s </td> <td class="no_wrap">  0.10 </td> <td class="no_wrap">  </td> <td class="no_wrap">  </td> <td class="no_wrap">  </td> <td class="no_wrap"> Process </td> <td class="no_wrap"> [PID 4379] /etc/profiles/per-user/mark/bin/kitty  </td> </tr>
+<tr class="emph1"> <td class="no_wrap">   6.0 us/s </td> <td class="no_wrap">  0.10 </td> <td class="no_wrap">  </td> <td class="no_wrap">  </td> <td class="no_wrap">  </td> <td class="no_wrap"> Process </td> <td class="no_wrap"> [PID 2031] /nix/store/a8avqfxd649rfgfpqldja6v38ljb8fj5-systemd-260.1/lib/systemd/systemd-machined  </td> </tr>
+<tr class="emph1"> <td class="no_wrap">   2.2 us/s </td> <td class="no_wrap">  0.10 </td> <td class="no_wrap">  </td> <td class="no_wrap">  </td> <td class="no_wrap">  </td> <td class="no_wrap"> Process </td> <td class="no_wrap"> [PID 1676] [mt76-tx phy0] </td> </tr>
+<tr class="emph1"> <td class="no_wrap">  16.4 us/s </td> <td class="no_wrap">  0.09 </td> <td class="no_wrap">  </td> <td class="no_wrap">  </td> <td class="no_wrap">  </td> <td class="no_wrap"> Process </td> <td class="no_wrap"> [PID 1] /run/current-system/systemd/lib/systemd/systemd --switched-root --system --deserialize=41  </td> </tr>
+<tr class="emph1"> <td class="no_wrap">   5.0 us/s </td> <td class="no_wrap">  0.09 </td> <td class="no_wrap">  </td> <td class="no_wrap">  </td> <td class="no_wrap">  </td> <td class="no_wrap"> Process </td> <td class="no_wrap"> [PID 5672] /etc/profiles/per-user/mark/bin/zen-beta --name=zen-beta --class=zen-beta  </td> </tr>
+<tr class="emph1"> <td class="no_wrap">   4.5 us/s </td> <td class="no_wrap">  0.09 </td> <td class="no_wrap">  </td> <td class="no_wrap">  </td> <td class="no_wrap">  </td> <td class="no_wrap"> Process </td> <td class="no_wrap"> [PID 1237] [napi/phy0-0] </td> </tr>
+<tr class="emph1"> <td class="no_wrap">   8.8 us/s </td> <td class="no_wrap">  0.09 </td> <td class="no_wrap">  </td> <td class="no_wrap">  </td> <td class="no_wrap">  </td> <td class="no_wrap"> Process </td> <td class="no_wrap"> [PID 4135] /nix/store/h0agc7jqz21v9ci1yzd74390p58vfvh2-quickshell-0.3.0/bin/quickshell -c cappuccino  </td> </tr>
+<tr class="emph1"> <td class="no_wrap">   7.8 us/s </td> <td class="no_wrap">  0.09 </td> <td class="no_wrap">  </td> <td class="no_wrap">  </td> <td class="no_wrap">  </td> <td class="no_wrap"> Process </td> <td class="no_wrap"> [PID 1978] dbus-broker --log 11 --controller 10 --machine-id e1d97920edd64de48f2372b3b43c57c4 --max-bytes 536870912 --max-fds 4 </td> </tr>
+<tr class="emph1"> <td class="no_wrap">   1.1 us/s </td> <td class="no_wrap">  0.09 </td> <td class="no_wrap">  </td> <td class="no_wrap">  </td> <td class="no_wrap">  </td> <td class="no_wrap"> Process </td> <td class="no_wrap"> [PID 7479] code </td> </tr>
+<tr class="emph1"> <td class="no_wrap">  58.2 us/s </td> <td class="no_wrap">  0.06 </td> <td class="no_wrap">  </td> <td class="no_wrap">  </td> <td class="no_wrap">  </td> <td class="no_wrap"> Interrupt </td> <td class="no_wrap"> [111] amdgpu </td> </tr>
+<tr class="emph1"> <td class="no_wrap">   2.4 us/s </td> <td class="no_wrap">  0.08 </td> <td class="no_wrap">  </td> <td class="no_wrap">  </td> <td class="no_wrap">  </td> <td class="no_wrap"> Process </td> <td class="no_wrap"> [PID 7482] libuv-worker </td> </tr>
+<tr class="emph1"> <td class="no_wrap">   2.5 us/s </td> <td class="no_wrap">  0.08 </td> <td class="no_wrap">  </td> <td class="no_wrap">  </td> <td class="no_wrap">  </td> <td class="no_wrap"> Process </td> <td class="no_wrap"> [PID 7436] ThreadPoolForeg </td> </tr>
+<tr class="emph1"> <td class="no_wrap">   4.1 us/s </td> <td class="no_wrap">  0.07 </td> <td class="no_wrap">  </td> <td class="no_wrap">  </td> <td class="no_wrap">  </td> <td class="no_wrap"> Process </td> <td class="no_wrap"> [PID 7531] CacheThread_Blo </td> </tr>
+<tr class="emph1"> <td class="no_wrap">   3.7 us/s </td> <td class="no_wrap">  0.07 </td> <td class="no_wrap">  </td> <td class="no_wrap">  </td> <td class="no_wrap">  </td> <td class="no_wrap"> Process </td> <td class="no_wrap"> [PID 3658] containerd --config /var/run/docker/containerd/containerd.toml  </td> </tr>
+<tr class="emph1"> <td class="no_wrap">   2.1 us/s </td> <td class="no_wrap">  0.07 </td> <td class="no_wrap">  </td> <td class="no_wrap">  </td> <td class="no_wrap">  </td> <td class="no_wrap"> Process </td> <td class="no_wrap"> [PID 7629] libuv-worker </td> </tr>
+<tr class="emph1"> <td class="no_wrap">   8.4 us/s </td> <td class="no_wrap">  0.06 </td> <td class="no_wrap">  </td> <td class="no_wrap">  </td> <td class="no_wrap">  </td> <td class="no_wrap"> Process </td> <td class="no_wrap"> [PID 7076] KittyChildMon </td> </tr>
+<tr class="emph1"> <td class="no_wrap">   2.6 us/s </td> <td class="no_wrap">  0.07 </td> <td class="no_wrap">  </td> <td class="no_wrap">  </td> <td class="no_wrap">  </td> <td class="no_wrap"> Process </td> <td class="no_wrap"> [PID 7628] libuv-worker </td> </tr>
+<tr class="emph1"> <td class="no_wrap">   2.7 us/s </td> <td class="no_wrap">  0.06 </td> <td class="no_wrap">  </td> <td class="no_wrap">  </td> <td class="no_wrap">  </td> <td class="no_wrap"> Process </td> <td class="no_wrap"> [PID 5939] /nix/store/b232dfa4g6xxxncn9fzcc64lbwkr26z0-zen-beta-bin-unwrapped-1.20.1b/lib/zen-bin-1.20.1b/zen -contentproc -isF </td> </tr>
+<tr class="emph1"> <td class="no_wrap">  13.8 us/s </td> <td class="no_wrap">  0.06 </td> <td class="no_wrap">  </td> <td class="no_wrap">  </td> <td class="no_wrap">  </td> <td class="no_wrap"> Process </td> <td class="no_wrap"> [PID 7294] /nix/store/495xjzgfqzp0n7jg6fzjaxymfchm9kdz-nsncd-1.5.2/bin/nsncd  </td> </tr>
+<tr class="emph1"> <td class="no_wrap">   4.1 us/s </td> <td class="no_wrap">  0.06 </td> <td class="no_wrap">  </td> <td class="no_wrap">  </td> <td class="no_wrap">  </td> <td class="no_wrap"> Process </td> <td class="no_wrap"> [PID 1234] [napi/phy0-0] </td> </tr>
+<tr class="emph1"> <td class="no_wrap">  14.5 us/s </td> <td class="no_wrap">  0.05 </td> <td class="no_wrap">  </td> <td class="no_wrap">  </td> <td class="no_wrap">  </td> <td class="no_wrap"> Process </td> <td class="no_wrap"> [PID 7537] ThreadPoolForeg </td> </tr>
+<tr class="emph1"> <td class="no_wrap">   0.8 us/s </td> <td class="no_wrap">  0.06 </td> <td class="no_wrap">  </td> <td class="no_wrap">  </td> <td class="no_wrap">  </td> <td class="no_wrap"> kWork </td> <td class="no_wrap"> flush_to_ldisc </td> </tr>
+<tr class="emph1"> <td class="no_wrap">   2.0 us/s </td> <td class="no_wrap">  0.06 </td> <td class="no_wrap">  </td> <td class="no_wrap">  </td> <td class="no_wrap">  </td> <td class="no_wrap"> Process </td> <td class="no_wrap"> [PID 6162] /nix/store/b232dfa4g6xxxncn9fzcc64lbwkr26z0-zen-beta-bin-unwrapped-1.20.1b/lib/zen-bin-1.20.1b/zen -contentproc -isF </td> </tr>
+<tr class="emph1"> <td class="no_wrap">   2.8 us/s </td> <td class="no_wrap">  0.05 </td> <td class="no_wrap">  </td> <td class="no_wrap">  </td> <td class="no_wrap">  </td> <td class="no_wrap"> Process </td> <td class="no_wrap"> [PID 7536] Chrome_ChildIOT </td> </tr>
+<tr class="emph1"> <td class="no_wrap"> 134.9 us/s </td> <td class="no_wrap">  0.00 </td> <td class="no_wrap">  </td> <td class="no_wrap">  </td> <td class="no_wrap">  </td> <td class="no_wrap"> kWork </td> <td class="no_wrap"> mmput_async_fn </td> </tr>
+<tr class="emph1"> <td class="no_wrap">   2.1 us/s </td> <td class="no_wrap">  0.05 </td> <td class="no_wrap">  </td> <td class="no_wrap">  </td> <td class="no_wrap">  </td> <td class="no_wrap"> Process </td> <td class="no_wrap"> [PID 6165] /nix/store/b232dfa4g6xxxncn9fzcc64lbwkr26z0-zen-beta-bin-unwrapped-1.20.1b/lib/zen-bin-1.20.1b/zen -contentproc -isF </td> </tr>
+<tr class="emph1"> <td class="no_wrap">   6.3 us/s </td> <td class="no_wrap">  0.05 </td> <td class="no_wrap">  </td> <td class="no_wrap">  </td> <td class="no_wrap">  </td> <td class="no_wrap"> Process </td> <td class="no_wrap"> [PID 5797] /nix/store/b232dfa4g6xxxncn9fzcc64lbwkr26z0-zen-beta-bin-unwrapped-1.20.1b/lib/zen-bin-1.20.1b/zen -contentproc -isF </td> </tr>
+<tr class="emph1"> <td class="no_wrap">  21.1 us/s </td> <td class="no_wrap">  0.04 </td> <td class="no_wrap">  </td> <td class="no_wrap">  </td> <td class="no_wrap">  </td> <td class="no_wrap"> kWork </td> <td class="no_wrap"> delayed_vfree_work </td> </tr>
+<tr class="emph1"> <td class="no_wrap">   6.6 us/s </td> <td class="no_wrap">  0.05 </td> <td class="no_wrap">  </td> <td class="no_wrap">  </td> <td class="no_wrap">  </td> <td class="no_wrap"> Interrupt </td> <td class="no_wrap"> [72] nvme1q5 </td> </tr>
+<tr class="emph1"> <td class="no_wrap">   2.2 us/s </td> <td class="no_wrap">  0.05 </td> <td class="no_wrap">  </td> <td class="no_wrap">  </td> <td class="no_wrap">  </td> <td class="no_wrap"> Process </td> <td class="no_wrap"> [PID 5826] /nix/store/b232dfa4g6xxxncn9fzcc64lbwkr26z0-zen-beta-bin-unwrapped-1.20.1b/lib/zen-bin-1.20.1b/zen -contentproc -isF </td> </tr>
+<tr class="emph1"> <td class="no_wrap">   5.8 us/s </td> <td class="no_wrap">  0.05 </td> <td class="no_wrap">  </td> <td class="no_wrap">  </td> <td class="no_wrap">  </td> <td class="no_wrap"> Process </td> <td class="no_wrap"> [PID 2347] /nix/store/qg9zw2psnziqnl4yyqrrajd7ca0qgvpa-networkmanager-1.56.0/sbin/NetworkManager --no-daemon  </td> </tr>
+<tr class="emph1"> <td class="no_wrap">   6.9 us/s </td> <td class="no_wrap">  0.05 </td> <td class="no_wrap">  </td> <td class="no_wrap">  </td> <td class="no_wrap">  </td> <td class="no_wrap"> Interrupt </td> <td class="no_wrap"> [69] nvme1q2 </td> </tr>
+<tr class="emph1"> <td class="no_wrap">   2.9 us/s </td> <td class="no_wrap">  0.05 </td> <td class="no_wrap">  </td> <td class="no_wrap">  </td> <td class="no_wrap">  </td> <td class="no_wrap"> Process </td> <td class="no_wrap"> [PID 3680] containerd --config /var/run/docker/containerd/containerd.toml  </td> </tr>
+<tr class="emph1"> <td class="no_wrap">   1.9 us/s </td> <td class="no_wrap">  0.05 </td> <td class="no_wrap">  </td> <td class="no_wrap">  </td> <td class="no_wrap">  </td> <td class="no_wrap"> Process </td> <td class="no_wrap"> [PID 5863] /nix/store/b232dfa4g6xxxncn9fzcc64lbwkr26z0-zen-beta-bin-unwrapped-1.20.1b/lib/zen-bin-1.20.1b/zen -contentproc -isF </td> </tr>
+<tr class="emph1"> <td class="no_wrap">   4.7 us/s </td> <td class="no_wrap">  0.05 </td> <td class="no_wrap">  </td> <td class="no_wrap">  </td> <td class="no_wrap">  </td> <td class="no_wrap"> Process </td> <td class="no_wrap"> [PID 5845] /nix/store/b232dfa4g6xxxncn9fzcc64lbwkr26z0-zen-beta-bin-unwrapped-1.20.1b/lib/zen-bin-1.20.1b/zen -contentproc -isF </td> </tr>
+<tr class="emph1"> <td class="no_wrap">   1.9 us/s </td> <td class="no_wrap">  0.05 </td> <td class="no_wrap">  </td> <td class="no_wrap">  </td> <td class="no_wrap">  </td> <td class="no_wrap"> Process </td> <td class="no_wrap"> [PID 6163] Timer </td> </tr>
+<tr class="emph1"> <td class="no_wrap">  19.7 us/s </td> <td class="no_wrap">  0.04 </td> <td class="no_wrap">  </td> <td class="no_wrap">  </td> <td class="no_wrap">  </td> <td class="no_wrap"> Process </td> <td class="no_wrap"> [PID 7550] code </td> </tr>
+<tr class="emph1"> <td class="no_wrap">  15.5 us/s </td> <td class="no_wrap">  0.04 </td> <td class="no_wrap">  </td> <td class="no_wrap">  </td> <td class="no_wrap">  </td> <td class="no_wrap"> kWork </td> <td class="no_wrap"> usb_giveback_urb_bh </td> </tr>
+<tr class="emph1"> <td class="no_wrap">   4.2 us/s </td> <td class="no_wrap">  0.04 </td> <td class="no_wrap">  </td> <td class="no_wrap">  </td> <td class="no_wrap">  </td> <td class="no_wrap"> Process </td> <td class="no_wrap"> [PID 6124] /nix/store/b232dfa4g6xxxncn9fzcc64lbwkr26z0-zen-beta-bin-unwrapped-1.20.1b/lib/zen-bin-1.20.1b/zen -contentproc -isF </td> </tr>
+<tr class="emph1"> <td class="no_wrap">   1.7 us/s </td> <td class="no_wrap">  0.04 </td> <td class="no_wrap">  </td> <td class="no_wrap">  </td> <td class="no_wrap">  </td> <td class="no_wrap"> Process </td> <td class="no_wrap"> [PID 7484] libuv-worker </td> </tr>
+<tr class="emph1"> <td class="no_wrap">   0.8 us/s </td> <td class="no_wrap">  0.04 </td> <td class="no_wrap">  </td> <td class="no_wrap">  </td> <td class="no_wrap">  </td> <td class="no_wrap"> Timer </td> <td class="no_wrap"> watchdog_timer_fn </td> </tr>
+<tr class="emph1"> <td class="no_wrap">   3.7 us/s </td> <td class="no_wrap">  0.04 </td> <td class="no_wrap">  </td> <td class="no_wrap">  </td> <td class="no_wrap">  </td> <td class="no_wrap"> Process </td> <td class="no_wrap"> [PID 6114] /nix/store/b232dfa4g6xxxncn9fzcc64lbwkr26z0-zen-beta-bin-unwrapped-1.20.1b/lib/zen-bin-1.20.1b/zen -contentproc -isF </td> </tr>
+<tr class="emph1"> <td class="no_wrap"> 101.1 us/s </td> <td class="no_wrap">  </td> <td class="no_wrap">  </td> <td class="no_wrap">  </td> <td class="no_wrap">  </td> <td class="no_wrap"> Timer </td> <td class="no_wrap"> delayed_work_timer_fn </td> </tr>
+<tr class="emph1"> <td class="no_wrap">   0.3 us/s </td> <td class="no_wrap">  0.04 </td> <td class="no_wrap">  </td> <td class="no_wrap">  </td> <td class="no_wrap">  </td> <td class="no_wrap"> Process </td> <td class="no_wrap"> [PID 7087] kitten </td> </tr>
+<tr class="emph1"> <td class="no_wrap">   2.4 us/s </td> <td class="no_wrap">  0.04 </td> <td class="no_wrap">  </td> <td class="no_wrap">  </td> <td class="no_wrap">  </td> <td class="no_wrap"> Process </td> <td class="no_wrap"> [PID 7471] ThreadPoolForeg </td> </tr>
+<tr class="emph1"> <td class="no_wrap">   9.9 us/s </td> <td class="no_wrap">  0.03 </td> <td class="no_wrap">  </td> <td class="no_wrap">  </td> <td class="no_wrap">  </td> <td class="no_wrap"> Process </td> <td class="no_wrap"> [PID 7232] nmtui </td> </tr>
+<tr class="emph1"> <td class="no_wrap">  11.7 us/s </td> <td class="no_wrap">  0.03 </td> <td class="no_wrap">  </td> <td class="no_wrap">  </td> <td class="no_wrap">  </td> <td class="no_wrap"> Process </td> <td class="no_wrap"> [PID 7535] ThreadPoolForeg </td> </tr>
+<tr class="emph1"> <td class="no_wrap">  49.5 us/s </td> <td class="no_wrap">  0.02 </td> <td class="no_wrap">  </td> <td class="no_wrap">  </td> <td class="no_wrap">  </td> <td class="no_wrap"> Process </td> <td class="no_wrap"> [PID 7559] code </td> </tr>
+<tr class="emph1"> <td class="no_wrap">   1.5 us/s </td> <td class="no_wrap">  0.03 </td> <td class="no_wrap">  </td> <td class="no_wrap">  </td> <td class="no_wrap">  </td> <td class="no_wrap"> Process </td> <td class="no_wrap"> [PID 3676] containerd --config /var/run/docker/containerd/containerd.toml  </td> </tr>
+<tr class="emph1"> <td class="no_wrap">   3.7 us/s </td> <td class="no_wrap">  0.03 </td> <td class="no_wrap">  </td> <td class="no_wrap">  </td> <td class="no_wrap">  </td> <td class="no_wrap"> Process </td> <td class="no_wrap"> [PID 6112] Web Content </td> </tr>
+<tr class="emph1"> <td class="no_wrap">   4.0 us/s </td> <td class="no_wrap">  0.03 </td> <td class="no_wrap">  </td> <td class="no_wrap">  </td> <td class="no_wrap">  </td> <td class="no_wrap"> Interrupt </td> <td class="no_wrap"> [71] nvme1q4 </td> </tr>
+<tr class="emph1"> <td class="no_wrap">   6.8 us/s </td> <td class="no_wrap">  0.03 </td> <td class="no_wrap">  </td> <td class="no_wrap">  </td> <td class="no_wrap">  </td> <td class="no_wrap"> Interrupt </td> <td class="no_wrap"> [76] nvme1q9 </td> </tr>
+<tr class="emph1"> <td class="no_wrap">  26.7 us/s </td> <td class="no_wrap">  0.02 </td> <td class="no_wrap">  </td> <td class="no_wrap">  </td> <td class="no_wrap">  </td> <td class="no_wrap"> Process </td> <td class="no_wrap"> [PID 867] /nix/store/a8avqfxd649rfgfpqldja6v38ljb8fj5-systemd-260.1/lib/systemd/systemd-udevd  </td> </tr>
+<tr class="emph1"> <td class="no_wrap">  76.6 us/s </td> <td class="no_wrap">  0.00 </td> <td class="no_wrap">  </td> <td class="no_wrap">  </td> <td class="no_wrap">  </td> <td class="no_wrap"> Process </td> <td class="no_wrap"> [PID 7028] StreamTrans #35 </td> </tr>
+<tr class="emph1"> <td class="no_wrap">   4.8 us/s </td> <td class="no_wrap">  0.03 </td> <td class="no_wrap">  </td> <td class="no_wrap">  </td> <td class="no_wrap">  </td> <td class="no_wrap"> Process </td> <td class="no_wrap"> [PID 7059] kitty:cs0 </td> </tr>
+<tr class="emph1"> <td class="no_wrap">  80.3 us/s </td> <td class="no_wrap">  </td> <td class="no_wrap">  </td> <td class="no_wrap">  </td> <td class="no_wrap">  </td> <td class="no_wrap"> Interrupt </td> <td class="no_wrap"> [9] RCU(softirq) </td> </tr>
+<tr class="emph1"> <td class="no_wrap">   2.7 us/s </td> <td class="no_wrap">  0.03 </td> <td class="no_wrap">  </td> <td class="no_wrap">  </td> <td class="no_wrap">  </td> <td class="no_wrap"> Process </td> <td class="no_wrap"> [PID 7472] ThreadPoolForeg </td> </tr>
+<tr class="emph1"> <td class="no_wrap">   1.5 us/s </td> <td class="no_wrap">  0.03 </td> <td class="no_wrap">  </td> <td class="no_wrap">  </td> <td class="no_wrap">  </td> <td class="no_wrap"> Process </td> <td class="no_wrap"> [PID 3671] containerd --config /var/run/docker/containerd/containerd.toml  </td> </tr>
+<tr class="emph1"> <td class="no_wrap">  75.7 us/s </td> <td class="no_wrap">  </td> <td class="no_wrap">  </td> <td class="no_wrap">  </td> <td class="no_wrap">  </td> <td class="no_wrap"> Timer </td> <td class="no_wrap"> process_timeout </td> </tr>
+</table>
+</div>
+<div class="clear_block" id="devinfo">
+<div><br/> <ul>
+<li class="summary_list"> <b> The battery reports a discharge rate of:  </b> 22.0  W </li></ul> </div> <br />
+<div><br/> <ul>
+<li class="summary_list"> <b> The energy consumed was :  </b> 68.7 k J </li></ul> </div> <br />
+<h2 class="content_title"> Device Power Report </h2>
+<table class="emphasis2 side_by_side_left">
+<tr class="emph1"> <th class="emph_title"> Usage </th> <th class="emph_title"> Device Name </th> </tr>
+<tr class="emph1"> <td >  1851% </td> <td > CPU misc </td> </tr>
+<tr class="emph1"> <td >  1851% </td> <td > CPU core </td> </tr>
+<tr class="emph1"> <td > 100.0% </td> <td > USB device: ITE Device(8176) (ITE Tech. Inc.) </td> </tr>
+<tr class="emph1"> <td > 100.0% </td> <td > USB device: xHCI Host Controller </td> </tr>
+<tr class="emph1"> <td >  39.3 pkts/s </td> <td > Network interface: wlo1 (mt7921e) </td> </tr>
+<tr class="emph1"> <td >  31.6% </td> <td > Display backlight </td> </tr>
+<tr class="emph1"> <td >   0.0% </td> <td > USB device: Integrated Camera (Chicony Electronics Co.,Ltd.) </td> </tr>
+<tr class="emph1"> <td >   0.0% </td> <td > Display backlight </td> </tr>
+<tr class="emph1"> <td >   0.0% </td> <td > USB device: xHCI Host Controller </td> </tr>
+<tr class="emph1"> <td >   0.0% </td> <td > USB device: xHCI Host Controller </td> </tr>
+<tr class="emph1"> <td >   0.0% </td> <td > USB device: xHCI Host Controller </td> </tr>
+<tr class="emph1"> <td >   0.0% </td> <td > USB device: xHCI Host Controller </td> </tr>
+<tr class="emph1"> <td >   0.0% </td> <td > USB device: xHCI Host Controller </td> </tr>
+<tr class="emph1"> <td >   0.0% </td> <td > USB device: xHCI Host Controller </td> </tr>
+<tr class="emph1"> <td >   0.0% </td> <td > USB device: Wireless_Device (MediaTek Inc.) </td> </tr>
+<tr class="emph1"> <td >   0.0% </td> <td > USB device: xHCI Host Controller </td> </tr>
+<tr class="emph1"> <td >   0.0% </td> <td > Audio codec hwC0D0: Nvidia </td> </tr>
+<tr class="emph1"> <td >   0.0% </td> <td > Audio codec hwC2D0: Realtek </td> </tr>
+<tr class="emph1"> <td >   0.0% </td> <td > Audio codec hwC1D0: ATI </td> </tr>
+<tr class="emph1"> <td > 100.0% </td> <td > PCI Device: Advanced Micro Devices, Inc. [AMD] Phoenix GPP Bridge </td> </tr>
+<tr class="emph1"> <td > 100.0% </td> <td > PCI Device: MEDIATEK Corp. MT7922 802.11ax PCI Express Wireless Network Adapter </td> </tr>
+<tr class="emph1"> <td > 100.0% </td> <td > USB device: USB2.0 Hub </td> </tr>
+<tr class="emph1"> <td > 100.0% </td> <td > PCI Device: Samsung Electronics Co Ltd NVMe SSD Controller SM981/PM981/PM983 </td> </tr>
+<tr class="emph1"> <td > 100.0% </td> <td > PCI Device: Advanced Micro Devices, Inc. [AMD] Phoenix GPP Bridge </td> </tr>
+<tr class="emph1"> <td > 100.0% </td> <td > PCI Device: Advanced Micro Devices, Inc. [AMD] Phoenix GPP Bridge </td> </tr>
+<tr class="emph1"> <td > 100.0% </td> <td > PCI Device: SK hynix Platinum P41/PC801 NVMe Solid State Drive </td> </tr>
+<tr class="emph1"> <td > 100.0% </td> <td > PCI Device: Advanced Micro Devices, Inc. [AMD] Phoenix Internal GPP Bridge to Bus [C:A] </td> </tr>
+<tr class="emph1"> <td > 100.0% </td> <td > PCI Device: Advanced Micro Devices, Inc. [AMD] Phoenix CCP/PSP 3.0 Device </td> </tr>
+<tr class="emph1"> <td > 100.0% </td> <td > PCI Device: Advanced Micro Devices, Inc. [AMD] Device 15b9 </td> </tr>
+<tr class="emph1"> <td > 100.0% </td> <td > PCI Device: Advanced Micro Devices, Inc. [AMD] FCH SMBus Controller </td> </tr>
+<tr class="emph1"> <td > 100.0% </td> <td > PCI Device: Advanced Micro Devices, Inc. [AMD/ATI] HawkPoint1 </td> </tr>
+<tr class="emph1"> <td > 100.0% </td> <td > PCI Device: Advanced Micro Devices, Inc. [AMD] Phoenix GPP Bridge </td> </tr>
+<tr class="emph1"> <td >  93.2% </td> <td > PCI Device: NVIDIA Corporation AD106M [GeForce RTX 4070 Max-Q / Mobile] </td> </tr>
+<tr class="emph1"> <td >  50.0% </td> <td > Radio device: ideapad_acpi </td> </tr>
+<tr class="emph1"> <td >  50.0% </td> <td > Radio device: mt7921e </td> </tr>
+<tr class="emph1"> <td >  33.6% </td> <td > runtime-AMDI0010:00 </td> </tr>
+<tr class="emph1"> <td >   6.2% </td> <td > PCI Device: NVIDIA Corporation AD106M High Definition Audio Controller </td> </tr>
+<tr class="emph1"> <td >   0.3% </td> <td > PCI Device: Advanced Micro Devices, Inc. [AMD] Phoenix GPP Bridge </td> </tr>
+<tr class="emph1"> <td >   0.3% </td> <td > PCI Device: Realtek Semiconductor Co., Ltd. RTL8111/8168/8211/8411 PCI Express Gigabit Ethernet Controller </td> </tr>
+<tr class="emph1"> <td >   0.0% </td> <td > PCI Device: Advanced Micro Devices, Inc. [AMD] Ryzen HD Audio Controller </td> </tr>
+<tr class="emph1"> <td >   0.0% </td> <td > PCI Device: Advanced Micro Devices, Inc. [AMD] Phoenix Dummy Host Bridge </td> </tr>
+<tr class="emph1"> <td >   0.0% </td> <td > Radio device: ideapad_acpi </td> </tr>
+<tr class="emph1"> <td >   0.0 pkts/s </td> <td > Network interface: enp2s0 (r8169) </td> </tr>
+<tr class="emph1"> <td >   0.0 pkts/s </td> <td > nic:br-d2f1c5f59a94 </td> </tr>
+<tr class="emph1"> <td >   0.0 pkts/s </td> <td > nic:docker0 </td> </tr>
+<tr class="emph1"> <td >   0.0% </td> <td > PCI Device: Advanced Micro Devices, Inc. [AMD] Device 15c1 </td> </tr>
+<tr class="emph1"> <td >   0.0% </td> <td > PCI Device: Advanced Micro Devices, Inc. [AMD] Phoenix Dummy Host Bridge </td> </tr>
+<tr class="emph1"> <td >   0.0% </td> <td > PCI Device: Advanced Micro Devices, Inc. [AMD] Phoenix Data Fabric; Function 3 </td> </tr>
+<tr class="emph1"> <td >   0.0% </td> <td > PCI Device: Advanced Micro Devices, Inc. [AMD] Phoenix Data Fabric; Function 1 </td> </tr>
+<tr class="emph1"> <td >   0.0% </td> <td > PCI Device: Advanced Micro Devices, Inc. [AMD] Device 15c0 </td> </tr>
+<tr class="emph1"> <td >   0.0% </td> <td > PCI Device: Advanced Micro Devices, Inc. [AMD] Phoenix Dummy Function </td> </tr>
+<tr class="emph1"> <td >   0.0% </td> <td > PCI Device: Advanced Micro Devices, Inc. [AMD] Phoenix Dummy Host Bridge </td> </tr>
+<tr class="emph1"> <td >   0.0% </td> <td > PCI Device: Advanced Micro Devices, Inc. [AMD] FCH LPC Bridge </td> </tr>
+<tr class="emph1"> <td >   0.0% </td> <td > PCI Device: Advanced Micro Devices, Inc. [AMD] Device 15ba </td> </tr>
+<tr class="emph1"> <td >   0.0% </td> <td > PCI Device: Advanced Micro Devices, Inc. [AMD] Phoenix Dummy Function </td> </tr>
+<tr class="emph1"> <td >   0.0% </td> <td > PCI Device: Advanced Micro Devices, Inc. [AMD] Phoenix IOMMU </td> </tr>
+<tr class="emph1"> <td >   0.0% </td> <td > PCI Device: Advanced Micro Devices, Inc. [AMD] Phoenix Internal GPP Bridge to Bus [C:A] </td> </tr>
+<tr class="emph1"> <td >   0.0% </td> <td > PCI Device: Advanced Micro Devices, Inc. [AMD] Phoenix Data Fabric; Function 6 </td> </tr>
+<tr class="emph1"> <td >   0.0% </td> <td > PCI Device: Advanced Micro Devices, Inc. [AMD] Phoenix Root Complex </td> </tr>
+<tr class="emph1"> <td >   0.0% </td> <td > PCI Device: Advanced Micro Devices, Inc. [AMD] Phoenix Data Fabric; Function 4 </td> </tr>
+<tr class="emph1"> <td >   0.0% </td> <td > PCI Device: Advanced Micro Devices, Inc. [AMD] Phoenix Dummy Host Bridge </td> </tr>
+<tr class="emph1"> <td >   0.0% </td> <td > PCI Device: Advanced Micro Devices, Inc. [AMD] Phoenix Data Fabric; Function 2 </td> </tr>
+<tr class="emph1"> <td >   0.0% </td> <td > runtime-PNP0C09:00 </td> </tr>
+<tr class="emph1"> <td >   0.0% </td> <td > PCI Device: Advanced Micro Devices, Inc. [AMD] Phoenix Data Fabric; Function 0 </td> </tr>
+<tr class="emph1"> <td >   0.0% </td> <td > PCI Device: Advanced Micro Devices, Inc. [AMD] Audio Coprocessor </td> </tr>
+<tr class="emph1"> <td >   0.0% </td> <td > PCI Device: Advanced Micro Devices, Inc. [AMD] AMD IPU Device </td> </tr>
+<tr class="emph1"> <td >   0.0% </td> <td > PCI Device: Advanced Micro Devices, Inc. [AMD] Phoenix Dummy Host Bridge </td> </tr>
+<tr class="emph1"> <td >   0.0% </td> <td > PCI Device: Advanced Micro Devices, Inc. [AMD] Phoenix Data Fabric; Function 7 </td> </tr>
+<tr class="emph1"> <td >   0.0% </td> <td > PCI Device: Advanced Micro Devices, Inc. [AMD] Phoenix Internal GPP Bridge to Bus [C:A] </td> </tr>
+<tr class="emph1"> <td >   0.0% </td> <td > PCI Device: Advanced Micro Devices, Inc. [AMD] Phoenix Data Fabric; Function 5 </td> </tr>
+<tr class="emph1"> <td >   0.0% </td> <td > PCI Device: Advanced Micro Devices, Inc. [AMD/ATI] Radeon High Definition Audio Controller </td> </tr>
+<tr class="emph1"> <td >   0.0% </td> <td > runtime-PNP0C14:00 </td> </tr>
+<tr class="emph1"> <td >   0.0% </td> <td > runtime-sp5100-tco </td> </tr>
+<tr class="emph1"> <td >   0.0% </td> <td > runtime-PNP0C0D:00 </td> </tr>
+<tr class="emph1"> <td >   0.0% </td> <td > Radio device: btusb </td> </tr>
+<tr class="emph1"> <td >   0.0% </td> <td > runtime-PNP0C0A:00 </td> </tr>
+<tr class="emph1"> <td >   0.0% </td> <td > runtime-ACPI0003:00 </td> </tr>
+<tr class="emph1"> <td >   0.0% </td> <td > runtime-acpi-cpufreq </td> </tr>
+<tr class="emph1"> <td >   0.0% </td> <td > runtime-intel_rapl_msr.0 </td> </tr>
+<tr class="emph1"> <td >   0.0% </td> <td > runtime-USBC000:00 </td> </tr>
+<tr class="emph1"> <td >   0.0% </td> <td > runtime-PNP0C14:03 </td> </tr>
+<tr class="emph1"> <td >   0.0% </td> <td > runtime-PNP0C0C:00 </td> </tr>
+<tr class="emph1"> <td >   0.0% </td> <td > runtime-rtc-efi.0 </td> </tr>
+<tr class="emph1"> <td >   0.0% </td> <td > runtime-PNP0C14:01 </td> </tr>
+<tr class="emph1"> <td >   0.0% </td> <td > runtime-alarmtimer.0.auto </td> </tr>
+<tr class="emph1"> <td >   0.0% </td> <td > runtime-PNP0103:00 </td> </tr>
+<tr class="emph1"> <td >   0.0% </td> <td > I2C Adapter (i2c-11): AMDGPU DM i2c hw bus 6 </td> </tr>
+<tr class="emph1"> <td >   0.0% </td> <td > runtime-efivars.0 </td> </tr>
+<tr class="emph1"> <td >   0.0% </td> <td > runtime-serial8250 </td> </tr>
+<tr class="emph1"> <td >   0.0% </td> <td > runtime-AMDI0030:00 </td> </tr>
+<tr class="emph1"> <td >   0.0% </td> <td > runtime-PNP0C14:04 </td> </tr>
+<tr class="emph1"> <td >   0.0% </td> <td > runtime-i8042 </td> </tr>
+<tr class="emph1"> <td >   0.0% </td> <td > runtime-VPC2004:00 </td> </tr>
+<tr class="emph1"> <td >   0.0% </td> <td > runtime-PNP0C04:00 </td> </tr>
+<tr class="emph1"> <td >   0.0% </td> <td > runtime-LHK2019:00 </td> </tr>
+<tr class="emph1"> <td >   0.0% </td> <td > runtime-NVDA0820:00 </td> </tr>
+<tr class="emph1"> <td >   0.0% </td> <td > runtime-PNP0C14:02 </td> </tr>
+<tr class="emph1"> <td >   0.0% </td> <td > runtime-pcspkr </td> </tr>
+<tr class="emph1"> <td >   0.0% </td> <td > I2C Adapter (i2c-22): AMDGPU DM aux hw bus 8 </td> </tr>
+<tr class="emph1"> <td >   0.0% </td> <td > runtime-PNP0C0B:00 </td> </tr>
+<tr class="emph1"> <td >   0.0% </td> <td > runtime-AMDI0009:00 </td> </tr>
+<tr class="emph1"> <td >   0.0% </td> <td > runtime-LNXTHERM:00 </td> </tr>
+<tr class="emph1"> <td >   0.0% </td> <td > I2C Adapter (i2c-3): SMBus PIIX4 adapter port 2 at 0b00 </td> </tr>
+<tr class="emph1"> <td >   0.0% </td> <td > runtime-AMDI0010:01 </td> </tr>
+<tr class="emph1"> <td >   0.0% </td> <td > runtime-MSFT0101:00 </td> </tr>
+<tr class="emph1"> <td >   0.0% </td> <td > I2C Adapter (i2c-20): AMDGPU DM aux hw bus 6 </td> </tr>
+<tr class="emph1"> <td >   0.0% </td> <td > I2C Adapter (i2c-10): AMDGPU DM i2c hw bus 5 </td> </tr>
+<tr class="emph1"> <td >   0.0% </td> <td > runtime-PNP0800:00 </td> </tr>
+<tr class="emph1"> <td >   0.0% </td> <td > I2C Adapter (i2c-12): AMDGPU DM i2c hw bus 7 </td> </tr>
+<tr class="emph1"> <td >   0.0% </td> <td > runtime-AMDI0052:00 </td> </tr>
+<tr class="emph1"> <td >   0.0% </td> <td > I2C Adapter (i2c-2): SMBus PIIX4 adapter port 0 at 0b00 </td> </tr>
+<tr class="emph1"> <td >   0.0% </td> <td > I2C Device (i2c-LTCN0001:01): LTCN0001:01 </td> </tr>
+<tr class="emph1"> <td >   0.0% </td> <td > I2C Adapter (i2c-17): AMDGPU DM aux hw bus 3 </td> </tr>
+<tr class="emph1"> <td >   0.0% </td> <td > I2C Adapter (i2c-8): AMDGPU DM i2c hw bus 3 </td> </tr>
+<tr class="emph1"> <td >   0.0% </td> <td > I2C Adapter (i2c-25): NVIDIA i2c adapter 5 at 1:00.0 </td> </tr>
+<tr class="emph1"> <td >   0.0% </td> <td > I2C Adapter (i2c-15): AMDGPU DM aux hw bus 1 </td> </tr>
+<tr class="emph1"> <td >   0.0% </td> <td > I2C Adapter (i2c-6): AMDGPU DM i2c hw bus 1 </td> </tr>
+<tr class="emph1"> <td >   0.0% </td> <td > I2C Adapter (i2c-23): NVIDIA i2c adapter 1 at 1:00.0 </td> </tr>
+<tr class="emph1"> <td >   0.0% </td> <td > I2C Adapter (i2c-13): AMDGPU DM i2c hw bus 8 </td> </tr>
+<tr class="emph1"> <td >   0.0% </td> <td > I2C Adapter (i2c-4): SMBus PIIX4 adapter port 1 at 0b20 </td> </tr>
+<tr class="emph1"> <td >   0.0% </td> <td > I2C Device (4-0050): spd5118 </td> </tr>
+<tr class="emph1"> <td >   0.0% </td> <td > I2C Adapter (i2c-21): AMDGPU DM aux hw bus 7 </td> </tr>
+<tr class="emph1"> <td >   0.0% </td> <td > I2C Adapter (i2c-1): Synopsys DesignWare I2C adapter </td> </tr>
+<tr class="emph1"> <td >   0.0% </td> <td > I2C Adapter (i2c-19): AMDGPU DM aux hw bus 5 </td> </tr>
+<tr class="emph1"> <td >   0.0% </td> <td > I2C Device (i2c-SYNA2BA6:00): SYNA2BA6:00 </td> </tr>
+<tr class="emph1"> <td >   0.0% </td> <td > I2C Adapter (i2c-0): Synopsys DesignWare I2C adapter </td> </tr>
+<tr class="emph1"> <td >   0.0% </td> <td > I2C Adapter (i2c-18): AMDGPU DM aux hw bus 4 </td> </tr>
+<tr class="emph1"> <td >   0.0% </td> <td > I2C Adapter (i2c-9): AMDGPU DM i2c hw bus 4 </td> </tr>
+<tr class="emph1"> <td >   0.0% </td> <td > I2C Adapter (i2c-26): NVIDIA i2c adapter 6 at 1:00.0 </td> </tr>
+<tr class="emph1"> <td >   0.0% </td> <td > I2C Adapter (i2c-16): AMDGPU DM aux hw bus 2 </td> </tr>
+<tr class="emph1"> <td >   0.0% </td> <td > I2C Adapter (i2c-7): AMDGPU DM i2c hw bus 2 </td> </tr>
+<tr class="emph1"> <td >   0.0% </td> <td > I2C Adapter (i2c-24): NVIDIA i2c adapter 3 at 1:00.0 </td> </tr>
+<tr class="emph1"> <td >   0.0% </td> <td > I2C Adapter (i2c-14): AMDGPU DM aux hw bus 0 </td> </tr>
+<tr class="emph1"> <td >   0.0% </td> <td > I2C Adapter (i2c-5): AMDGPU DM i2c hw bus 0 </td> </tr>
+<tr class="emph1"> <td >   0.0% </td> <td > I2C Device (4-0051): spd5118 </td> </tr>
+</table>
+<h2 class="content_title"> Process Device Activity </h2>
+<table class="emphasis2">
+<tr class="emph1"> <th class="emph_title"> Process </th> <th class="emph_title"> Device </th> </tr>
+<tr class="emph1"> <td > systemd </td> <td > /dev/dri/card0 </td> </tr>
+<tr class="emph1"> <td >  </td> <td > /dev/dri/card1 </td> </tr>
+<tr class="emph1"> <td >  </td> <td > /dev/input/event0 </td> </tr>
+<tr class="emph1"> <td >  </td> <td > /dev/input/event1 </td> </tr>
+<tr class="emph1"> <td >  </td> <td > /dev/input/event11 </td> </tr>
+<tr class="emph1"> <td >  </td> <td > /dev/input/event12 </td> </tr>
+<tr class="emph1"> <td >  </td> <td > /dev/input/event16 </td> </tr>
+<tr class="emph1"> <td >  </td> <td > /dev/input/event17 </td> </tr>
+<tr class="emph1"> <td >  </td> <td > /dev/input/event2 </td> </tr>
+<tr class="emph1"> <td >  </td> <td > /dev/input/event3 </td> </tr>
+<tr class="emph1"> <td >  </td> <td > /dev/input/event4 </td> </tr>
+<tr class="emph1"> <td >  </td> <td > /dev/input/event5 </td> </tr>
+<tr class="emph1"> <td >  </td> <td > /dev/kmsg </td> </tr>
+<tr class="emph1"> <td > systemd-journal </td> <td > /dev/kmsg </td> </tr>
+<tr class="emph1"> <td >  </td> <td > /dev/kmsg </td> </tr>
+<tr class="emph1"> <td > mount.ntfs </td> <td > /dev/fuse </td> </tr>
+<tr class="emph1"> <td >  </td> <td > /dev/nvme0n1p3 </td> </tr>
+<tr class="emph1"> <td > acpid </td> <td > /dev/input/event0 </td> </tr>
+<tr class="emph1"> <td >  </td> <td > /dev/input/event1 </td> </tr>
+<tr class="emph1"> <td >  </td> <td > /dev/input/event10 </td> </tr>
+<tr class="emph1"> <td >  </td> <td > /dev/input/event14 </td> </tr>
+<tr class="emph1"> <td >  </td> <td > /dev/input/event15 </td> </tr>
+<tr class="emph1"> <td >  </td> <td > /dev/input/event16 </td> </tr>
+<tr class="emph1"> <td >  </td> <td > /dev/input/event2 </td> </tr>
+<tr class="emph1"> <td >  </td> <td > /dev/input/event3 </td> </tr>
+<tr class="emph1"> <td >  </td> <td > /dev/input/event4 </td> </tr>
+<tr class="emph1"> <td >  </td> <td > /dev/input/event5 </td> </tr>
+<tr class="emph1"> <td >  </td> <td > /dev/input/event6 </td> </tr>
+<tr class="emph1"> <td >  </td> <td > /dev/input/event7 </td> </tr>
+<tr class="emph1"> <td >  </td> <td > /dev/input/event8 </td> </tr>
+<tr class="emph1"> <td >  </td> <td > /dev/input/event9 </td> </tr>
+<tr class="emph1"> <td > bluetoothd </td> <td > /dev/rfkill </td> </tr>
+<tr class="emph1"> <td > systemd-logind </td> <td > /dev/dri/card0 </td> </tr>
+<tr class="emph1"> <td >  </td> <td > /dev/dri/card1 </td> </tr>
+<tr class="emph1"> <td >  </td> <td > /dev/input/event0 </td> </tr>
+<tr class="emph1"> <td >  </td> <td > /dev/input/event0 </td> </tr>
+<tr class="emph1"> <td >  </td> <td > /dev/input/event1 </td> </tr>
+<tr class="emph1"> <td >  </td> <td > /dev/input/event11 </td> </tr>
+<tr class="emph1"> <td >  </td> <td > /dev/input/event12 </td> </tr>
+<tr class="emph1"> <td >  </td> <td > /dev/input/event16 </td> </tr>
+<tr class="emph1"> <td >  </td> <td > /dev/input/event16 </td> </tr>
+<tr class="emph1"> <td >  </td> <td > /dev/input/event17 </td> </tr>
+<tr class="emph1"> <td >  </td> <td > /dev/input/event2 </td> </tr>
+<tr class="emph1"> <td >  </td> <td > /dev/input/event3 </td> </tr>
+<tr class="emph1"> <td >  </td> <td > /dev/input/event3 </td> </tr>
+<tr class="emph1"> <td >  </td> <td > /dev/input/event4 </td> </tr>
+<tr class="emph1"> <td >  </td> <td > /dev/input/event4 </td> </tr>
+<tr class="emph1"> <td >  </td> <td > /dev/input/event5 </td> </tr>
+<tr class="emph1"> <td > upowerd </td> <td > /dev/input/event4 </td> </tr>
+<tr class="emph1"> <td > .Hyprland-wrapp </td> <td > /dev/dri/card0 </td> </tr>
+<tr class="emph1"> <td >  </td> <td > /dev/dri/card0 </td> </tr>
+<tr class="emph1"> <td >  </td> <td > /dev/dri/card1 </td> </tr>
+<tr class="emph1"> <td >  </td> <td > /dev/dri/card1 </td> </tr>
+<tr class="emph1"> <td >  </td> <td > /dev/dri/card1 </td> </tr>
+<tr class="emph1"> <td >  </td> <td > /dev/dri/card1 </td> </tr>
+<tr class="emph1"> <td >  </td> <td > /dev/dri/card1 </td> </tr>
+<tr class="emph1"> <td >  </td> <td > /dev/dri/renderD128 </td> </tr>
+<tr class="emph1"> <td >  </td> <td > /dev/dri/renderD128 </td> </tr>
+<tr class="emph1"> <td >  </td> <td > /dev/dri/renderD128 </td> </tr>
+<tr class="emph1"> <td >  </td> <td > /dev/dri/renderD128 </td> </tr>
+<tr class="emph1"> <td >  </td> <td > /dev/dri/renderD128 </td> </tr>
+<tr class="emph1"> <td >  </td> <td > /dev/dri/renderD129 </td> </tr>
+<tr class="emph1"> <td >  </td> <td > /dev/dri/renderD129 </td> </tr>
+<tr class="emph1"> <td >  </td> <td > /dev/input/event0 </td> </tr>
+<tr class="emph1"> <td >  </td> <td > /dev/input/event1 </td> </tr>
+<tr class="emph1"> <td >  </td> <td > /dev/input/event11 </td> </tr>
+<tr class="emph1"> <td >  </td> <td > /dev/input/event12 </td> </tr>
+<tr class="emph1"> <td >  </td> <td > /dev/input/event16 </td> </tr>
+<tr class="emph1"> <td >  </td> <td > /dev/input/event17 </td> </tr>
+<tr class="emph1"> <td >  </td> <td > /dev/input/event2 </td> </tr>
+<tr class="emph1"> <td >  </td> <td > /dev/input/event3 </td> </tr>
+<tr class="emph1"> <td >  </td> <td > /dev/input/event4 </td> </tr>
+<tr class="emph1"> <td >  </td> <td > /dev/input/event5 </td> </tr>
+<tr class="emph1"> <td >  </td> <td > /dev/nvidia0 </td> </tr>
+<tr class="emph1"> <td >  </td> <td > /dev/nvidia0 </td> </tr>
+<tr class="emph1"> <td >  </td> <td > /dev/nvidia0 </td> </tr>
+<tr class="emph1"> <td >  </td> <td > /dev/nvidiactl </td> </tr>
+<tr class="emph1"> <td >  </td> <td > /dev/nvidiactl </td> </tr>
+<tr class="emph1"> <td > hyprlauncher </td> <td > /dev/dri/renderD128 </td> </tr>
+<tr class="emph1"> <td >  </td> <td > /dev/dri/renderD128 </td> </tr>
+<tr class="emph1"> <td >  </td> <td > /dev/dri/renderD128 </td> </tr>
+<tr class="emph1"> <td >  </td> <td > /dev/dri/renderD128 </td> </tr>
+<tr class="emph1"> <td >  </td> <td > /dev/dri/renderD128 </td> </tr>
+<tr class="emph1"> <td >  </td> <td > /dev/dri/renderD128 </td> </tr>
+<tr class="emph1"> <td >  </td> <td > /dev/dri/renderD129 </td> </tr>
+<tr class="emph1"> <td >  </td> <td > /dev/nvidia0 </td> </tr>
+<tr class="emph1"> <td >  </td> <td > /dev/nvidia0 </td> </tr>
+<tr class="emph1"> <td >  </td> <td > /dev/nvidia0 </td> </tr>
+<tr class="emph1"> <td >  </td> <td > /dev/nvidiactl </td> </tr>
+<tr class="emph1"> <td >  </td> <td > /dev/nvidiactl </td> </tr>
+<tr class="emph1"> <td > .quickshell-wra </td> <td > /dev/dri/renderD128 </td> </tr>
+<tr class="emph1"> <td >  </td> <td > /dev/dri/renderD128 </td> </tr>
+<tr class="emph1"> <td >  </td> <td > /dev/dri/renderD128 </td> </tr>
+<tr class="emph1"> <td > Xwayland </td> <td > /dev/dri/card0 </td> </tr>
+<tr class="emph1"> <td >  </td> <td > /dev/dri/card1 </td> </tr>
+<tr class="emph1"> <td >  </td> <td > /dev/dri/renderD128 </td> </tr>
+<tr class="emph1"> <td >  </td> <td > /dev/dri/renderD128 </td> </tr>
+<tr class="emph1"> <td >  </td> <td > /dev/dri/renderD128 </td> </tr>
+<tr class="emph1"> <td >  </td> <td > /dev/dri/renderD128 </td> </tr>
+<tr class="emph1"> <td > .xdg-document-p </td> <td > /dev/fuse </td> </tr>
+<tr class="emph1"> <td > .gvfsd-fuse-wra </td> <td > /dev/fuse </td> </tr>
+<tr class="emph1"> <td > pipewire </td> <td > /dev/snd/seq </td> </tr>
+<tr class="emph1"> <td >  </td> <td > /dev/snd/seq </td> </tr>
+<tr class="emph1"> <td > wireplumber </td> <td > /dev/media0 </td> </tr>
+<tr class="emph1"> <td >  </td> <td > /dev/snd/controlC0 </td> </tr>
+<tr class="emph1"> <td >  </td> <td > /dev/snd/controlC1 </td> </tr>
+<tr class="emph1"> <td >  </td> <td > /dev/snd/controlC2 </td> </tr>
+<tr class="emph1"> <td > .xdg-desktop-po </td> <td > /dev/dri/renderD128 </td> </tr>
+<tr class="emph1"> <td >  </td> <td > /dev/dri/renderD128 </td> </tr>
+<tr class="emph1"> <td >  </td> <td > /dev/dri/renderD128 </td> </tr>
+<tr class="emph1"> <td > .kitty-wrapped </td> <td > /dev/dri/renderD128 </td> </tr>
+<tr class="emph1"> <td >  </td> <td > /dev/dri/renderD128 </td> </tr>
+<tr class="emph1"> <td >  </td> <td > /dev/dri/renderD128 </td> </tr>
+<tr class="emph1"> <td > .zen-beta-wrapp </td> <td > /dev/dri/renderD128 </td> </tr>
+<tr class="emph1"> <td >  </td> <td > /dev/dri/renderD128 </td> </tr>
+<tr class="emph1"> <td >  </td> <td > /dev/dri/renderD128 </td> </tr>
+<tr class="emph1"> <td >  </td> <td > /dev/dri/renderD128 </td> </tr>
+<tr class="emph1"> <td >  </td> <td > /dev/dri/renderD128 </td> </tr>
+<tr class="emph1"> <td >  </td> <td > /dev/dri/renderD128 </td> </tr>
+</table>
+</div>
+<div class="clear_block" id="ahci">
+<h2 class="content_title"> AHCI ALPM Residency Statistics - Not supported on this macine </h2>
+</div>
+<div class="clear_block" id="tuning">
+<h2 class="content_title"> Software Settings in Need of Tuning </h2>
+<table class="emphasis2">
+<tr class="tune"> <th class="emph_title"> Description </th> <th class="emph_title"> Script </th> </tr>
+<tr class="tune"> <td > VM writeback timeout </td> <td > echo '1500' > '/proc/sys/vm/dirty_writeback_centisecs'; </td> </tr>
+</table>
+<h2 class="content_title"> Untunable Software Issues </h2>
+<table class="emphasis2">
+<tr class="tune"> <th class="emph_title"> Description </th> </tr>
+<tr class="tune"> <td > I2C Adapter i2c-3 has no runtime power management </td> </tr>
+<tr class="tune"> <td > I2C Adapter i2c-20 has no runtime power management </td> </tr>
+<tr class="tune"> <td > I2C Adapter i2c-10 has no runtime power management </td> </tr>
+<tr class="tune"> <td > I2C Adapter i2c-1 has no runtime power management </td> </tr>
+<tr class="tune"> <td > I2C Adapter i2c-19 has no runtime power management </td> </tr>
+<tr class="tune"> <td > I2C Device i2c-LTCN0001:01 has no runtime power management </td> </tr>
+<tr class="tune"> <td > I2C Adapter i2c-17 has no runtime power management </td> </tr>
+<tr class="tune"> <td > I2C Adapter i2c-8 has no runtime power management </td> </tr>
+<tr class="tune"> <td > I2C Adapter i2c-25 has no runtime power management </td> </tr>
+<tr class="tune"> <td > I2C Adapter i2c-15 has no runtime power management </td> </tr>
+<tr class="tune"> <td > I2C Adapter i2c-6 has no runtime power management </td> </tr>
+<tr class="tune"> <td > I2C Adapter i2c-23 has no runtime power management </td> </tr>
+<tr class="tune"> <td > I2C Adapter i2c-13 has no runtime power management </td> </tr>
+<tr class="tune"> <td > I2C Adapter i2c-4 has no runtime power management </td> </tr>
+<tr class="tune"> <td > I2C Device 4-0050 has no runtime power management </td> </tr>
+<tr class="tune"> <td > I2C Adapter i2c-21 has no runtime power management </td> </tr>
+<tr class="tune"> <td > I2C Adapter i2c-11 has no runtime power management </td> </tr>
+<tr class="tune"> <td > I2C Adapter i2c-2 has no runtime power management </td> </tr>
+<tr class="tune"> <td > I2C Device i2c-SYNA2BA6:00 has no runtime power management </td> </tr>
+<tr class="tune"> <td > I2C Adapter i2c-0 has no runtime power management </td> </tr>
+<tr class="tune"> <td > I2C Adapter i2c-18 has no runtime power management </td> </tr>
+<tr class="tune"> <td > I2C Adapter i2c-9 has no runtime power management </td> </tr>
+<tr class="tune"> <td > I2C Adapter i2c-26 has no runtime power management </td> </tr>
+<tr class="tune"> <td > I2C Adapter i2c-16 has no runtime power management </td> </tr>
+<tr class="tune"> <td > I2C Adapter i2c-7 has no runtime power management </td> </tr>
+<tr class="tune"> <td > I2C Adapter i2c-24 has no runtime power management </td> </tr>
+<tr class="tune"> <td > I2C Adapter i2c-14 has no runtime power management </td> </tr>
+<tr class="tune"> <td > I2C Adapter i2c-5 has no runtime power management </td> </tr>
+<tr class="tune"> <td > I2C Device 4-0051 has no runtime power management </td> </tr>
+<tr class="tune"> <td > I2C Adapter i2c-22 has no runtime power management </td> </tr>
+<tr class="tune"> <td > I2C Adapter i2c-12 has no runtime power management </td> </tr>
+</table>
+<h2 class="content_title"> Optimal Tuned Software Settings </h2>
+<table class="emphasis2">
+<tr class="tune"> <th class="emph_title"> Description </th> </tr>
+<tr class="tune"> <td > NMI watchdog should be turned off </td> </tr>
+<tr class="tune"> <td > Bluetooth device interface status </td> </tr>
+<tr class="tune"> <td > Enable Audio codec power management </td> </tr>
+<tr class="tune"> <td > Autosuspend for USB device Wireless_Device [MediaTek Inc.] </td> </tr>
+<tr class="tune"> <td > Autosuspend for USB device xHCI Host Controller [usb3] </td> </tr>
+<tr class="tune"> <td > Autosuspend for USB device xHCI Host Controller [usb4] </td> </tr>
+<tr class="tune"> <td > Autosuspend for USB device USB2.0 Hub [1-5] </td> </tr>
+<tr class="tune"> <td > Autosuspend for USB device Integrated Camera [Chicony Electronics Co.,Ltd.] </td> </tr>
+<tr class="tune"> <td > Autosuspend for USB device xHCI Host Controller [usb1] </td> </tr>
+<tr class="tune"> <td > Autosuspend for USB device ITE Device(8176) [ITE Tech. Inc.] </td> </tr>
+<tr class="tune"> <td > Autosuspend for USB device xHCI Host Controller [usb5] </td> </tr>
+<tr class="tune"> <td > Autosuspend for USB device xHCI Host Controller [usb8] </td> </tr>
+<tr class="tune"> <td > Autosuspend for USB device xHCI Host Controller [usb6] </td> </tr>
+<tr class="tune"> <td > Autosuspend for USB device xHCI Host Controller [usb2] </td> </tr>
+<tr class="tune"> <td > Autosuspend for USB device xHCI Host Controller [usb7] </td> </tr>
+<tr class="tune"> <td > Runtime PM for PCI Device Advanced Micro Devices, Inc. [AMD/ATI] Radeon High Definition Audio Controller </td> </tr>
+<tr class="tune"> <td > Runtime PM for PCI Device Advanced Micro Devices, Inc. [AMD] Phoenix Internal GPP Bridge to Bus [C:A] </td> </tr>
+<tr class="tune"> <td > Runtime PM for PCI Device Advanced Micro Devices, Inc. [AMD] FCH LPC Bridge </td> </tr>
+<tr class="tune"> <td > Runtime PM for PCI Device Advanced Micro Devices, Inc. [AMD] Device 15c1 </td> </tr>
+<tr class="tune"> <td > Runtime PM for PCI Device Advanced Micro Devices, Inc. [AMD] Phoenix Dummy Host Bridge </td> </tr>
+<tr class="tune"> <td > Runtime PM for PCI Device Advanced Micro Devices, Inc. [AMD] Phoenix Data Fabric; Function 5 </td> </tr>
+<tr class="tune"> <td > Runtime PM for PCI Device Advanced Micro Devices, Inc. [AMD] Phoenix Data Fabric; Function 1 </td> </tr>
+<tr class="tune"> <td > Runtime PM for PCI Device Realtek Semiconductor Co., Ltd. RTL8111/8168/8211/8411 PCI Express Gigabit Ethernet Controller </td> </tr>
+<tr class="tune"> <td > Runtime PM for PCI Device Advanced Micro Devices, Inc. [AMD] Phoenix Dummy Host Bridge </td> </tr>
+<tr class="tune"> <td > Runtime PM for PCI Device Advanced Micro Devices, Inc. [AMD] Phoenix Dummy Function </td> </tr>
+<tr class="tune"> <td > Runtime PM for PCI Device Advanced Micro Devices, Inc. [AMD] Phoenix GPP Bridge </td> </tr>
+<tr class="tune"> <td > Runtime PM for PCI Device Advanced Micro Devices, Inc. [AMD] Ryzen HD Audio Controller </td> </tr>
+<tr class="tune"> <td > Runtime PM for PCI Device Advanced Micro Devices, Inc. [AMD] Phoenix Dummy Host Bridge </td> </tr>
+<tr class="tune"> <td > Runtime PM for PCI Device MEDIATEK Corp. MT7922 802.11ax PCI Express Wireless Network Adapter </td> </tr>
+<tr class="tune"> <td > Runtime PM for PCI Device NVIDIA Corporation AD106M [GeForce RTX 4070 Max-Q / Mobile] </td> </tr>
+<tr class="tune"> <td > Runtime PM for PCI Device Advanced Micro Devices, Inc. [AMD] Phoenix GPP Bridge </td> </tr>
+<tr class="tune"> <td > Runtime PM for PCI Device Advanced Micro Devices, Inc. [AMD] Device 15ba </td> </tr>
+<tr class="tune"> <td > Runtime PM for PCI Device Advanced Micro Devices, Inc. [AMD] Phoenix Dummy Function </td> </tr>
+<tr class="tune"> <td > Runtime PM for PCI Device Advanced Micro Devices, Inc. [AMD] Phoenix Internal GPP Bridge to Bus [C:A] </td> </tr>
+<tr class="tune"> <td > Runtime PM for PCI Device Advanced Micro Devices, Inc. [AMD] Phoenix Data Fabric; Function 6 </td> </tr>
+<tr class="tune"> <td > Runtime PM for PCI Device Advanced Micro Devices, Inc. [AMD] Phoenix Root Complex </td> </tr>
+<tr class="tune"> <td > Runtime PM for PCI Device Advanced Micro Devices, Inc. [AMD] Phoenix Data Fabric; Function 0 </td> </tr>
+<tr class="tune"> <td > Runtime PM for PCI Device Advanced Micro Devices, Inc. [AMD/ATI] HawkPoint1 </td> </tr>
+<tr class="tune"> <td > Runtime PM for PCI Device Advanced Micro Devices, Inc. [AMD] Phoenix Data Fabric; Function 4 </td> </tr>
+<tr class="tune"> <td > Runtime PM for PCI Device Advanced Micro Devices, Inc. [AMD] Phoenix Dummy Host Bridge </td> </tr>
+<tr class="tune"> <td > Runtime PM for PCI Device Advanced Micro Devices, Inc. [AMD] Phoenix IOMMU </td> </tr>
+<tr class="tune"> <td > Runtime PM for PCI Device Advanced Micro Devices, Inc. [AMD] Device 15c0 </td> </tr>
+<tr class="tune"> <td > Runtime PM for PCI Device Advanced Micro Devices, Inc. [AMD] Phoenix CCP/PSP 3.0 Device </td> </tr>
+<tr class="tune"> <td > Runtime PM for PCI Device Advanced Micro Devices, Inc. [AMD] Phoenix Data Fabric; Function 2 </td> </tr>
+<tr class="tune"> <td > Runtime PM for PCI Device Advanced Micro Devices, Inc. [AMD] Phoenix GPP Bridge </td> </tr>
+<tr class="tune"> <td > Runtime PM for PCI Device Advanced Micro Devices, Inc. [AMD] Phoenix GPP Bridge </td> </tr>
+<tr class="tune"> <td > Runtime PM for PCI Device Samsung Electronics Co Ltd NVMe SSD Controller SM981/PM981/PM983 </td> </tr>
+<tr class="tune"> <td > Runtime PM for PCI Device Advanced Micro Devices, Inc. [AMD] Phoenix Data Fabric; Function 3 </td> </tr>
+<tr class="tune"> <td > Runtime PM for PCI Device NVIDIA Corporation AD106M High Definition Audio Controller </td> </tr>
+<tr class="tune"> <td > Runtime PM for PCI Device Advanced Micro Devices, Inc. [AMD] Phoenix GPP Bridge </td> </tr>
+<tr class="tune"> <td > Runtime PM for PCI Device Advanced Micro Devices, Inc. [AMD] Audio Coprocessor </td> </tr>
+<tr class="tune"> <td > Runtime PM for PCI Device Advanced Micro Devices, Inc. [AMD] AMD IPU Device </td> </tr>
+<tr class="tune"> <td > Runtime PM for PCI Device SK hynix Platinum P41/PC801 NVMe Solid State Drive </td> </tr>
+<tr class="tune"> <td > Runtime PM for PCI Device Advanced Micro Devices, Inc. [AMD] Phoenix Dummy Host Bridge </td> </tr>
+<tr class="tune"> <td > Runtime PM for PCI Device Advanced Micro Devices, Inc. [AMD] Phoenix Data Fabric; Function 7 </td> </tr>
+<tr class="tune"> <td > Runtime PM for PCI Device Advanced Micro Devices, Inc. [AMD] Device 15b9 </td> </tr>
+<tr class="tune"> <td > Runtime PM for PCI Device Advanced Micro Devices, Inc. [AMD] FCH SMBus Controller </td> </tr>
+<tr class="tune"> <td > Runtime PM for PCI Device Advanced Micro Devices, Inc. [AMD] Phoenix Internal GPP Bridge to Bus [C:A] </td> </tr>
+</table>
+</div>
+<div class="clear_block" id="wakeup">
+<h2 class="content_title"> Wake status of the devices </h2>
+<table class="emphasis2">
+<tr class="tune"> <th class="emph_title"> Description </th> <th class="emph_title"> Script </th> </tr>
+<tr class="tune"> <td > Wake-on-lan status for device enp2s0 </td> <td > echo 'enabled' > '/sys/class/net/enp2s0/device/power/wakeup'; </td> </tr>
+<tr class="tune"> <td > Wake-on-lan status for device wlo1 </td> <td > echo 'enabled' > '/sys/class/net/wlo1/device/power/wakeup'; </td> </tr>
+<tr class="tune"> <td > Wake status for USB device usb5 </td> <td > echo 'enabled' > '/sys/bus/usb/devices/usb5/power/wakeup'; </td> </tr>
+<tr class="tune"> <td > Wake status for USB device usb3 </td> <td > echo 'enabled' > '/sys/bus/usb/devices/usb3/power/wakeup'; </td> </tr>
+<tr class="tune"> <td > Wake status for USB device usb1 </td> <td > echo 'enabled' > '/sys/bus/usb/devices/usb1/power/wakeup'; </td> </tr>
+<tr class="tune"> <td > Wake status for USB device 1-5 </td> <td > echo 'enabled' > '/sys/bus/usb/devices/1-5/power/wakeup'; </td> </tr>
+<tr class="tune"> <td > Wake status for USB device usb8 </td> <td > echo 'enabled' > '/sys/bus/usb/devices/usb8/power/wakeup'; </td> </tr>
+<tr class="tune"> <td > Wake status for USB device usb6 </td> <td > echo 'enabled' > '/sys/bus/usb/devices/usb6/power/wakeup'; </td> </tr>
+<tr class="tune"> <td > Wake status for USB device usb4 </td> <td > echo 'enabled' > '/sys/bus/usb/devices/usb4/power/wakeup'; </td> </tr>
+<tr class="tune"> <td > Wake status for USB device usb2 </td> <td > echo 'enabled' > '/sys/bus/usb/devices/usb2/power/wakeup'; </td> </tr>
+<tr class="tune"> <td > Wake status for USB device 1-4 </td> <td > echo 'enabled' > '/sys/bus/usb/devices/1-4/power/wakeup'; </td> </tr>
+<tr class="tune"> <td > Wake status for USB device usb7 </td> <td > echo 'enabled' > '/sys/bus/usb/devices/usb7/power/wakeup'; </td> </tr>
+</table>
+</body>
+</html>

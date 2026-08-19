@@ -7,12 +7,13 @@
   cfg = config.modules.zsh;
   inherit (lib) mkEnableOption mkIf mkMerge;
 
-  # function converting ~/ to absolute path
-  expandHome = path: lib.optionalString (path != null) (
-    if lib.strings.hasPrefix "~/" path
+  # function converting ~/ to absolute path; passes null through so
+  # unset flake paths don't become empty env vars
+  expandHome = path:
+    if path == null then null
+    else if lib.strings.hasPrefix "~/" path
       then "${config.home.homeDirectory}${lib.removePrefix "~" path}"
-      else path
-  );
+      else path;
 in {
   options.modules.zsh = {
     enable = mkEnableOption "zsh";
