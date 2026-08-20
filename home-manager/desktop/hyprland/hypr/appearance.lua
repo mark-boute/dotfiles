@@ -27,7 +27,7 @@ hl.config({
 
 		dim_special = 0.0,
 		blur = {
-			enabled = false,
+			enabled = true,
             size = 5,
             passes = 3,
 		},
@@ -71,3 +71,18 @@ hl.animation({ leaf = "border", enabled = true, speed = 4, bezier = "default" })
 hl.animation({ leaf = "fade", enabled = true, speed = 4, bezier = "default" })
 hl.animation({ leaf = "workspaces", enabled = true, speed = 4, bezier = "default" })
 hl.animation({ leaf = "specialWorkspace", enabled = true, speed = 4, bezier = "default", style = "slidefadevert -50%" })
+
+-- Frosted-glass bar/panels: resonate's own translucent surface color (see
+-- CurrentTheme.qml) only reads as "glass" once there's real blur behind it.
+-- ignore_alpha excludes the mostly-transparent bar window's empty space
+-- (alpha 0) from the blur, so only the actual pill/panel shapes (alpha
+-- ~0.72) get it — without this, the whole window's bounding box blurs,
+-- which is most of the screen width once a panel is open.
+--
+-- Kept above the drop shadow's peak alpha (Theme.shadowColor, 0.45) on
+-- purpose: Hyprland's blur region is a bounding rect, not the pill's actual
+-- rounded shape, so if the shadow's soft gradient qualified too, the blur
+-- region would extend into the shadow's (rectangular) texture bounds and
+-- show up as a faint square edge around each pill instead of following its
+-- silhouette.
+hl.layer_rule({ match = { namespace = "quickshell:resonate:bar" }, blur = true, ignore_alpha = 0.5 })

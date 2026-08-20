@@ -11,6 +11,7 @@
 in {
   imports = [
     ./cappuccino
+    ./resonate
   ];
 
   options.modules.hyprland = {
@@ -49,6 +50,19 @@ in {
     ] ++ [
       inputs.hyprshutdown.packages.${pkgs.stdenv.hostPlatform.system}.default
     ];
+
+    # xdg-desktop-portal >=1.22 gates its unit on graphical-session.target (Requisite=),
+    # but that target refuses manual starts and only activates via a compositor session
+    # target binding to it (see wiki.hypr.land/Useful-Utilities/Systemd-start). Hyprland
+    # itself doesn't create one, so without this, portals (incl. screen share) never start.
+    systemd.user.targets.hyprland-session = {
+      Unit = {
+        Description = "hyprland compositor session";
+        BindsTo = [ "graphical-session.target" ];
+        Wants = [ "graphical-session-pre.target" ];
+        After = [ "graphical-session-pre.target" ];
+      };
+    };
 
     # Based on: https://gitlab.com/nicky.tope/nixos-config/-/blob/main/user/desktop/hyprland/default.nix?ref_type=heads
     services = {
