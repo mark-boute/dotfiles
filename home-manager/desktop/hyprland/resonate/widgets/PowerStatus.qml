@@ -208,10 +208,18 @@ Rectangle {
 
   anchors { top: parent.top; right: parent.right; }
 
+  // Bottom-rounded "notch" hanging from the bar's connecting strip
+  // (Bar.qml) — no border (would draw a seam right where this meets the
+  // strip). Square top corners via per-corner radius, not a same-color
+  // Rectangle painted over the top to flatten it — that approach stacked
+  // two translucent layers of CurrentTheme.surface in the top band,
+  // compositing visibly darker there than the single-layer rest of the
+  // pill (confirmed live: a sharp horizontal color seam right at the
+  // patch's own edge).
   radius: Math.min(16, height / 2);
+  topLeftRadius: 0;
+  topRightRadius: 0;
   color: CurrentTheme.surface;
-  border.width: 1;
-  border.color: CurrentTheme.border;
 
   layer.enabled: true;
   layer.effect: MultiEffect {
@@ -219,6 +227,18 @@ Rectangle {
     shadowColor: Theme.shadowColor;
     shadowBlur: Theme.shadowBlur;
     shadowVerticalOffset: Theme.shadowVerticalOffset;
+  }
+
+  // Smooths the concave seam where this island's left edge meets the
+  // connecting strip above (see NotchFillet.qml) — a child of this
+  // Rectangle, positioned off its own width/height, so it stays in
+  // lockstep with this island's own size changes. Only on the left: this
+  // is the rightmost island, flush with the strip's own right edge, so
+  // there's no seam to smooth on the right.
+  NotchFillet {
+    id: leftFillet;
+    x: -leftFillet.filletRadius;
+    y: Theme.barConnectorHeight;
   }
 
   // expanded/expandedWidth/expandedHeight above already fold in the OSD

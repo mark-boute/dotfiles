@@ -57,6 +57,20 @@ Singleton {
   property int barVerticalMargin: 4;
   property int barHorizontalMargin: 4;
 
+  // The bar's three islands (workspaces/clock/power) hang as rounded-
+  // bottom "notches" below one full-width connecting strip of the same
+  // frosted-glass fill, flush against the top of the screen. This is that
+  // strip's height — about 2/5 of an island's own idle height.
+  readonly property int barConnectorHeight: Math.round(barHeight / 4);
+
+  // Radius of the concave fillet smoothing each seam between a notch and
+  // the connecting strip (NotchFillet.qml) — also read by Bar.qml so the
+  // strip's own gap segments know to stop this far short of each island,
+  // rather than reaching all the way to it and drawing underneath the
+  // fillet (CurrentTheme.surface is translucent, so two overlapping
+  // layers of it composite visibly darker than either alone).
+  readonly property int notchFilletRadius: Math.min(16, barHeight / 2);
+
   readonly property int defaultMargin: 14;
   readonly property int defaultSpacing: 8;
 

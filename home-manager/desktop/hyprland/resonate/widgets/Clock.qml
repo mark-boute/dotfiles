@@ -74,10 +74,19 @@ Rectangle {
   // (very visible now that the drop shadow outlines the exact silhouette).
   // Deriving radius directly from height needs no Behavior of its own —
   // it's already smooth because height already is.
+  // Bottom-rounded "notch" hanging from the bar's connecting strip
+  // (Bar.qml) — no border (would draw a seam right where this meets the
+  // strip; also drops the old hasNotification accent-border cue, see the
+  // accent dot on notificationContent below instead). Square top corners
+  // via per-corner radius, not a same-color Rectangle painted over the
+  // top to flatten it — that approach stacked two translucent layers of
+  // CurrentTheme.surface in the top band, compositing visibly darker
+  // there than the single-layer rest of the pill (confirmed live: a
+  // sharp horizontal color seam right at the patch's own edge).
   radius: Math.min(16, height / 2);
+  topLeftRadius: 0;
+  topRightRadius: 0;
   color: CurrentTheme.surface;
-  border.width: 1;
-  border.color: hasNotification ? CurrentTheme.accent : CurrentTheme.border;
 
   layer.enabled: true;
   layer.effect: MultiEffect {
@@ -87,13 +96,30 @@ Rectangle {
     shadowVerticalOffset: Theme.shadowVerticalOffset;
   }
 
+  // Smooths the concave seams where this island's left/right edges meet
+  // the connecting strip above (see NotchFillet.qml) — children of this
+  // Rectangle, positioned off its own width/height, so both track this
+  // island's Behavior-animated implicitWidth/implicitHeight (hover/
+  // notification expand) in lockstep with zero lag, rather than Bar.qml
+  // computing their position externally from outside this component.
+  NotchFillet {
+    id: leftFillet;
+    x: -leftFillet.filletRadius;
+    y: Theme.barConnectorHeight;
+  }
+  NotchFillet {
+    id: rightFillet;
+    mirrored: true;
+    x: clock.width;
+    y: Theme.barConnectorHeight;
+  }
+
   implicitWidth: expanded ? expandedWidth : collapsedWidth;
   implicitHeight: expanded ? expandedHeight : collapsedSize;
 
   Behavior on implicitWidth  { NumberAnimation { duration: 180; easing.type: Easing.OutExpo } }
   Behavior on implicitHeight { NumberAnimation { duration: 180; easing.type: Easing.OutExpo } }
   Behavior on color          { ColorAnimation  { duration: 180 } }
-  Behavior on border.color   { ColorAnimation  { duration: 180 } }
 
   Text {
     id: collapsedContent;
@@ -124,6 +150,18 @@ Rectangle {
     Row {
       spacing: 6;
       anchors.left: parent.left;
+
+      // Replaces the old accent-colored border cue for hasNotification —
+      // that border was dropped along with every island's border (see the
+      // corner-patch comment above) so the notch reads as flush with the
+      // bar's connecting strip instead of outlined.
+      Rectangle {
+        anchors.verticalCenter: parent.verticalCenter;
+        width: 6;
+        height: 6;
+        radius: 3;
+        color: CurrentTheme.accent;
+      }
 
       IconImage {
         anchors.verticalCenter: parent.verticalCenter;

@@ -16,10 +16,16 @@ Rectangle {
   readonly property var flavors: ["latte", "frappe", "macchiato", "mocha"];
   readonly property int contentWidth: 300;
 
+  // No border — the bar's islands went borderless for the same reason
+  // (see Workspaces/Clock/PowerStatus.qml): an outline clashes with the
+  // frosted-glass one-piece look this whole shell is going for now.
+  // Square top corners for the same reason too — this panel opens
+  // directly out of the clock island above it, so a fully rounded top
+  // would visually disconnect from it the moment it's open.
   radius: 18;
+  topLeftRadius: 0;
+  topRightRadius: 0;
   color: CurrentTheme.surface;
-  border.width: 1;
-  border.color: CurrentTheme.border;
 
   layer.enabled: true;
   layer.effect: MultiEffect {
@@ -27,6 +33,25 @@ Rectangle {
     shadowColor: Theme.shadowColor;
     shadowBlur: Theme.shadowBlur;
     shadowVerticalOffset: Theme.shadowVerticalOffset;
+  }
+
+  // Smooths the concave seams where this panel's left/right edges meet
+  // the connecting strip above (see NotchFillet.qml) — same treatment as
+  // the clock island itself (Clock.qml): both sides, since this panel
+  // stays centered on screen when open (see Bar.qml's CenterWidget/
+  // panelLoader centering — a panel exactly as wide as its wrapper
+  // renders with zero centering offset), just wider than the pill it
+  // replaces.
+  NotchFillet {
+    id: leftFillet;
+    x: -leftFillet.filletRadius;
+    y: Theme.barConnectorHeight;
+  }
+  NotchFillet {
+    id: rightFillet;
+    mirrored: true;
+    x: panel.width;
+    y: Theme.barConnectorHeight;
   }
 
   implicitWidth: layout.implicitWidth + Theme.defaultMargin * 2;

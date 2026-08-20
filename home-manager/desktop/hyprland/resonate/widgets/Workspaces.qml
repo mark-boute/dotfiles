@@ -29,10 +29,25 @@ Rectangle {
   property HyprlandMonitor monitor: Hyprland.monitorFor(screen);
 
   height: Theme.barHeight;
-  radius: height / 2;
+  // A "notch" hanging from the bar's connecting strip (Bar.qml) — no
+  // border (would draw a seam right where this meets the strip). The
+  // smooth outward-curving transition into the strip itself is drawn by
+  // rightFillet below, a child of this Rectangle (not placed externally
+  // by Bar.qml) so it tracks this island's own size/position with zero
+  // animation lag — not by this Rectangle's own corners. Only on the
+  // right: this is the leftmost island, flush with the strip's own left
+  // edge, so there's no seam to smooth on the left.
+  // Square top corners (the outward curve into the connecting strip is
+  // drawn entirely by NotchFillet at the seam, not by rounding here) via
+  // per-corner radius, not a same-color Rectangle painted over the top of
+  // this one to flatten it — that approach stacked two translucent layers
+  // of CurrentTheme.surface in the top band, compositing visibly darker
+  // there than the single-layer rest of the pill (confirmed live: a sharp
+  // horizontal color seam right at the patch's own edge).
+  radius: Math.min(16, height / 2);
+  topLeftRadius: 0;
+  topRightRadius: 0;
   color: CurrentTheme.surface;
-  border.width: 1;
-  border.color: CurrentTheme.border;
 
   layer.enabled: true;
   layer.effect: MultiEffect {
@@ -40,6 +55,18 @@ Rectangle {
     shadowColor: Theme.shadowColor;
     shadowBlur: Theme.shadowBlur;
     shadowVerticalOffset: Theme.shadowVerticalOffset;
+  }
+
+  // Smooths the concave seam where this island's right edge meets the
+  // connecting strip above (see NotchFillet.qml) — a child of this
+  // Rectangle, positioned off its own width/height, so it stays in
+  // lockstep if this island's size ever animates, with no cross-
+  // component binding into Bar.qml.
+  NotchFillet {
+    id: rightFillet;
+    mirrored: true;
+    x: workspacesWidget.width;
+    y: Theme.barConnectorHeight;
   }
 
   implicitWidth: workspaceRow.implicitWidth + Theme.defaultSpacing * 2;
