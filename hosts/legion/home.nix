@@ -28,7 +28,8 @@ in {
       shellBlur = true;
     };
     hyprland.enable = true;
-    hyprland.cappuccino.enable = true;
+    hyprland.cappuccino.enable = false;
+    hyprland.resonate.enable = true;
     zsh = {
       enable = true;
       usePowerlevel10k = true;

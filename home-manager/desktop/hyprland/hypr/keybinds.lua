@@ -264,28 +264,34 @@ M.binds = {
     { keys = "PRINT",             desc = "Screenshot (output)",  action = A.exec("hyprshot -m output -o ~/Pictures/Screenshots") },
     { keys = "SUPER + PRINT",     desc = "Screenshot (window)",  action = A.exec("hyprshot -m window -o ~/Pictures/Screenshots") },
 
-	-- Volume keys
+	-- Volume keys — plain pamixer, unlike brightness/temperature below.
+	-- Those have no live readback so their keybinds must round-trip
+	-- through resonate's IPC to keep it in sync; volume's AudioService
+	-- reads Pipewire's own live state directly, so it flashes the OSD
+	-- reactively off whatever pamixer changes without needing a
+	-- resonate-owned command here (and avoids the backlog a `quickshell
+	-- ipc call` per repeat-tick built up while a key was held).
 	{ keys = "XF86AudioMute", desc = "Toggle mute", action = A.exec("pamixer --toggle-mute") },
 	{ keys = "XF86AudioLowerVolume", desc = "Lower volume", action = A.exec("pamixer --decrease 5"), repeating = true },
 	{ keys = "XF86AudioRaiseVolume", desc = "Raise volume", action = A.exec("pamixer --increase 5"), repeating = true },
 
 	-- Brightness and temperature
-	-- Set both backlights (MUX: panel may be on amdgpu or nvidia), but skip
-	-- nvidia_0 when the dGPU is in D3cold so a keypress doesn't wake it.
+	-- Routed through resonate's BrightnessService/TemperatureService IPC
+	-- (quickshell -c resonate ipc call <target> adjust <delta>) rather
+	-- than shelling out to brightnessctl/hyprsunset directly, so resonate
+	-- is the one source of truth for the current value (needed for its
+	-- OSD and panel slider) and so a keybind press also flashes the OSD
+	-- and turns off auto mode, same as a manual slider drag would.
 	{
 		keys = "XF86MonBrightnessUp",
 		desc = "Increase brightness",
-		action = A.exec(
-			'sh -c \'brightnessctl -d amdgpu_bl1 set 5%+ --min-value=1; [ "$(cat /sys/bus/pci/devices/0000:01:00.0/power_state)" = D3cold ] || brightnessctl -d nvidia_0 set 5%+ --min-value=1\''
-		),
+		action = A.exec("quickshell -c resonate ipc call brightness adjust 5"),
 		repeating = true,
 	},
 	{
 		keys = "XF86MonBrightnessDown",
 		desc = "Decrease brightness",
-		action = A.exec(
-			'sh -c \'brightnessctl -d amdgpu_bl1 set 5%- --min-value=1; [ "$(cat /sys/bus/pci/devices/0000:01:00.0/power_state)" = D3cold ] || brightnessctl -d nvidia_0 set 5%- --min-value=1\''
-		),
+		action = A.exec("quickshell -c resonate ipc call brightness adjust -5"),
 		repeating = true,
 	},
 	{
@@ -303,13 +309,13 @@ M.binds = {
     {
         keys = "SUPER + XF86MonBrightnessUp",
         desc = "Increase temperature",
-        action = A.exec("hyprctl hyprsunset temperature +250"),
+        action = A.exec("quickshell -c resonate ipc call temperature adjust 250"),
         repeating = true,
     },
     {
         keys = "SUPER + XF86MonBrightnessDown",
         desc = "Decrease temperature",
-        action = A.exec("hyprctl hyprsunset temperature -250"),
+        action = A.exec("quickshell -c resonate ipc call temperature adjust -250"),
         repeating = true,
     },
 }
