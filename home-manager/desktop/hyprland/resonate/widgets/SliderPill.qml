@@ -16,7 +16,7 @@ Rectangle {
 
   implicitHeight: 40;
   radius: height / 2;
-  color: CurrentTheme.background;
+  color: CurrentTheme.backgroundGlass;
   opacity: enabled ? 1 : 0.4;
   clip: true;
 

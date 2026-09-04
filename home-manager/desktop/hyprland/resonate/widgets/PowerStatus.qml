@@ -18,7 +18,7 @@ import qs.services as Services
 //      tray icon with a menu swaps the row for that menu's items instead
 //      (`activeMenuItem`/`showingMenu`).
 // Leaving the pill (mouse-out) always resets back to state 1.
-Rectangle {
+Item {
   id: power;
   visible: UPower.displayDevice.isLaptopBattery;
 
@@ -208,33 +208,14 @@ Rectangle {
 
   anchors { top: parent.top; right: parent.right; }
 
-  // Bottom-rounded "notch" hanging from the bar's connecting strip
-  // (Bar.qml) — no border (would draw a seam right where this meets the
-  // strip). Square top corners via per-corner radius, not a same-color
-  // Rectangle painted over the top to flatten it — that approach stacked
-  // two translucent layers of CurrentTheme.surface in the top band,
-  // compositing visibly darker there than the single-layer rest of the
-  // pill (confirmed live: a sharp horizontal color seam right at the
-  // patch's own edge).
-  radius: Math.min(16, height / 2);
-  topLeftRadius: 0;
-  topRightRadius: 0;
-  color: CurrentTheme.surface;
-
-  layer.enabled: true;
-  layer.effect: MultiEffect {
-    shadowEnabled: true;
-    shadowColor: Theme.shadowColor;
-    shadowBlur: Theme.shadowBlur;
-    shadowVerticalOffset: Theme.shadowVerticalOffset;
-  }
-
   // Smooths the concave seam where this island's left edge meets the
   // connecting strip above (see NotchFillet.qml) — a child of this
-  // Rectangle, positioned off its own width/height, so it stays in
+  // Item, positioned off the surface's own width/height, so it stays in
   // lockstep with this island's own size changes. Only on the left: this
   // is the rightmost island, flush with the strip's own right edge, so
-  // there's no seam to smooth on the right.
+  // there's no seam to smooth on the right. Kept off the shadowed/layered
+  // surface Rectangle below so that Rectangle's layer texture bounds stay
+  // fixed at its own size (this fillet renders outside [0, width]).
   NotchFillet {
     id: leftFillet;
     x: -leftFillet.filletRadius;
@@ -249,7 +230,6 @@ Rectangle {
 
   Behavior on implicitWidth  { NumberAnimation { duration: 180; easing.type: Easing.OutExpo } }
   Behavior on implicitHeight { NumberAnimation { duration: 180; easing.type: Easing.OutExpo } }
-  Behavior on color          { ColorAnimation  { duration: 180 } }
 
   readonly property color levelColor: {
     if (UPower.displayDevice.state === UPowerDeviceState.FullyCharged) return CurrentTheme.success;
@@ -263,204 +243,6 @@ Rectangle {
     if (UPower.displayDevice.state === UPowerDeviceState.FullyCharged) return "✓ "; // check
     if (UPower.displayDevice.state === UPowerDeviceState.Charging) return "⚡ ";     // bolt
     return "";
-  }
-
-  Row {
-    id: collapsedContent;
-    anchors.centerIn: parent;
-    spacing: 5;
-    // expanded, not manuallyExpanded: a menu opened directly from the
-    // collapsed row (right-clicking a tray icon there, without ever
-    // clicking the chevron first) sets showingMenu without ever setting
-    // manuallyExpanded — this used to stay at opacity 1 in that case,
-    // rendering on top of menuContent since both were visible at once.
-    // expanded folds in showingOsd the same way (see its own comment).
-    opacity: power.expanded ? 0 : 1;
-    visible: opacity > 0;
-
-    Behavior on opacity { NumberAnimation { duration: 120 } }
-
-    Repeater {
-      model: SystemTray.items;
-
-      Item {
-        id: trayIconSlot;
-        required property var modelData;
-        // controlsExclusions only inspects *direct* row children — this
-        // wrapper, not the TrayIcon nested inside it, is what that scan
-        // actually sees. TrayIcon's own isInteractive:true lives one
-        // level too deep to matter here, which is why tray icons were
-        // never actually excluded: left-clicking one correctly fired its
-        // own tap handler, but the click also fell through to
-        // CenterWidget's ancestor handler and opened the command center
-        // every time, since nothing here was ever telling it not to.
-        readonly property bool isInteractive: true;
-        anchors.verticalCenter: parent.verticalCenter;
-        implicitWidth: Theme.iconSize;
-        implicitHeight: Theme.iconSize;
-        width: implicitWidth;
-        height: implicitHeight;
-
-        TrayIcon {
-          anchors.fill: parent;
-          trayItem: trayIconSlot.modelData;
-          owner: power;
-        }
-      }
-    }
-
-    // A Row's own `spacing` is uniform between every child, but this
-    // divider wants more clearance than the tight inter-icon spacing
-    // above — defaultMargin (14) read as "too much"; defaultSpacing (8)
-    // instead. Wrapped in a box wide enough that the visible 1px line,
-    // centered within it, ends up with (defaultSpacing - spacing) of
-    // extra clearance on each side — added to the row's own spacing,
-    // that totals defaultSpacing either way. Math.max keeps this from
-    // going negative if a row's own spacing ever exceeds the target
-    // (which would mean "no extra needed", not "negative padding").
-    Item {
-      visible: SystemTray.items.values.length > 0;
-      anchors.verticalCenter: parent.verticalCenter;
-      implicitWidth: 1 + Math.max(0, Theme.defaultSpacing - collapsedContent.spacing) * 2;
-      implicitHeight: 16;
-      width: implicitWidth;
-      height: implicitHeight;
-
-      Rectangle {
-        anchors.centerIn: parent;
-        width: 1;
-        height: parent.height;
-        color: CurrentTheme.border;
-      }
-    }
-
-    Text {
-      anchors.verticalCenter: parent.verticalCenter;
-      text: power.stateGlyph + Math.floor(UPower.displayDevice.percentage * 100) + "%";
-      color: power.levelColor;
-      font.pixelSize: 14;
-      font.weight: Font.DemiBold;
-    }
-
-    // No isInteractive here — this control changes manuallyExpanded, so
-    // geometric exclusion for it specifically is unreliable (see
-    // controlsExclusions above); markControlActivated() in its own
-    // TapHandler already covers it unconditionally, before any geometry.
-    Item {
-      visible: power.hovered;
-      anchors.verticalCenter: parent.verticalCenter;
-      implicitWidth: chevronGlyph.implicitWidth + 12;
-      implicitHeight: power.collapsedSize;
-      width: implicitWidth;
-      height: implicitHeight;
-
-      Text {
-        id: chevronGlyph;
-        anchors.centerIn: parent;
-        text: String.fromCodePoint(0xf0140); // md-chevron_down
-        font.family: Theme.iconFontFamily;
-        font.pixelSize: Theme.iconSize;
-        color: CurrentTheme.subtext;
-      }
-
-      TapHandler {
-        onTapped: { power.markControlActivated(); power.manuallyExpanded = true; }
-      }
-    }
-  }
-
-  // Icon + thin fill bar + value label, styled after the battery bar at
-  // the top of PowerPanel.qml — flashed by Brightness/Temperature/
-  // AudioService whenever their value changes (a keybind, this panel's
-  // own sliders, or the bar below directly), then auto-hidden again by
-  // their own osdTimer. Sized noticeably larger than the row it replaces
-  // (wider in particular) so it reads as a deliberate OSD popup, not
-  // just another cramped bar control.
-  Row {
-    id: osdContent;
-    anchors.centerIn: parent;
-    spacing: 12;
-    visible: power.showingOsd;
-    opacity: visible ? 1 : 0;
-
-    Behavior on opacity { NumberAnimation { duration: 120 } }
-
-    Text {
-      anchors.verticalCenter: parent.verticalCenter;
-      text: power.osdGlyph;
-      font.family: Theme.iconFontFamily;
-      font.pixelSize: Theme.iconSize + 8;
-      color: CurrentTheme.text;
-    }
-
-    // Live control, not just a readout — drag or scroll to adjust
-    // whichever value the popup is currently showing. Same TapHandler +
-    // DragHandler + wheel-only-MouseArea shape as SliderPill.qml (a bare
-    // WheelHandler was found not to fire in this setup).
-    Rectangle {
-      id: osdBarTrack;
-      anchors.verticalCenter: parent.verticalCenter;
-      width: 180;
-      height: 12;
-      radius: height / 2;
-      color: CurrentTheme.background;
-
-      Rectangle {
-        width: parent.width * power.osdValue;
-        height: parent.height;
-        radius: parent.radius;
-        color: CurrentTheme.accent;
-
-        Behavior on width { NumberAnimation { duration: 150; easing.type: Easing.OutCubic } }
-      }
-
-      // markControlActivated() on every interaction here — same reasoning
-      // as the chevron/menu controls above: this pill sits inside
-      // CenterWidget's own "tap anywhere opens the command panel"
-      // handler, and geometric exclusion (controlsExclusions) doesn't
-      // cover the popup row at all, so without this a drag/tap here
-      // would also pop the full panel open behind it.
-      TapHandler {
-        onTapped: (eventPoint) => {
-          power.markControlActivated();
-          power.osdSetValue(eventPoint.position.x / osdBarTrack.width);
-        }
-      }
-
-      DragHandler {
-        target: null;
-        onCentroidChanged: {
-          if (!active) return;
-          power.markControlActivated();
-          power.osdSetValue(centroid.position.x / osdBarTrack.width);
-        }
-      }
-
-      MouseArea {
-        anchors.fill: parent;
-        acceptedButtons: Qt.NoButton;
-        onWheel: (wheel) => {
-          power.markControlActivated();
-          power.osdStep(wheel.angleDelta.y > 0 ? 0.05 : -0.05);
-        }
-      }
-    }
-
-    Text {
-      id: osdLabelWidthRef;
-      visible: false;
-      text: "100%";
-      font.pixelSize: 15;
-    }
-
-    Text {
-      anchors.verticalCenter: parent.verticalCenter;
-      text: power.osdLabel;
-      color: CurrentTheme.subtext;
-      font.pixelSize: 15;
-      horizontalAlignment: Text.AlignRight;
-      width: Math.max(implicitWidth, osdLabelWidthRef.implicitWidth);
-    }
   }
 
   readonly property real powerDraw: Math.abs(UPower.displayDevice.changeRate);
@@ -497,187 +279,6 @@ Rectangle {
     onTriggered: gpuPowerProc.running = true;
   }
 
-  Row {
-    id: expandedContent;
-    anchors.centerIn: parent;
-    spacing: 10;
-    visible: power.manuallyExpanded && !power.showingMenu && !power.showingOsd;
-    opacity: visible ? 1 : 0;
-
-    Behavior on opacity { NumberAnimation { duration: 160; easing.type: Easing.OutCubic } }
-
-    Repeater {
-      model: SystemTray.items;
-
-      // Not TrayIcon directly as the delegate: Repeater's injected
-      // `modelData` context property didn't resolve correctly through a
-      // required property on a separately-defined component (it was
-      // picking up Bar.qml's PanelWindow's own unrelated `modelData`,
-      // the screen, instead — confirmed live, calling secondaryActivate()
-      // on it threw "not a function" on a QuickshellScreenInfo). A plain
-      // Item owning `modelData` directly, matching how every other
-      // Repeater delegate in this codebase does it, sidesteps whatever
-      // that resolution issue was.
-      Item {
-        id: trayIconSlot;
-        required property var modelData;
-        // controlsExclusions only inspects *direct* row children — this
-        // wrapper, not the TrayIcon nested inside it, is what that scan
-        // actually sees. TrayIcon's own isInteractive:true lives one
-        // level too deep to matter here, which is why tray icons were
-        // never actually excluded: left-clicking one correctly fired its
-        // own tap handler, but the click also fell through to
-        // CenterWidget's ancestor handler and opened the command center
-        // every time, since nothing here was ever telling it not to.
-        readonly property bool isInteractive: true;
-        anchors.verticalCenter: parent.verticalCenter;
-        implicitWidth: Theme.iconSize;
-        implicitHeight: Theme.iconSize;
-        width: implicitWidth;
-        height: implicitHeight;
-
-        TrayIcon {
-          anchors.fill: parent;
-          trayItem: trayIconSlot.modelData;
-          owner: power;
-        }
-      }
-    }
-
-    // See collapsedContent's own divider for why this is wrapped rather
-    // than a bare Rectangle, and for defaultSpacing/Math.max — same
-    // reasoning applies here.
-    Item {
-      visible: SystemTray.items.values.length > 0;
-      anchors.verticalCenter: parent.verticalCenter;
-      implicitWidth: 1 + Math.max(0, Theme.defaultSpacing - expandedContent.spacing) * 2;
-      implicitHeight: Theme.iconSize;
-      width: implicitWidth;
-      height: implicitHeight;
-
-      Rectangle {
-        anchors.centerIn: parent;
-        width: 1;
-        height: parent.height;
-        color: CurrentTheme.border;
-      }
-    }
-
-    Text {
-      readonly property bool isInteractive: true;
-      anchors.verticalCenter: parent.verticalCenter;
-      text: Services.AudioService.iconGlyph;
-      font.family: Theme.iconFontFamily;
-      font.pixelSize: Theme.iconSize;
-      color: Services.AudioService.muted ? CurrentTheme.danger : CurrentTheme.text;
-
-      TapHandler {
-        onTapped: Services.AudioService.toggleMute();
-      }
-    }
-
-    Text {
-      readonly property bool isInteractive: true;
-      anchors.verticalCenter: parent.verticalCenter;
-      text: String.fromCodePoint(0xf05a9); // md-wifi
-      font.family: Theme.iconFontFamily;
-      font.pixelSize: Theme.iconSize;
-      color: Services.NetworkService.enabled ? CurrentTheme.text : CurrentTheme.subtext;
-
-      TapHandler {
-        onTapped: Services.NetworkService.toggle();
-      }
-    }
-
-    Text {
-      readonly property bool isInteractive: true;
-      anchors.verticalCenter: parent.verticalCenter;
-      text: String.fromCodePoint(0xf00af); // md-bluetooth
-      font.family: Theme.iconFontFamily;
-      font.pixelSize: Theme.iconSize;
-      color: Services.BluetoothService.enabled ? CurrentTheme.text : CurrentTheme.subtext;
-
-      TapHandler {
-        onTapped: Services.BluetoothService.toggle();
-      }
-    }
-
-    Text {
-      id: wattageWidthRef;
-      visible: false;
-      text: "88.8W";
-      font.pixelSize: 12;
-    }
-
-    Row {
-      anchors.verticalCenter: parent.verticalCenter;
-      spacing: 3;
-
-      Text {
-        text: "⚡";
-        color: CurrentTheme.subtext;
-        font.pixelSize: 11;
-      }
-      Text {
-        text: power.powerDraw.toFixed(1) + "W";
-        color: CurrentTheme.subtext;
-        font.pixelSize: 12;
-        horizontalAlignment: Text.AlignLeft;
-        width: wattageWidthRef.implicitWidth;
-      }
-    }
-
-    Row {
-      anchors.verticalCenter: parent.verticalCenter;
-      spacing: 3;
-      visible: !power.gpuAsleep;
-
-      Text {
-        text: "GPU";
-        color: CurrentTheme.warning;
-        font.pixelSize: 11;
-      }
-      Text {
-        text: power.gpuWatts.toFixed(1) + "W";
-        color: CurrentTheme.warning;
-        font.pixelSize: 12;
-        horizontalAlignment: Text.AlignLeft;
-        width: wattageWidthRef.implicitWidth;
-      }
-    }
-
-    Text {
-      anchors.verticalCenter: parent.verticalCenter;
-      text: power.stateGlyph + Math.floor(UPower.displayDevice.percentage * 100) + "%";
-      color: power.levelColor;
-      font.pixelSize: 14;
-      font.weight: Font.DemiBold;
-    }
-
-    // No isInteractive here either — same reasoning as the expand
-    // chevron in collapsedContent above.
-    Item {
-      anchors.verticalCenter: parent.verticalCenter;
-      implicitWidth: collapseGlyph.implicitWidth + 12;
-      implicitHeight: power.collapsedSize;
-      width: implicitWidth;
-      height: implicitHeight;
-
-      Text {
-        id: collapseGlyph;
-        anchors.centerIn: parent;
-        text: String.fromCodePoint(0xf0143); // md-chevron_up
-        font.family: Theme.iconFontFamily;
-        font.pixelSize: Theme.iconSize;
-        color: CurrentTheme.subtext;
-      }
-
-      TapHandler {
-        onTapped: { power.markControlActivated(); power.manuallyExpanded = false; }
-      }
-    }
-  }
-
   QsMenuOpener {
     id: menuOpener;
     // Just the one `.menu` (the item's DBusMenuHandle itself), not
@@ -689,97 +290,507 @@ Rectangle {
     menu: (power.activeMenuItem && power.activeMenuItem.menu) || null;
   }
 
-  Column {
-    id: menuContent;
-    anchors.centerIn: parent;
-    spacing: 2;
-    visible: power.showingMenu && !power.showingOsd;
-    opacity: visible ? 1 : 0;
+  // The actual painted notch surface — kept separate from power above so
+  // its layer (shadow) texture bounds stay fixed at exactly this
+  // Rectangle's own size, never needing to grow for leftFillet above.
+  Rectangle {
+    id: powerSurface;
+    anchors.fill: parent;
 
-    Behavior on opacity { NumberAnimation { duration: 140 } }
+    // Bottom-rounded "notch" hanging from the bar's connecting strip
+    // (Bar.qml) — no border (would draw a seam right where this meets the
+    // strip). Square top corners via per-corner radius, not a same-color
+    // Rectangle painted over the top to flatten it — that approach stacked
+    // two translucent layers of CurrentTheme.surface in the top band,
+    // compositing visibly darker there than the single-layer rest of the
+    // pill (confirmed live: a sharp horizontal color seam right at the
+    // patch's own edge).
+    radius: Math.min(16, height / 2);
+    topLeftRadius: 0;
+    topRightRadius: 0;
+    color: CurrentTheme.surface;
 
-    // Explicit close control — this menu stays open once opened (see the
-    // comment on hovered above), so it needs its own way back too. Only
-    // clears activeMenuItem, not manuallyExpanded, so it returns to
-    // whichever state (icon row or collapsed) was showing before the
-    // menu was opened, rather than forcing a full collapse. No
-    // isInteractive — same reasoning as the expand/collapse chevrons.
-    Item {
-      implicitWidth: 170;
-      implicitHeight: Math.max(backGlyph.implicitHeight, Theme.iconSize) + 4;
-      width: implicitWidth;
-      height: implicitHeight;
+    Behavior on color { ColorAnimation { duration: 180 } }
 
-      Text {
-        id: backGlyph;
-        anchors { left: parent.left; verticalCenter: parent.verticalCenter; leftMargin: 4; }
-        text: String.fromCodePoint(0xf0141) + " Back"; // md-chevron_left
-        font.family: Theme.iconFontFamily;
-        font.pixelSize: 12;
-        color: CurrentTheme.subtext;
-      }
+    layer.enabled: true;
+    layer.effect: MultiEffect {
+      shadowEnabled: true;
+      shadowColor: Theme.shadowColor;
+      shadowBlur: Theme.shadowBlur;
+      shadowVerticalOffset: Theme.shadowVerticalOffset;
+    }
 
-      // Which app's menu this is, so it stays legible after switching
-      // straight from one tray item's menu to another.
-      IconImage {
-        anchors { right: parent.right; verticalCenter: parent.verticalCenter; rightMargin: 4; }
-        implicitSize: Theme.iconSize;
-        source: {
-          var item = power.activeMenuItem;
-          if (!item || !item.icon) return "";
-          if (item.icon.includes("?path=")) {
-            var parts = item.icon.split("?path=");
-            var name = parts[0];
-            var path = parts[1];
-            return Qt.resolvedUrl(path + "/" + name.slice(name.lastIndexOf("/") + 1));
+    Row {
+      id: collapsedContent;
+      anchors.centerIn: parent;
+      spacing: 5;
+      // expanded, not manuallyExpanded: a menu opened directly from the
+      // collapsed row (right-clicking a tray icon there, without ever
+      // clicking the chevron first) sets showingMenu without ever setting
+      // manuallyExpanded — this used to stay at opacity 1 in that case,
+      // rendering on top of menuContent since both were visible at once.
+      // expanded folds in showingOsd the same way (see its own comment).
+      opacity: power.expanded ? 0 : 1;
+      visible: opacity > 0;
+
+      Behavior on opacity { NumberAnimation { duration: 120 } }
+
+      Repeater {
+        model: SystemTray.items;
+
+        Item {
+          id: trayIconSlot;
+          required property var modelData;
+          // controlsExclusions only inspects *direct* row children — this
+          // wrapper, not the TrayIcon nested inside it, is what that scan
+          // actually sees. TrayIcon's own isInteractive:true lives one
+          // level too deep to matter here, which is why tray icons were
+          // never actually excluded: left-clicking one correctly fired its
+          // own tap handler, but the click also fell through to
+          // CenterWidget's ancestor handler and opened the command center
+          // every time, since nothing here was ever telling it not to.
+          readonly property bool isInteractive: true;
+          anchors.verticalCenter: parent.verticalCenter;
+          implicitWidth: Theme.iconSize;
+          implicitHeight: Theme.iconSize;
+          width: implicitWidth;
+          height: implicitHeight;
+
+          TrayIcon {
+            anchors.fill: parent;
+            trayItem: trayIconSlot.modelData;
+            owner: power;
           }
-          return item.icon;
         }
       }
 
-      TapHandler {
-        onTapped: { power.markControlActivated(); power.closeMenu(); }
-      }
-    }
-
-    Repeater {
-      model: menuOpener.children;
-
+      // A Row's own `spacing` is uniform between every child, but this
+      // divider wants more clearance than the tight inter-icon spacing
+      // above — defaultMargin (14) read as "too much"; defaultSpacing (8)
+      // instead. Wrapped in a box wide enough that the visible 1px line,
+      // centered within it, ends up with (defaultSpacing - spacing) of
+      // extra clearance on each side — added to the row's own spacing,
+      // that totals defaultSpacing either way. Math.max keeps this from
+      // going negative if a row's own spacing ever exceeds the target
+      // (which would mean "no extra needed", not "negative padding").
       Item {
-        id: menuEntry;
-        required property var modelData;
-        
-        readonly property bool isInteractive: !modelData.isSeparator;
-
-        implicitWidth: 170;
-        implicitHeight: modelData.isSeparator ? 9 : 24;
+        visible: SystemTray.items.values.length > 0;
+        anchors.verticalCenter: parent.verticalCenter;
+        implicitWidth: 1 + Math.max(0, Theme.defaultSpacing - collapsedContent.spacing) * 2;
+        implicitHeight: 16;
         width: implicitWidth;
         height: implicitHeight;
 
         Rectangle {
-          visible: menuEntry.modelData.isSeparator;
           anchors.centerIn: parent;
-          width: parent.width;
-          height: 1;
+          width: 1;
+          height: parent.height;
           color: CurrentTheme.border;
         }
+      }
+
+      Text {
+        anchors.verticalCenter: parent.verticalCenter;
+        text: power.stateGlyph + Math.floor(UPower.displayDevice.percentage * 100) + "%";
+        color: power.levelColor;
+        font.pixelSize: 14;
+        font.weight: Font.DemiBold;
+      }
+
+      // No isInteractive here — this control changes manuallyExpanded, so
+      // geometric exclusion for it specifically is unreliable (see
+      // controlsExclusions above); markControlActivated() in its own
+      // TapHandler already covers it unconditionally, before any geometry.
+      Item {
+        visible: power.hovered;
+        anchors.verticalCenter: parent.verticalCenter;
+        implicitWidth: chevronGlyph.implicitWidth + 12;
+        implicitHeight: power.collapsedSize;
+        width: implicitWidth;
+        height: implicitHeight;
 
         Text {
-          visible: !menuEntry.modelData.isSeparator;
-          anchors { left: parent.left; verticalCenter: parent.verticalCenter; leftMargin: 4; right: parent.right; rightMargin: 4; }
-          text: menuEntry.modelData.text;
-          elide: Text.ElideRight;
-          color: menuEntry.modelData.enabled ? CurrentTheme.text : CurrentTheme.subtext;
-          font.pixelSize: 12;
+          id: chevronGlyph;
+          anchors.centerIn: parent;
+          text: String.fromCodePoint(0xf0140); // md-chevron_down
+          font.family: Theme.iconFontFamily;
+          font.pixelSize: Theme.iconSize;
+          color: CurrentTheme.subtext;
         }
 
         TapHandler {
-          enabled: !menuEntry.modelData.isSeparator && menuEntry.modelData.enabled;
-          onTapped: {
+          onTapped: { power.markControlActivated(); power.manuallyExpanded = true; }
+        }
+      }
+    }
+
+    // Icon + thin fill bar + value label, styled after the battery bar at
+    // the top of PowerPanel.qml — flashed by Brightness/Temperature/
+    // AudioService whenever their value changes (a keybind, this panel's
+    // own sliders, or the bar below directly), then auto-hidden again by
+    // their own osdTimer. Sized noticeably larger than the row it replaces
+    // (wider in particular) so it reads as a deliberate OSD popup, not
+    // just another cramped bar control.
+    Row {
+      id: osdContent;
+      anchors.centerIn: parent;
+      spacing: 12;
+      visible: power.showingOsd;
+      opacity: visible ? 1 : 0;
+
+      Behavior on opacity { NumberAnimation { duration: 120 } }
+
+      Text {
+        anchors.verticalCenter: parent.verticalCenter;
+        text: power.osdGlyph;
+        font.family: Theme.iconFontFamily;
+        font.pixelSize: Theme.iconSize + 8;
+        color: CurrentTheme.text;
+      }
+
+      // Live control, not just a readout — drag or scroll to adjust
+      // whichever value the popup is currently showing. Same TapHandler +
+      // DragHandler + wheel-only-MouseArea shape as SliderPill.qml (a bare
+      // WheelHandler was found not to fire in this setup).
+      Rectangle {
+        id: osdBarTrack;
+        anchors.verticalCenter: parent.verticalCenter;
+        width: 180;
+        height: 12;
+        radius: height / 2;
+        color: CurrentTheme.backgroundGlass;
+
+        Rectangle {
+          width: parent.width * power.osdValue;
+          height: parent.height;
+          radius: parent.radius;
+          color: CurrentTheme.accent;
+
+          Behavior on width { NumberAnimation { duration: 150; easing.type: Easing.OutCubic } }
+        }
+
+        // markControlActivated() on every interaction here — same reasoning
+        // as the chevron/menu controls above: this pill sits inside
+        // CenterWidget's own "tap anywhere opens the command panel"
+        // handler, and geometric exclusion (controlsExclusions) doesn't
+        // cover the popup row at all, so without this a drag/tap here
+        // would also pop the full panel open behind it.
+        TapHandler {
+          onTapped: (eventPoint) => {
             power.markControlActivated();
-            menuEntry.modelData.triggered(); // matches cappuccino's MenuItem.qml
-            power.closeMenu();
-            power.manuallyExpanded = false;
+            power.osdSetValue(eventPoint.position.x / osdBarTrack.width);
+          }
+        }
+
+        DragHandler {
+          target: null;
+          onCentroidChanged: {
+            if (!active) return;
+            power.markControlActivated();
+            power.osdSetValue(centroid.position.x / osdBarTrack.width);
+          }
+        }
+
+        MouseArea {
+          anchors.fill: parent;
+          acceptedButtons: Qt.NoButton;
+          onWheel: (wheel) => {
+            power.markControlActivated();
+            power.osdStep(wheel.angleDelta.y > 0 ? 0.05 : -0.05);
+          }
+        }
+      }
+
+      Text {
+        id: osdLabelWidthRef;
+        visible: false;
+        text: "100%";
+        font.pixelSize: 15;
+      }
+
+      Text {
+        anchors.verticalCenter: parent.verticalCenter;
+        text: power.osdLabel;
+        color: CurrentTheme.subtext;
+        font.pixelSize: 15;
+        horizontalAlignment: Text.AlignRight;
+        width: Math.max(implicitWidth, osdLabelWidthRef.implicitWidth);
+      }
+    }
+
+    Row {
+      id: expandedContent;
+      anchors.centerIn: parent;
+      spacing: 10;
+      visible: power.manuallyExpanded && !power.showingMenu && !power.showingOsd;
+      opacity: visible ? 1 : 0;
+
+      Behavior on opacity { NumberAnimation { duration: 160; easing.type: Easing.OutCubic } }
+
+      Repeater {
+        model: SystemTray.items;
+
+        // Not TrayIcon directly as the delegate: Repeater's injected
+        // `modelData` context property didn't resolve correctly through a
+        // required property on a separately-defined component (it was
+        // picking up Bar.qml's PanelWindow's own unrelated `modelData`,
+        // the screen, instead — confirmed live, calling secondaryActivate()
+        // on it threw "not a function" on a QuickshellScreenInfo). A plain
+        // Item owning `modelData` directly, matching how every other
+        // Repeater delegate in this codebase does it, sidesteps whatever
+        // that resolution issue was.
+        Item {
+          id: trayIconSlot;
+          required property var modelData;
+          // controlsExclusions only inspects *direct* row children — this
+          // wrapper, not the TrayIcon nested inside it, is what that scan
+          // actually sees. TrayIcon's own isInteractive:true lives one
+          // level too deep to matter here, which is why tray icons were
+          // never actually excluded: left-clicking one correctly fired its
+          // own tap handler, but the click also fell through to
+          // CenterWidget's ancestor handler and opened the command center
+          // every time, since nothing here was ever telling it not to.
+          readonly property bool isInteractive: true;
+          anchors.verticalCenter: parent.verticalCenter;
+          implicitWidth: Theme.iconSize;
+          implicitHeight: Theme.iconSize;
+          width: implicitWidth;
+          height: implicitHeight;
+
+          TrayIcon {
+            anchors.fill: parent;
+            trayItem: trayIconSlot.modelData;
+            owner: power;
+          }
+        }
+      }
+
+      // See collapsedContent's own divider for why this is wrapped rather
+      // than a bare Rectangle, and for defaultSpacing/Math.max — same
+      // reasoning applies here.
+      Item {
+        visible: SystemTray.items.values.length > 0;
+        anchors.verticalCenter: parent.verticalCenter;
+        implicitWidth: 1 + Math.max(0, Theme.defaultSpacing - expandedContent.spacing) * 2;
+        implicitHeight: Theme.iconSize;
+        width: implicitWidth;
+        height: implicitHeight;
+
+        Rectangle {
+          anchors.centerIn: parent;
+          width: 1;
+          height: parent.height;
+          color: CurrentTheme.border;
+        }
+      }
+
+      Text {
+        readonly property bool isInteractive: true;
+        anchors.verticalCenter: parent.verticalCenter;
+        text: Services.AudioService.iconGlyph;
+        font.family: Theme.iconFontFamily;
+        font.pixelSize: Theme.iconSize;
+        color: Services.AudioService.muted ? CurrentTheme.danger : CurrentTheme.text;
+
+        TapHandler {
+          onTapped: Services.AudioService.toggleMute();
+        }
+      }
+
+      Text {
+        readonly property bool isInteractive: true;
+        anchors.verticalCenter: parent.verticalCenter;
+        text: String.fromCodePoint(0xf05a9); // md-wifi
+        font.family: Theme.iconFontFamily;
+        font.pixelSize: Theme.iconSize;
+        color: Services.NetworkService.enabled ? CurrentTheme.text : CurrentTheme.subtext;
+
+        TapHandler {
+          onTapped: Services.NetworkService.toggle();
+        }
+      }
+
+      Text {
+        readonly property bool isInteractive: true;
+        anchors.verticalCenter: parent.verticalCenter;
+        text: String.fromCodePoint(0xf00af); // md-bluetooth
+        font.family: Theme.iconFontFamily;
+        font.pixelSize: Theme.iconSize;
+        color: Services.BluetoothService.enabled ? CurrentTheme.text : CurrentTheme.subtext;
+
+        TapHandler {
+          onTapped: Services.BluetoothService.toggle();
+        }
+      }
+
+      Text {
+        id: wattageWidthRef;
+        visible: false;
+        text: "88.8W";
+        font.pixelSize: 12;
+      }
+
+      Row {
+        anchors.verticalCenter: parent.verticalCenter;
+        spacing: 3;
+
+        Text {
+          text: "⚡";
+          color: CurrentTheme.subtext;
+          font.pixelSize: 11;
+        }
+        Text {
+          text: power.powerDraw.toFixed(1) + "W";
+          color: CurrentTheme.subtext;
+          font.pixelSize: 12;
+          horizontalAlignment: Text.AlignLeft;
+          width: wattageWidthRef.implicitWidth;
+        }
+      }
+
+      Row {
+        anchors.verticalCenter: parent.verticalCenter;
+        spacing: 3;
+        visible: !power.gpuAsleep;
+
+        Text {
+          text: "GPU";
+          color: CurrentTheme.warning;
+          font.pixelSize: 11;
+        }
+        Text {
+          text: power.gpuWatts.toFixed(1) + "W";
+          color: CurrentTheme.warning;
+          font.pixelSize: 12;
+          horizontalAlignment: Text.AlignLeft;
+          width: wattageWidthRef.implicitWidth;
+        }
+      }
+
+      Text {
+        anchors.verticalCenter: parent.verticalCenter;
+        text: power.stateGlyph + Math.floor(UPower.displayDevice.percentage * 100) + "%";
+        color: power.levelColor;
+        font.pixelSize: 14;
+        font.weight: Font.DemiBold;
+      }
+
+      // No isInteractive here either — same reasoning as the expand
+      // chevron in collapsedContent above.
+      Item {
+        anchors.verticalCenter: parent.verticalCenter;
+        implicitWidth: collapseGlyph.implicitWidth + 12;
+        implicitHeight: power.collapsedSize;
+        width: implicitWidth;
+        height: implicitHeight;
+
+        Text {
+          id: collapseGlyph;
+          anchors.centerIn: parent;
+          text: String.fromCodePoint(0xf0143); // md-chevron_up
+          font.family: Theme.iconFontFamily;
+          font.pixelSize: Theme.iconSize;
+          color: CurrentTheme.subtext;
+        }
+
+        TapHandler {
+          onTapped: { power.markControlActivated(); power.manuallyExpanded = false; }
+        }
+      }
+    }
+
+    Column {
+      id: menuContent;
+      anchors.centerIn: parent;
+      spacing: 2;
+      visible: power.showingMenu && !power.showingOsd;
+      opacity: visible ? 1 : 0;
+
+      Behavior on opacity { NumberAnimation { duration: 140 } }
+
+      // Explicit close control — this menu stays open once opened (see the
+      // comment on hovered above), so it needs its own way back too. Only
+      // clears activeMenuItem, not manuallyExpanded, so it returns to
+      // whichever state (icon row or collapsed) was showing before the
+      // menu was opened, rather than forcing a full collapse. No
+      // isInteractive — same reasoning as the expand/collapse chevrons.
+      Item {
+        implicitWidth: 170;
+        implicitHeight: Math.max(backGlyph.implicitHeight, Theme.iconSize) + 4;
+        width: implicitWidth;
+        height: implicitHeight;
+
+        Text {
+          id: backGlyph;
+          anchors { left: parent.left; verticalCenter: parent.verticalCenter; leftMargin: 4; }
+          text: String.fromCodePoint(0xf0141) + " Back"; // md-chevron_left
+          font.family: Theme.iconFontFamily;
+          font.pixelSize: 12;
+          color: CurrentTheme.subtext;
+        }
+
+        // Which app's menu this is, so it stays legible after switching
+        // straight from one tray item's menu to another.
+        IconImage {
+          anchors { right: parent.right; verticalCenter: parent.verticalCenter; rightMargin: 4; }
+          implicitSize: Theme.iconSize;
+          source: {
+            var item = power.activeMenuItem;
+            if (!item || !item.icon) return "";
+            if (item.icon.includes("?path=")) {
+              var parts = item.icon.split("?path=");
+              var name = parts[0];
+              var path = parts[1];
+              return Qt.resolvedUrl(path + "/" + name.slice(name.lastIndexOf("/") + 1));
+            }
+            return item.icon;
+          }
+        }
+
+        TapHandler {
+          onTapped: { power.markControlActivated(); power.closeMenu(); }
+        }
+      }
+
+      Repeater {
+        model: menuOpener.children;
+
+        Item {
+          id: menuEntry;
+          required property var modelData;
+
+          readonly property bool isInteractive: !modelData.isSeparator;
+
+          implicitWidth: 170;
+          implicitHeight: modelData.isSeparator ? 9 : 24;
+          width: implicitWidth;
+          height: implicitHeight;
+
+          Rectangle {
+            visible: menuEntry.modelData.isSeparator;
+            anchors.centerIn: parent;
+            width: parent.width;
+            height: 1;
+            color: CurrentTheme.border;
+          }
+
+          Text {
+            visible: !menuEntry.modelData.isSeparator;
+            anchors { left: parent.left; verticalCenter: parent.verticalCenter; leftMargin: 4; right: parent.right; rightMargin: 4; }
+            text: menuEntry.modelData.text;
+            elide: Text.ElideRight;
+            color: menuEntry.modelData.enabled ? CurrentTheme.text : CurrentTheme.subtext;
+            font.pixelSize: 12;
+          }
+
+          TapHandler {
+            enabled: !menuEntry.modelData.isSeparator && menuEntry.modelData.enabled;
+            onTapped: {
+              power.markControlActivated();
+              menuEntry.modelData.triggered(); // matches cappuccino's MenuItem.qml
+              power.closeMenu();
+              power.manuallyExpanded = false;
+            }
           }
         }
       }

@@ -32,13 +32,12 @@ in {
   };
 
   virtualisation.docker.enable = true;
-  virtualisation.docker.enableOnBoot = false; # socket-activated on first use
+  virtualisation.docker.enableOnBoot = true;
   hardware.nvidia-container-toolkit.enable = true;
   boot.extraModulePackages = [ config.boot.kernelPackages.lenovo-legion-module ];
   time.hardwareClockInLocalTime = true;
 
   programs = {
-    thunderbird.enable = true;
     tmux.enable = true;
     hyprland = {
       enable = true;
@@ -211,6 +210,7 @@ in {
   programs.nix-ld.libraries = with pkgs; [
     ruff
     uv
+    libsecret glib # proton-drive CLI session store (gnome-keyring)
   ];
 
   hardware.bluetooth.enable = true;

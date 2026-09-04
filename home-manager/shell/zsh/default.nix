@@ -164,6 +164,7 @@ in {
 
           #Programs
           cora = "~/.cora/bin/cora";
+          proton-drive = "~/.proton-drive/bin/proton-drive";
           cat = "bat -p";
         };
 

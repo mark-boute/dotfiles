@@ -61,7 +61,6 @@ in {
       wl-clipboard
 
       # networking and authentication
-      gnomeExtensions.cloudflare-warp-toggle
       authenticator
       eduvpn-client
       bitwarden-cli
@@ -74,6 +73,13 @@ in {
       r2modman      
       lunar-client
       prismlauncher
+
+      # proton
+      protonmail-desktop
+      proton-vpn
+      protonvpn-gui
+      proton-pass
+      proton-pass-cli
 
       # office suite
       onlyoffice-desktopeditors
@@ -95,6 +101,9 @@ in {
       z3
       jdk21
       gradle
+
+      # eclipse
+      eclipses.eclipse-committers
     ]
     ++ [
       inputs.zen-browser.packages.${pkgs.stdenv.system}.default

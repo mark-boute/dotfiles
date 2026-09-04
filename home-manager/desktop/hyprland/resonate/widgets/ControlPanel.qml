@@ -1,4 +1,5 @@
 import QtQuick
+import QtQuick.Window
 import QtQuick.Layouts
 import QtQuick.Effects
 import Quickshell
@@ -7,352 +8,217 @@ import Quickshell.Widgets
 import qs
 import qs.services as Services
 
-// Opened by clicking the center widget: theme selector, a "now playing"
-// banner when Spotify is active, and the full notification history with
-// per-item dismiss / clear all.
-Rectangle {
+// The center widget's popout. Two modes:
+//   home  — a header (time/date), now-playing, the apps drawer, the
+//           notification centre.
+//   app   — one drawer app taken over the whole panel (wider), with a
+//           back arrow + title, system-tray-menu style.
+//
+// `openApp` drives the mode; CenterWidget resets it to "" each time the panel
+// opens so you always land on home.
+Item {
   id: panel;
 
-  readonly property var flavors: ["latte", "frappe", "macchiato", "mocha"];
-  readonly property int contentWidth: 300;
+  property string openApp: "";
+  readonly property bool inApp: openApp !== "";
 
-  // No border — the bar's islands went borderless for the same reason
-  // (see Workspaces/Clock/PowerStatus.qml): an outline clashes with the
-  // frosted-glass one-piece look this whole shell is going for now.
-  // Square top corners for the same reason too — this panel opens
-  // directly out of the clock island above it, so a fully rounded top
-  // would visually disconnect from it the moment it's open.
-  radius: 18;
-  topLeftRadius: 0;
-  topRightRadius: 0;
-  color: CurrentTheme.surface;
+  // The bar window is full-width, so its Window.width is the monitor width; its
+  // height is not the monitor height though, so screenHeight is fed in by
+  // CenterWidget (from Bar's PanelWindow.screen) via a Binding.
+  readonly property real screenW: Window.width > 0 ? Window.width : 1920;
+  property real screenHeight: 0;
 
-  layer.enabled: true;
-  layer.effect: MultiEffect {
-    shadowEnabled: true;
-    shadowColor: Theme.shadowColor;
-    shadowBlur: Theme.shadowBlur;
-    shadowVerticalOffset: Theme.shadowVerticalOffset;
+  // Tallest the panel may get before its body starts scrolling — the screen
+  // minus room for the bar above and a little breathing space below.
+  readonly property real maxHeight:
+    (screenHeight > 0 ? screenHeight : 1080) - Theme.barHeight - Theme.defaultMargin * 4;
+
+  readonly property int homeWidth: 340;
+  // Each app declares the width it wants (bodyLoader.item.appWidth); the panel
+  // gives it that, capped at 3/4 of the screen. Doesn't depend on the laid-out
+  // width, so there's no sizing loop.
+  readonly property int appWidthCap: Math.round(screenW * 0.75);
+  readonly property int appWidth: {
+    var want = (bodyLoader.item && bodyLoader.item.appWidth) ? bodyLoader.item.appWidth : 480;
+    return Math.min(want, appWidthCap);
   }
+  readonly property int contentW: inApp ? appWidth : homeWidth;
 
-  // Smooths the concave seams where this panel's left/right edges meet
-  // the connecting strip above (see NotchFillet.qml) — same treatment as
-  // the clock island itself (Clock.qml): both sides, since this panel
-  // stays centered on screen when open (see Bar.qml's CenterWidget/
-  // panelLoader centering — a panel exactly as wide as its wrapper
-  // renders with zero centering offset), just wider than the pill it
-  // replaces.
-  NotchFillet {
-    id: leftFillet;
-    x: -leftFillet.filletRadius;
-    y: Theme.barConnectorHeight;
-  }
-  NotchFillet {
-    id: rightFillet;
-    mirrored: true;
-    x: panel.width;
-    y: Theme.barConnectorHeight;
-  }
+  readonly property real contentH:
+    (headerLoader.item ? headerLoader.item.implicitHeight : 0)
+    + Theme.defaultSpacing
+    + (bodyLoader.item ? bodyLoader.item.implicitHeight : 0);
 
-  implicitWidth: layout.implicitWidth + Theme.defaultMargin * 2;
-  implicitHeight: Math.min(layout.implicitHeight, Theme.maxPanelContentHeight) + Theme.defaultMargin * 2;
+  // See NotchFillet.qml — smooths the seam where the panel meets the connector
+  // strip above. Kept off the shadowed surface Rectangle (they render outside
+  // [0, width]).
+  NotchFillet { id: leftFillet;  x: -leftFillet.filletRadius; y: Theme.barConnectorHeight; }
+  NotchFillet { id: rightFillet; mirrored: true; x: panel.width; y: Theme.barConnectorHeight; }
 
-  Behavior on implicitWidth  { NumberAnimation { duration: 160; easing.type: Easing.OutCubic } }
-  Behavior on implicitHeight { NumberAnimation { duration: 160; easing.type: Easing.OutCubic } }
+  // Grows to fit content, but never past maxHeight — beyond that the body
+  // scrolls (see the Flickable below).
+  implicitWidth: contentW + Theme.defaultMargin * 2;
+  implicitHeight: Math.min(contentH, maxHeight) + Theme.defaultMargin * 2;
 
-  // Flickable rather than a plain centered ColumnLayout — panel content
-  // (theme swatches + a growing notification list) can end up taller than
-  // the capped implicitHeight above, so this scrolls the overflow instead
-  // of clipping it unreachably. Drag-to-pan is Flickable's own default
-  // behavior; the MouseArea below adds wheel support the same way
-  // SliderPill.qml does (a bare WheelHandler was found not to fire here).
-  Flickable {
-    id: flick;
+  // Width eases (a mode switch, rare); height snaps — animating a layer-shell
+  // surface's height means a Wayland reconfigure every frame (see Bar.qml).
+  Behavior on implicitWidth { NumberAnimation { duration: 130; easing.type: Easing.OutCubic } }
+
+  Rectangle {
+    id: panelSurface;
     anchors.fill: parent;
-    anchors.margins: Theme.defaultMargin;
-    contentWidth: layout.implicitWidth;
-    contentHeight: layout.implicitHeight;
-    clip: true;
-    boundsBehavior: Flickable.StopAtBounds;
+    radius: 18;
+    topLeftRadius: 0;
+    topRightRadius: 0;
+    color: CurrentTheme.surface;
 
-    MouseArea {
-      anchors.fill: parent;
-      acceptedButtons: Qt.NoButton;
-      onWheel: (wheel) => {
-        flick.contentY = Math.max(0, Math.min(flick.contentHeight - flick.height, flick.contentY - wheel.angleDelta.y));
-      }
+    layer.enabled: true;
+    layer.effect: MultiEffect {
+      shadowEnabled: true;
+      shadowColor: Theme.shadowColor;
+      shadowBlur: Theme.shadowBlur;
+      shadowVerticalOffset: Theme.shadowVerticalOffset;
     }
 
     ColumnLayout {
-      id: layout;
-      anchors.horizontalCenter: parent.horizontalCenter;
+      anchors.fill: parent;
+      anchors.margins: Theme.defaultMargin;
       spacing: Theme.defaultSpacing;
 
-      // --- Now playing (Spotify only) ---
-      RowLayout {
-        Layout.preferredWidth: panel.contentWidth;
-        Layout.alignment: Qt.AlignHCenter;
-        visible: Services.MediaService.hasPlayer;
-        spacing: Theme.defaultSpacing;
-  
-        ColumnLayout {
-          Layout.fillWidth: true;
-          spacing: 1;
-  
-          Text {
-            Layout.fillWidth: true;
-            text: Services.MediaService.title;
-            color: CurrentTheme.text;
-            font.pixelSize: 13;
-            font.weight: Font.DemiBold;
-            elide: Text.ElideRight;
-          }
-  
-          Text {
-            Layout.fillWidth: true;
-            text: Services.MediaService.artist;
-            color: CurrentTheme.subtext;
-            font.pixelSize: 11;
-            elide: Text.ElideRight;
+      Loader {
+        id: headerLoader;
+        Layout.fillWidth: true;
+        Layout.preferredHeight: item ? item.implicitHeight : 0;
+        sourceComponent: panel.inApp ? appHeader : homeHeader;
+      }
+
+      Flickable {
+        id: bodyFlick;
+        Layout.fillWidth: true;
+        Layout.fillHeight: true;
+        contentWidth: width;
+        contentHeight: bodyLoader.item ? bodyLoader.item.implicitHeight : 0;
+        clip: true;
+        interactive: contentHeight > height;
+        flickableDirection: Flickable.VerticalFlick;
+        boundsBehavior: Flickable.StopAtBounds;
+
+        MouseArea {
+          anchors.fill: parent;
+          acceptedButtons: Qt.NoButton;
+          onWheel: (wheel) => {
+            var max = Math.max(0, bodyFlick.contentHeight - bodyFlick.height);
+            bodyFlick.contentY = Math.max(0, Math.min(max, bodyFlick.contentY - wheel.angleDelta.y));
           }
         }
-  
-        Text {
-          text: "⏮";
-          color: Services.MediaService.canGoPrevious ? CurrentTheme.text : CurrentTheme.subtext;
-          font.pixelSize: 14;
-          TapHandler { enabled: Services.MediaService.canGoPrevious; onTapped: Services.MediaService.previous(); }
-        }
-  
-        Text {
-          text: Services.MediaService.playing ? "⏸" : "▶";
-          color: CurrentTheme.accent;
-          font.pixelSize: 16;
-          TapHandler { onTapped: Services.MediaService.togglePlaying(); }
-        }
-  
-        Text {
-          text: "⏭";
-          color: Services.MediaService.canGoNext ? CurrentTheme.text : CurrentTheme.subtext;
-          font.pixelSize: 14;
-          TapHandler { enabled: Services.MediaService.canGoNext; onTapped: Services.MediaService.next(); }
+
+        Loader {
+          id: bodyLoader;
+          width: bodyFlick.width;
+          sourceComponent: panel.inApp
+            ? (panel.openApp === "theme" ? themeApp : checklistApp)
+            : homeBody;
         }
       }
-  
-      Rectangle {
-        Layout.preferredWidth: panel.contentWidth;
+    }
+  }
+
+  // --- headers ---------------------------------------------------------------
+
+  Component {
+    id: homeHeader;
+    ColumnLayout {
+      width: headerLoader.width;
+      spacing: 1;
+      Text {
         Layout.alignment: Qt.AlignHCenter;
+        text: Services.SystemClock.time;
+        color: CurrentTheme.text;
+        font.pixelSize: 26;
+        font.weight: Font.Light;
+      }
+      Text {
+        Layout.alignment: Qt.AlignHCenter;
+        text: Services.SystemClock.weekday + ", " + Services.SystemClock.date;
+        color: CurrentTheme.subtext;
+        font.pixelSize: 11;
+      }
+    }
+  }
+
+  Component {
+    id: appHeader;
+    Item {
+      width: headerLoader.width;
+      implicitHeight: 30;
+
+      Row {
+        anchors.left: parent.left;
+        anchors.verticalCenter: parent.verticalCenter;
+        spacing: 9;
+
+        Rectangle {
+          width: 26; height: 26; radius: 8;
+          anchors.verticalCenter: parent.verticalCenter;
+          color: backHover.hovered ? CurrentTheme.surfaceHover : "transparent";
+          Behavior on color { ColorAnimation { duration: 100 } }
+          Text {
+            anchors.centerIn: parent;
+            text: String.fromCodePoint(0xf053); // chevron-left
+            font.family: Theme.iconFontFamily;
+            font.pixelSize: 14;
+            color: CurrentTheme.text;
+          }
+          HoverHandler { id: backHover; cursorShape: Qt.PointingHandCursor; }
+          TapHandler { onTapped: panel.openApp = ""; }
+        }
+
+        Text {
+          anchors.verticalCenter: parent.verticalCenter;
+          text: panel.openApp === "theme" ? "Theme" : "Checklist";
+          color: CurrentTheme.text;
+          font.pixelSize: 15;
+          font.weight: Font.DemiBold;
+        }
+      }
+    }
+  }
+
+  // --- bodies ---------------------------------------------------------------
+
+  Component {
+    id: homeBody;
+    ColumnLayout {
+      width: bodyLoader.width;
+      spacing: Theme.defaultSpacing;
+
+      AppDrawer {
+        Layout.fillWidth: true;
+        onOpen: (appId) => panel.openApp = appId;
+      }
+
+      Rectangle {
+        Layout.fillWidth: true;
         Layout.topMargin: Theme.defaultSpacing / 2;
         Layout.bottomMargin: Theme.defaultSpacing / 2;
-        visible: Services.MediaService.hasPlayer;
         implicitHeight: 1;
         color: CurrentTheme.border;
       }
-  
-      // --- Theme ---
-      Text {
-        Layout.alignment: Qt.AlignHCenter;
-        text: "Theme";
-        color: CurrentTheme.subtext;
-        font.pixelSize: 12;
-        font.weight: Font.DemiBold;
-      }
-  
-      RowLayout {
-        Layout.alignment: Qt.AlignHCenter;
-        spacing: Theme.defaultSpacing;
-  
-        Repeater {
-          model: panel.flavors;
-  
-          Rectangle {
-            id: swatch;
-            required property string modelData;
-            readonly property var flavorPalette: Theme.paletteFor(modelData);
-            readonly property bool active: Theme.flavor === modelData;
-  
-            width: 58;
-            height: 58;
-            radius: 14;
-            color: flavorPalette.base;
-            border.width: active ? 2 : 1;
-            border.color: active ? flavorPalette.mauve : CurrentTheme.border;
-  
-            Behavior on border.color { ColorAnimation { duration: 120 } }
-            Behavior on border.width { NumberAnimation { duration: 120 } }
-  
-            Row {
-              anchors.centerIn: parent;
-              spacing: 3;
-  
-              Repeater {
-                model: [swatch.flavorPalette.rosewater, swatch.flavorPalette.mauve, swatch.flavorPalette.blue];
-  
-                Rectangle {
-                  required property color modelData;
-                  width: 8;
-                  height: 8;
-                  radius: 4;
-                  color: modelData;
-                }
-              }
-            }
-  
-            TapHandler {
-              onTapped: Theme.flavor = swatch.modelData;
-            }
-          }
-        }
-      }
-  
-      Text {
-        Layout.alignment: Qt.AlignHCenter;
-        text: Theme.flavor.charAt(0).toUpperCase() + Theme.flavor.slice(1);
-        color: CurrentTheme.text;
-        font.pixelSize: 12;
-      }
-  
-      Text {
-        Layout.alignment: Qt.AlignHCenter;
-        Layout.topMargin: Theme.defaultSpacing;
-        text: "Accent";
-        color: CurrentTheme.subtext;
-        font.pixelSize: 12;
-        font.weight: Font.DemiBold;
-      }
-  
-      Flow {
-        Layout.preferredWidth: panel.contentWidth;
-        Layout.alignment: Qt.AlignHCenter;
-        spacing: Theme.defaultSpacing;
-  
-        Repeater {
-          model: Theme.accentChoices;
-  
-          Rectangle {
-            id: accentSwatch;
-            required property string modelData;
-            readonly property bool active: Theme.accentName === modelData;
-  
-            width: 28;
-            height: 28;
-            radius: 14;
-            color: Theme.palette[modelData];
-            border.width: active ? 2 : 0;
-            border.color: CurrentTheme.text;
-  
-            Behavior on border.width { NumberAnimation { duration: 120 } }
-  
-            TapHandler {
-              onTapped: Theme.accentName = accentSwatch.modelData;
-            }
-          }
-        }
-      }
-  
-      // --- Notifications ---
-      RowLayout {
-        Layout.preferredWidth: panel.contentWidth;
-        Layout.alignment: Qt.AlignHCenter;
-        Layout.topMargin: Theme.defaultSpacing;
-        visible: Services.NotificationService.trackedNotifications.values.length > 0;
-  
-        Text {
-          text: "Notifications";
-          color: CurrentTheme.subtext;
-          font.pixelSize: 12;
-          font.weight: Font.DemiBold;
-          Layout.fillWidth: true;
-        }
-  
-        Text {
-          text: "Clear all";
-          color: CurrentTheme.accent;
-          font.pixelSize: 12;
-          TapHandler { onTapped: Services.NotificationService.clearAll(); }
-        }
-      }
-  
-      ListView {
-        id: notifList;
-        Layout.preferredWidth: panel.contentWidth;
-        Layout.alignment: Qt.AlignHCenter;
-        Layout.preferredHeight: Math.min(contentHeight, 260);
-        visible: Services.NotificationService.trackedNotifications.values.length > 0;
-        clip: true;
-        spacing: 6;
-        model: Services.NotificationService.trackedNotifications;
-  
-        delegate: Rectangle {
-          id: card;
-          required property var modelData;
-          width: notifList.width;
-          height: body.implicitHeight + 20;
-          radius: 10;
-          color: CurrentTheme.background;
-          border.width: 1;
-          border.color: CurrentTheme.border;
-  
-          ColumnLayout {
-            id: body;
-            anchors { left: parent.left; right: parent.right; top: parent.top; margins: 10; }
-            spacing: 2;
-  
-            RowLayout {
-              Layout.fillWidth: true;
-              spacing: 6;
-  
-              IconImage {
-                implicitSize: 14;
-                visible: source.toString() !== "";
-                source: {
-                  var n = card.modelData;
-                  if (n.image) return n.image;
-                  var ic = n.appIcon;
-                  if (!ic) return "";
-                  return (ic.startsWith("/") || ic.indexOf("://") !== -1) ? ic : Quickshell.iconPath(ic, true);
-                }
-              }
-  
-              Text {
-                text: card.modelData.appName;
-                color: CurrentTheme.subtext;
-                font.pixelSize: 10;
-                Layout.fillWidth: true;
-              }
-  
-              Text {
-                // A trash icon, not the clock spotlight's × — this removes
-                // it from the list rather than just dismissing a toast.
-                text: "🗑";
-                color: CurrentTheme.subtext;
-                font.pixelSize: 12;
-                TapHandler { onTapped: card.modelData.dismiss(); }
-              }
-            }
-  
-            Text {
-              Layout.fillWidth: true;
-              text: card.modelData.summary;
-              color: CurrentTheme.text;
-              font.pixelSize: 12;
-              font.weight: Font.DemiBold;
-              elide: Text.ElideRight;
-            }
-  
-            Text {
-              Layout.fillWidth: true;
-              visible: card.modelData.body !== "";
-              text: card.modelData.body;
-              color: CurrentTheme.subtext;
-              font.pixelSize: 11;
-              wrapMode: Text.WordWrap;
-              maximumLineCount: 2;
-              elide: Text.ElideRight;
-            }
-          }
-        }
-      }
+
+      NotificationCenter { Layout.fillWidth: true; }
+    }
+  }
+
+  Component {
+    id: themeApp;
+    ThemeApp { width: bodyLoader.width; }
+  }
+
+  Component {
+    id: checklistApp;
+    ChecklistPanel {
+      width: bodyLoader.width;
+      panelW: bodyLoader.width;
     }
   }
 }

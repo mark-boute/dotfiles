@@ -40,9 +40,23 @@ Item {
   // contentContainer below).
   property var contentTapExclusions: [];
 
+  // "center" (Clock/PowerStatus, both centred/right-anchored in Bar so the
+  // panel opens straddling the pill) or "left" (Workspaces — the leftmost
+  // island, so its panel opens flush with the pill's own left edge and
+  // grows rightward).
+  property string panelAlign: "center";
+
   property Component panelContent: null;
   readonly property int panelWidth: panelLoader.item ? panelLoader.item.implicitWidth : 0;
   readonly property int panelHeight: panelLoader.item ? panelLoader.item.implicitHeight : 0;
+
+  // Monitor height, forwarded from Bar so the panel content can cap itself to
+  // the screen. Pushed onto the loaded item (if it wants it) via Binding below.
+  property real panelScreenHeight: 0;
+
+  // This bar's HyprlandMonitor, forwarded the same way — WorkspacesPanel needs
+  // it to show the same bullets the collapsed island does.
+  property var panelMonitor: null;
 
   property bool panelOpen: false;
 
@@ -62,10 +76,37 @@ Item {
   }
   Timer { id: settleTimer; interval: 180; onTriggered: holder.windowExpanded = false; }
 
-  readonly property int targetWidth: panelOpen
+  // Separately-timed grace period for panelOpen specifically, matching
+  // panelLoader's own 160ms opacity fade below. Without this, targetWidth/
+  // Height fell back to windowExpanded/collapsed sizing the instant
+  // panelOpen went false — the wrapper (and everything sized off it: the
+  // window, the connecting-strip gap segments, the mask) snapped back to
+  // the pill's footprint immediately, while the panel itself was still
+  // rendering at full size for another 160ms, fading out. That orphaned
+  // the still-visible panel from the strip/window that had already
+  // retracted out from under it — confirmed live, reproducible every
+  // close. panelClosing keeps targetWidth/Height on panelWidth/Height
+  // for exactly as long as the panel is still visible.
+  property bool panelClosing: false;
+  onPanelOpenChanged: {
+    if (panelOpen) {
+      panelCloseTimer.stop();
+      panelClosing = false;
+      // Land on the panel's home view every open, not wherever it was left.
+      // Guarded so it's a no-op for panel content without that notion.
+      if (panelLoader.item && "openApp" in panelLoader.item)
+        panelLoader.item.openApp = "";
+    } else {
+      panelClosing = true;
+      panelCloseTimer.restart();
+    }
+  }
+  Timer { id: panelCloseTimer; interval: 160; onTriggered: holder.panelClosing = false; }
+
+  readonly property int targetWidth: (panelOpen || panelClosing)
     ? holder.panelWidth
     : (windowExpanded ? contentExpandedWidth : contentCollapsedWidth);
-  readonly property int targetHeight: panelOpen
+  readonly property int targetHeight: (panelOpen || panelClosing)
     ? holder.panelHeight
     : (windowExpanded ? contentExpandedHeight : collapsedSize);
 
@@ -104,12 +145,38 @@ Item {
 
   Loader {
     id: panelLoader;
-    anchors { top: parent.top; horizontalCenter: parent.horizontalCenter; }
+    anchors {
+      top: parent.top;
+      horizontalCenter: holder.panelAlign === "center" ? parent.horizontalCenter : undefined;
+      left: holder.panelAlign === "left" ? parent.left : undefined;
+    }
     active: holder.panelContent !== null;
     sourceComponent: holder.panelContent;
     opacity: holder.panelOpen ? 1 : 0;
     visible: opacity > 0;
 
     Behavior on opacity { NumberAnimation { duration: 160; easing.type: Easing.OutCubic } }
+  }
+
+  Binding {
+    target: panelLoader.item;
+    property: "screenHeight";
+    value: holder.panelScreenHeight;
+    when: panelLoader.item !== null && "screenHeight" in panelLoader.item;
+  }
+
+  Binding {
+    target: panelLoader.item;
+    property: "monitor";
+    value: holder.panelMonitor;
+    when: panelLoader.item !== null && "monitor" in panelLoader.item;
+  }
+
+  // Panel content can ask to close itself (e.g. WorkspacesPanel's header
+  // up-chevron). Harmless no-op for panels without the signal.
+  Connections {
+    target: panelLoader.item;
+    ignoreUnknownSignals: true;
+    function onCloseRequested() { holder.panelOpen = false; }
   }
 }

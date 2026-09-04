@@ -43,9 +43,14 @@ A.global = function(c)
 	}
 end
 A.kill = function()
+	-- close() is a close request to the focused toplevel only, not
+	-- hl.dsp.window.kill() — that kills the whole process, so it took down
+	-- every window of a multi-window app like VSCode at once. (Was
+	-- `exec "hyprctl dispatch killactive"`, but this hyprctl parses its arg
+	-- as lua, and `killactive` isn't a symbol there, so the exec form 404s.)
 	return {
 		dispatch = function()
-			return hl.dsp.window.kill()
+			return hl.dsp.window.close()
 		end,
 	}
 end
@@ -195,6 +200,7 @@ M.binds = {
     { keys = "SUPER + C", desc = "Open VSCode", action = A.exec_app("code") },
     { keys = "SUPER + U", desc = "Open Authenticator", action = A.exec_app("authenticator") },
     { keys = "SUPER + D", desc = "Open Discord", action = A.exec_app("discord") },
+    { keys = "SUPER + M", desc = "Open Proton Mail", action = A.exec_app("proton-mail") },
 
     -- Window management
     { keys = "SUPER + Q", desc = "Close focused window", action = A.kill() },
@@ -204,7 +210,7 @@ M.binds = {
 		action = A.exec(
 			"pid=$(hyprctl activewindow -j | jq -r '.pid'); "
 				.. "n=$(hyprctl clients -j | jq --argjson p \"$pid\" '[.[] | select(.pid==$p)] | length'); "
-				.. "if [ \"$n\" -le 1 ]; then kill -9 \"$pid\"; else hyprctl dispatch killactive; fi"
+				.. "if [ \"$n\" -le 1 ]; then kill -9 \"$pid\"; else hyprctl dispatch 'hl.dsp.window.close()'; fi"
 		),
 	},
 	{ keys = "SUPER + F", desc = "Fullscreen", action = A.fullscreen("fullscreen") },
@@ -246,7 +252,7 @@ M.binds = {
     -- System
 	{ keys = "SUPER + ALT + R", desc = "Reload Hyprland", action = A.exec("hyprctl reload") },
 	{ keys = "SUPER + Escape", desc = "Lock screen", action = A.global("quickshell:Lock") },
-	{ keys = "SUPER + SHIFT + Escape", desc = "Log out", action = A.exec("hyprshutdown -t 'Logging out...' --post-cmd 'hyprctl dispatch exit'") },
+	{ keys = "SUPER + SHIFT + Escape", desc = "Log out", action = A.exec("hyprshutdown -t 'Logging out...' --post-cmd \"hyprctl dispatch 'hl.dsp.exit()'\"") },
     {
 		keys = "SUPER + SHIFT + Delete",
 		desc = "Reboot system",

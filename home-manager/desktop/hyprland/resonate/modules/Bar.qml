@@ -19,6 +19,10 @@ PanelWindow {
   // on this screen has a fullscreen window.
   WlrLayershell.layer: WlrLayer.Overlay;
   WlrLayershell.namespace: "quickshell:resonate:bar";
+  // OnDemand so a click on a text field in an open panel (the Wi-Fi password
+  // input) can take keyboard focus — without it, the layer surface never
+  // receives key events. Idle/hover states don't grab focus with this mode.
+  WlrLayershell.keyboardFocus: panel.anyPanelOpen ? WlrKeyboardFocus.OnDemand : WlrKeyboardFocus.None;
 
   property HyprlandMonitor monitor: Hyprland.monitorFor(screen);
   readonly property bool screenFullscreen: monitor && monitor.activeWorkspace ? monitor.activeWorkspace.hasFullscreen : false;
@@ -29,6 +33,7 @@ PanelWindow {
   onScreenFullscreenChanged: if (screenFullscreen) {
     centerWidget.panelOpen = false;
     powerWidget.panelOpen = false;
+    workspacesWidget.panelOpen = false;
   }
 
   anchors { top: true; left: true; right: true; }
@@ -36,15 +41,17 @@ PanelWindow {
 
   property alias panelOpen: centerWidget.panelOpen;
   property alias powerPanelOpen: powerWidget.panelOpen;
-  readonly property bool anyPanelOpen: panelOpen || powerPanelOpen;
+  property alias workspacesPanelOpen: workspacesWidget.panelOpen;
+  readonly property bool anyPanelOpen: panelOpen || powerPanelOpen || workspacesPanelOpen;
 
   // Only one panel open at a time — besides being the more sensible
   // quick-settings-style UX, having both open at once made the window
   // (sized to fit whichever is open, see implicitHeight below) taller,
   // which widens the HyprlandFocusGrab's "inside" region below and made
   // outside clicks miss more often.
-  onPanelOpenChanged: if (panelOpen) powerWidget.panelOpen = false;
-  onPowerPanelOpenChanged: if (powerPanelOpen) centerWidget.panelOpen = false;
+  onPanelOpenChanged: if (panelOpen) { powerWidget.panelOpen = false; workspacesWidget.panelOpen = false; }
+  onPowerPanelOpenChanged: if (powerPanelOpen) { centerWidget.panelOpen = false; workspacesWidget.panelOpen = false; }
+  onWorkspacesPanelOpenChanged: if (workspacesPanelOpen) { centerWidget.panelOpen = false; powerWidget.panelOpen = false; }
 
   // Click-outside-to-close, via Hyprland's own compositor-level grab —
   // NOT a full-screen invisible window of our own (that was tried first:
@@ -62,6 +69,7 @@ PanelWindow {
     onCleared: {
       centerWidget.panelOpen = false;
       powerWidget.panelOpen = false;
+      workspacesWidget.panelOpen = false;
     }
   }
 
@@ -84,14 +92,14 @@ PanelWindow {
   // so adding barConnectorHeight again would over-reserve space.
   // barVerticalMargin is kept as the breathing room below the tallest
   // current content.
-  implicitHeight: Math.max(centerWidget.targetHeight, powerWidget.targetHeight) + Theme.barVerticalMargin;
+  implicitHeight: Math.max(centerWidget.targetHeight, powerWidget.targetHeight, workspacesWidget.targetHeight) + Theme.barVerticalMargin;
 
   // The space Hyprland reserves for the bar is pinned to the widgets'
   // collapsed footprint, so hovering/opening a panel never reflows tiled
   // windows — the expanded content simply paints over them, on the Overlay
   // layer above.
   exclusionMode: ExclusionMode.Normal;
-  exclusiveZone: Math.max(centerWidget.collapsedSize, powerWidget.collapsedSize) + Theme.barVerticalMargin;
+  exclusiveZone: Math.max(centerWidget.collapsedSize, powerWidget.collapsedSize, workspacesWidget.collapsedSize) + Theme.barVerticalMargin;
 
   // Only the bar widgets' current (animated) bounds ever accept pointer
   // input — the rest of this window is click-through, always, even while a
@@ -172,27 +180,46 @@ PanelWindow {
   Rectangle {
     y: 0;
     x: workspacesWidget.x + workspacesWidget.width;
-    width: panel.clockLeftEdge - x;
+    // Clamped: an open workspaces panel is wider than this gap, which would
+    // otherwise make the strip segment go negative-width.
+    width: Math.max(0, panel.clockLeftEdge - x);
     height: Theme.barConnectorHeight;
     color: CurrentTheme.surface;
   }
   Rectangle {
     y: 0;
     x: panel.clockRightEdge;
-    width: panel.powerLeftEdge - x;
+    width: Math.max(0, panel.powerLeftEdge - x);
     height: Theme.barConnectorHeight;
     color: CurrentTheme.surface;
   }
 
-  Widgets.Workspaces {
+  Widgets.CenterWidget {
     id: workspacesWidget;
-    screen: panel.screen;
+    panelAlign: "left";
+    collapsedSize: workspacesContent.collapsedSize;
+    contentCollapsedWidth: workspacesContent.collapsedWidth;
+    contentExpandedWidth: workspacesContent.expandedWidth;
+    contentExpandedHeight: workspacesContent.expandedHeight;
+    contentExpanded: workspacesContent.expanded;
+    // Only the chevron handle opens the panel — the workspace dots keep
+    // their own tap-to-activate.
+    contentSuppressesTap: true;
+    panelContent: workspacesPanelComponent;
+    panelScreenHeight: panel.screen ? panel.screen.height : 0;
+    panelMonitor: panel.monitor;
 
     anchors {
       left: parent.left;
       leftMargin: Theme.barHorizontalMargin * 2;
       top: parent.top;
       topMargin: 0;
+    }
+
+    Widgets.Workspaces {
+      id: workspacesContent;
+      screen: panel.screen;
+      onPanelRequested: workspacesWidget.panelOpen = true;
     }
   }
 
@@ -205,6 +232,7 @@ PanelWindow {
     contentExpanded: clockContent.expanded;
     contentSuppressesTap: clockContent.suppressPanelOpen;
     panelContent: controlPanelComponent;
+    panelScreenHeight: panel.screen ? panel.screen.height : 0;
 
     anchors {
       top: parent.top;
@@ -251,5 +279,10 @@ PanelWindow {
   Component {
     id: powerPanelComponent;
     Widgets.PowerPanel {}
+  }
+
+  Component {
+    id: workspacesPanelComponent;
+    Widgets.WorkspacesPanel {}
   }
 }

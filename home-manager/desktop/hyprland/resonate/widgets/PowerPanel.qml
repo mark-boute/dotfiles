@@ -13,28 +13,27 @@ import qs.services as Services
 // widget itself). Audio goes through AudioService (shared with the bar's
 // own mute button). Styled after a phone-style quick-settings sheet:
 // status pills (accent-filled when on) plus a full-width slider pill.
-Rectangle {
+Item {
   id: panel;
 
   readonly property int contentWidth: 280;
 
-  // No border — the bar's islands went borderless for the same reason
-  // (see Workspaces/Clock/PowerStatus.qml): an outline clashes with the
-  // frosted-glass one-piece look this whole shell is going for now.
-  // Square top corners for the same reason too — this panel opens
-  // directly out of the power island above it, so a fully rounded top
-  // would visually disconnect from it the moment it's open.
-  radius: 18;
-  topLeftRadius: 0;
-  topRightRadius: 0;
-  color: CurrentTheme.surface;
+  // Which device dropdown is open under the Wi-Fi / Bluetooth tiles ("wifi",
+  // "bt", or ""). Opening one triggers that service's scan.
+  property string openSection: "";
+  onOpenSectionChanged: {
+    if (openSection === "wifi") Services.NetworkService.scan();
+    else if (openSection === "bt") Services.BluetoothService.scan();
+  }
 
-  layer.enabled: true;
-  layer.effect: MultiEffect {
-    shadowEnabled: true;
-    shadowColor: Theme.shadowColor;
-    shadowBlur: Theme.shadowBlur;
-    shadowVerticalOffset: Theme.shadowVerticalOffset;
+  // Keep the open dropdown's list fresh.
+  Timer {
+    interval: 8000; repeat: true;
+    running: panel.openSection !== "";
+    onTriggered: {
+      if (panel.openSection === "wifi") Services.NetworkService.refresh();
+      else if (panel.openSection === "bt") Services.BluetoothService.refresh();
+    }
   }
 
   // Smooths the concave seam where this panel's left edge meets the
@@ -44,6 +43,9 @@ Rectangle {
   // strip's own right edge, same as the collapsed pill it replaces when
   // open (see Bar.qml's CenterWidget/panelLoader centering — a panel
   // exactly as wide as its wrapper renders with zero centering offset).
+  // Kept off the shadowed/layered surface Rectangle below so that
+  // Rectangle's layer texture bounds stay fixed at its own size (this
+  // fillet renders outside [0, width]).
   NotchFillet {
     id: leftFillet;
     x: -leftFillet.filletRadius;
@@ -130,351 +132,409 @@ Rectangle {
     onTriggered: gpuPowerProc.running = true;
   }
 
-  // Flickable rather than a plain centered ColumnLayout — see the same
-  // comment in ControlPanel.qml. Drag-to-pan is Flickable's own default
-  // behavior; the MouseArea below adds wheel support the same way
-  // SliderPill.qml does (a bare WheelHandler was found not to fire here).
-  Flickable {
-    id: flick;
+  // The actual painted panel surface — kept separate from panel above so
+  // its layer (shadow) texture bounds stay fixed at exactly this
+  // Rectangle's own size, never needing to grow for leftFillet above.
+  Rectangle {
+    id: panelSurface;
     anchors.fill: parent;
-    anchors.margins: Theme.defaultMargin;
-    contentWidth: layout.implicitWidth;
-    contentHeight: layout.implicitHeight;
-    clip: true;
-    boundsBehavior: Flickable.StopAtBounds;
 
-    MouseArea {
-      anchors.fill: parent;
-      acceptedButtons: Qt.NoButton;
-      onWheel: (wheel) => {
-        flick.contentY = Math.max(0, Math.min(flick.contentHeight - flick.height, flick.contentY - wheel.angleDelta.y));
-      }
+    // No border — the bar's islands went borderless for the same reason
+    // (see Workspaces/Clock/PowerStatus.qml): an outline clashes with the
+    // frosted-glass one-piece look this whole shell is going for now.
+    // Square top corners for the same reason too — this panel opens
+    // directly out of the power island above it, so a fully rounded top
+    // would visually disconnect from it the moment it's open.
+    radius: 18;
+    topLeftRadius: 0;
+    topRightRadius: 0;
+    color: CurrentTheme.surface;
+
+    layer.enabled: true;
+    layer.effect: MultiEffect {
+      shadowEnabled: true;
+      shadowColor: Theme.shadowColor;
+      shadowBlur: Theme.shadowBlur;
+      shadowVerticalOffset: Theme.shadowVerticalOffset;
     }
 
-    ColumnLayout {
-      id: layout;
-      anchors.horizontalCenter: parent.horizontalCenter;
-      spacing: Theme.defaultSpacing;
-  
-      // --- Battery level ---
-      Rectangle {
-        id: batteryBarTrack;
-        Layout.preferredWidth: panel.contentWidth;
-        implicitHeight: 6;
-        radius: height / 2;
-        color: CurrentTheme.background;
-  
-        Rectangle {
-          width: parent.width * UPower.displayDevice.percentage;
-          height: parent.height;
-          radius: parent.radius;
-          color: panel.batteryColor;
-  
-          Behavior on width { NumberAnimation { duration: 300; easing.type: Easing.OutCubic } }
-          Behavior on color { ColorAnimation { duration: 180 } }
+    // Flickable rather than a plain centered ColumnLayout — see the same
+    // comment in ControlPanel.qml. Drag-to-pan is Flickable's own default
+    // behavior; the MouseArea below adds wheel support the same way
+    // SliderPill.qml does (a bare WheelHandler was found not to fire here).
+    Flickable {
+      id: flick;
+      anchors.fill: parent;
+      anchors.margins: Theme.defaultMargin;
+      contentWidth: layout.implicitWidth;
+      contentHeight: layout.implicitHeight;
+      clip: true;
+      boundsBehavior: Flickable.StopAtBounds;
+
+      MouseArea {
+        anchors.fill: parent;
+        acceptedButtons: Qt.NoButton;
+        onWheel: (wheel) => {
+          flick.contentY = Math.max(0, Math.min(flick.contentHeight - flick.height, flick.contentY - wheel.angleDelta.y));
         }
       }
-  
-      // --- Power draw graph (CPU/GPU, last 5 minutes) ---
+
       ColumnLayout {
-        Layout.preferredWidth: panel.contentWidth;
-        spacing: 4;
-  
-        RowLayout {
-          Layout.fillWidth: true;
-          spacing: Theme.defaultSpacing;
-  
-          Row {
-            spacing: 4;
-            Rectangle { width: 8; height: 8; radius: 4; anchors.verticalCenter: parent.verticalCenter; color: CurrentTheme.accent; }
-            Text { text: "CPU " + (panel.history.length > 0 ? panel.history[panel.history.length - 1].cpu.toFixed(1) : "0.0") + "W"; color: CurrentTheme.subtext; font.pixelSize: 11; }
+        id: layout;
+        anchors.horizontalCenter: parent.horizontalCenter;
+        spacing: Theme.defaultSpacing;
+
+        // --- Battery level ---
+        Rectangle {
+          id: batteryBarTrack;
+          Layout.preferredWidth: panel.contentWidth;
+          implicitHeight: 6;
+          radius: height / 2;
+          color: CurrentTheme.backgroundGlass;
+
+          Rectangle {
+            width: parent.width * UPower.displayDevice.percentage;
+            height: parent.height;
+            radius: parent.radius;
+            color: panel.batteryColor;
+
+            Behavior on width { NumberAnimation { duration: 300; easing.type: Easing.OutCubic } }
+            Behavior on color { ColorAnimation { duration: 180 } }
           }
-          Row {
-            spacing: 4;
-            Rectangle { width: 8; height: 8; radius: 4; anchors.verticalCenter: parent.verticalCenter; color: CurrentTheme.warning; }
-            Text { text: "GPU " + panel.gpuWatts.toFixed(1) + "W"; color: CurrentTheme.subtext; font.pixelSize: 11; }
-          }
-  
-          Item { Layout.fillWidth: true; }
-  
-          Text { text: "5 min avg: " + panel.avgWatts.toFixed(1) + "W"; color: CurrentTheme.subtext; font.pixelSize: 10; }
         }
-  
-        // CurrentTheme.background — the same fill PowerTile uses for its
-        // inactive/off state — rather than CurrentTheme.surface, so this
-        // reads as its own little instrument panel against the rest of
-        // the sheet. Radius is a fixed, moderate value rather than
-        // height/2 like the pill controls use: this box is taller than
-        // it is a "pill" shape, so full capsule rounding would look
-        // exaggerated: same curve style, just less of it.
+
+        // --- Power draw graph (CPU/GPU, last 5 minutes) ---
+        ColumnLayout {
+          Layout.preferredWidth: panel.contentWidth;
+          spacing: 4;
+
+          RowLayout {
+            Layout.fillWidth: true;
+            spacing: Theme.defaultSpacing;
+
+            Row {
+              spacing: 4;
+              Rectangle { width: 8; height: 8; radius: 4; anchors.verticalCenter: parent.verticalCenter; color: CurrentTheme.accent; }
+              Text { text: "CPU " + (panel.history.length > 0 ? panel.history[panel.history.length - 1].cpu.toFixed(1) : "0.0") + "W"; color: CurrentTheme.subtext; font.pixelSize: 11; }
+            }
+            Row {
+              spacing: 4;
+              Rectangle { width: 8; height: 8; radius: 4; anchors.verticalCenter: parent.verticalCenter; color: CurrentTheme.warning; }
+              Text { text: "GPU " + panel.gpuWatts.toFixed(1) + "W"; color: CurrentTheme.subtext; font.pixelSize: 11; }
+            }
+
+            Item { Layout.fillWidth: true; }
+
+            Text { text: "5 min avg: " + panel.avgWatts.toFixed(1) + "W"; color: CurrentTheme.subtext; font.pixelSize: 10; }
+          }
+
+          // CurrentTheme.background — the same fill PowerTile uses for its
+          // inactive/off state — rather than CurrentTheme.surface, so this
+          // reads as its own little instrument panel against the rest of
+          // the sheet. Radius is a fixed, moderate value rather than
+          // height/2 like the pill controls use: this box is taller than
+          // it is a "pill" shape, so full capsule rounding would look
+          // exaggerated: same curve style, just less of it.
+          Rectangle {
+            Layout.preferredWidth: panel.contentWidth;
+            implicitHeight: 60;
+            radius: 10;
+            color: CurrentTheme.backgroundGlass;
+            clip: true;
+
+            Canvas {
+              id: powerGraph;
+              anchors.fill: parent;
+              anchors.margins: 6;
+
+              readonly property real maxWatts: {
+                var m = 10;
+                for (var i = 0; i < panel.history.length; i++) {
+                  m = Math.max(m, panel.history[i].cpu, panel.history[i].gpu);
+                }
+                return m * 1.15;
+              }
+
+              onPaint: {
+                var ctx = getContext("2d");
+                ctx.reset();
+                if (panel.history.length < 2) return;
+
+                var now = Date.now();
+                var w = width, h = height;
+                function xFor(t) { return w * (1 - (now - t) / panel.historyWindowMs); }
+                function yFor(watts) { return h - (watts / maxWatts) * h; }
+
+                // Lowest/highest/center reference lines, over every plotted
+                // value (both traces combined) rather than per-trace, so
+                // there's one shared, easy-to-read scale rather than two.
+                var allValues = [];
+                for (var i = 0; i < panel.history.length; i++) {
+                  allValues.push(panel.history[i].cpu, panel.history[i].gpu);
+                }
+                var lo = Math.min.apply(null, allValues);
+                var hi = Math.max.apply(null, allValues);
+                var mid = (lo + hi) / 2;
+
+                // CurrentTheme.text at low alpha, not a hardcoded white —
+                // the background is now theme-aware (CurrentTheme.background,
+                // per PowerTile's own inactive fill), and white would lose
+                // most of its contrast on a light flavor like latte.
+                var tc = CurrentTheme.text;
+                ctx.font = "9px sans-serif";
+                ctx.textBaseline = "middle";
+                [lo, mid, hi].forEach(function(v) {
+                  var y = yFor(v);
+                  ctx.strokeStyle = Qt.rgba(tc.r, tc.g, tc.b, 0.15);
+                  ctx.lineWidth = 1;
+                  ctx.beginPath();
+                  ctx.moveTo(0, y);
+                  ctx.lineTo(w, y);
+                  ctx.stroke();
+                  ctx.fillStyle = Qt.rgba(tc.r, tc.g, tc.b, 0.5);
+                  // Clamped so the highest/lowest labels (whose lines sit
+                  // right at the canvas edge) don't get cut off above/below
+                  // the visible area.
+                  ctx.fillText(v.toFixed(1) + "W", 2, Math.max(6, Math.min(h - 6, y - 5)));
+                });
+
+                function drawLine(key, color) {
+                  ctx.strokeStyle = color;
+                  ctx.lineWidth = 1.5;
+                  ctx.beginPath();
+                  for (var i = 0; i < panel.history.length; i++) {
+                    var s = panel.history[i];
+                    var x = xFor(s.t), y = yFor(s[key]);
+                    if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+                  }
+                  ctx.stroke();
+                }
+
+                drawLine("gpu", CurrentTheme.warning);
+                drawLine("cpu", CurrentTheme.accent);
+              }
+            }
+          }
+        }
+
+        GridLayout {
+          Layout.preferredWidth: panel.contentWidth;
+          columns: 2;
+          columnSpacing: Theme.defaultSpacing;
+          rowSpacing: Theme.defaultSpacing;
+
+          PowerTile {
+            Layout.fillWidth: true;
+            iconGlyph: String.fromCodePoint(0xf05a9); // md-wifi
+            label: "Wi-Fi";
+            status: Services.NetworkService.enabled
+              ? (Services.NetworkService.activeSsid || "On") : "Off";
+            active: Services.NetworkService.enabled;
+            expandable: true;
+            expanded: panel.openSection === "wifi";
+            onTapped: Services.NetworkService.toggle();
+            onToggleExpanded: panel.openSection = (panel.openSection === "wifi" ? "" : "wifi");
+          }
+
+          PowerTile {
+            Layout.fillWidth: true;
+            iconGlyph: String.fromCodePoint(0xf00af); // md-bluetooth
+            label: "Bluetooth";
+            status: Services.BluetoothService.enabled ? "On" : "Off";
+            active: Services.BluetoothService.enabled;
+            expandable: true;
+            expanded: panel.openSection === "bt";
+            onTapped: Services.BluetoothService.toggle();
+            onToggleExpanded: panel.openSection = (panel.openSection === "bt" ? "" : "bt");
+          }
+        }
+
+        // --- Wi-Fi / Bluetooth device dropdown ---
         Rectangle {
           Layout.preferredWidth: panel.contentWidth;
-          implicitHeight: 60;
-          radius: 10;
-          color: CurrentTheme.background;
+          visible: panel.openSection !== "";
+          implicitHeight: visible ? sectionBody.implicitHeight + 20 : 0;
+          radius: 12;
+          color: CurrentTheme.backgroundGlass;
           clip: true;
-  
-          Canvas {
-            id: powerGraph;
-            anchors.fill: parent;
-            anchors.margins: 6;
-  
-            readonly property real maxWatts: {
-              var m = 10;
-              for (var i = 0; i < panel.history.length; i++) {
-                m = Math.max(m, panel.history[i].cpu, panel.history[i].gpu);
-              }
-              return m * 1.15;
+
+          ColumnLayout {
+            id: sectionBody;
+            anchors { left: parent.left; right: parent.right; top: parent.top; margins: 10; }
+
+            WifiList {
+              Layout.fillWidth: true;
+              visible: panel.openSection === "wifi";
             }
-  
-            onPaint: {
-              var ctx = getContext("2d");
-              ctx.reset();
-              if (panel.history.length < 2) return;
-  
-              var now = Date.now();
-              var w = width, h = height;
-              function xFor(t) { return w * (1 - (now - t) / panel.historyWindowMs); }
-              function yFor(watts) { return h - (watts / maxWatts) * h; }
-  
-              // Lowest/highest/center reference lines, over every plotted
-              // value (both traces combined) rather than per-trace, so
-              // there's one shared, easy-to-read scale rather than two.
-              var allValues = [];
-              for (var i = 0; i < panel.history.length; i++) {
-                allValues.push(panel.history[i].cpu, panel.history[i].gpu);
-              }
-              var lo = Math.min.apply(null, allValues);
-              var hi = Math.max.apply(null, allValues);
-              var mid = (lo + hi) / 2;
-  
-              // CurrentTheme.text at low alpha, not a hardcoded white —
-              // the background is now theme-aware (CurrentTheme.background,
-              // per PowerTile's own inactive fill), and white would lose
-              // most of its contrast on a light flavor like latte.
-              var tc = CurrentTheme.text;
-              ctx.font = "9px sans-serif";
-              ctx.textBaseline = "middle";
-              [lo, mid, hi].forEach(function(v) {
-                var y = yFor(v);
-                ctx.strokeStyle = Qt.rgba(tc.r, tc.g, tc.b, 0.15);
-                ctx.lineWidth = 1;
-                ctx.beginPath();
-                ctx.moveTo(0, y);
-                ctx.lineTo(w, y);
-                ctx.stroke();
-                ctx.fillStyle = Qt.rgba(tc.r, tc.g, tc.b, 0.5);
-                // Clamped so the highest/lowest labels (whose lines sit
-                // right at the canvas edge) don't get cut off above/below
-                // the visible area.
-                ctx.fillText(v.toFixed(1) + "W", 2, Math.max(6, Math.min(h - 6, y - 5)));
-              });
-  
-              function drawLine(key, color) {
-                ctx.strokeStyle = color;
-                ctx.lineWidth = 1.5;
-                ctx.beginPath();
-                for (var i = 0; i < panel.history.length; i++) {
-                  var s = panel.history[i];
-                  var x = xFor(s.t), y = yFor(s[key]);
-                  if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
-                }
-                ctx.stroke();
-              }
-  
-              drawLine("gpu", CurrentTheme.warning);
-              drawLine("cpu", CurrentTheme.accent);
+            BluetoothList {
+              Layout.fillWidth: true;
+              visible: panel.openSection === "bt";
             }
           }
         }
-      }
-  
-      GridLayout {
-        Layout.preferredWidth: panel.contentWidth;
-        columns: 2;
-        columnSpacing: Theme.defaultSpacing;
-        rowSpacing: Theme.defaultSpacing;
-  
-        PowerTile {
-          Layout.fillWidth: true;
-          iconGlyph: String.fromCodePoint(0xf05a9); // md-wifi
-          label: "Wi-Fi";
-          status: Services.NetworkService.enabled ? "On" : "Off";
-          active: Services.NetworkService.enabled;
-          onTapped: Services.NetworkService.toggle();
-        }
-  
-        PowerTile {
-          Layout.fillWidth: true;
-          iconGlyph: String.fromCodePoint(0xf00af); // md-bluetooth
-          label: "Bluetooth";
-          status: Services.BluetoothService.enabled ? "On" : "Off";
-          active: Services.BluetoothService.enabled;
-          onTapped: Services.BluetoothService.toggle();
-        }
-      }
-  
-      // --- Volume ---
-      RowLayout {
-        Layout.preferredWidth: panel.contentWidth;
-        Layout.topMargin: Theme.defaultSpacing / 2;
-        spacing: Theme.defaultSpacing;
-  
-        // Mute button — separate from the slider track so its icon never
-        // has to sit on top of the moving fill.
-        Rectangle {
-          implicitWidth: 40;
-          implicitHeight: 40;
-          radius: 20;
-          color: Services.AudioService.muted ? CurrentTheme.background : CurrentTheme.accent;
-          border.width: Services.AudioService.muted ? 1 : 0;
-          border.color: CurrentTheme.border;
-          opacity: Services.AudioService.available ? 1 : 0.4;
-  
-          Behavior on color { ColorAnimation { duration: 140 } }
-  
-          Text {
-            anchors.centerIn: parent;
-            text: Services.AudioService.iconGlyph;
-            font.family: Theme.iconFontFamily;
-            font.pixelSize: 18;
-            color: Services.AudioService.muted ? CurrentTheme.text : CurrentTheme.background;
+
+        // --- Volume ---
+        RowLayout {
+          Layout.preferredWidth: panel.contentWidth;
+          Layout.topMargin: Theme.defaultSpacing / 2;
+          spacing: Theme.defaultSpacing;
+
+          // Mute button — separate from the slider track so its icon never
+          // has to sit on top of the moving fill.
+          Rectangle {
+            implicitWidth: 40;
+            implicitHeight: 40;
+            radius: 20;
+            color: Services.AudioService.muted ? CurrentTheme.backgroundGlass : CurrentTheme.accent;
+            border.width: Services.AudioService.muted ? 1 : 0;
+            border.color: CurrentTheme.border;
+            opacity: Services.AudioService.available ? 1 : 0.4;
+
+            Behavior on color { ColorAnimation { duration: 140 } }
+
+            Text {
+              anchors.centerIn: parent;
+              text: Services.AudioService.iconGlyph;
+              font.family: Theme.iconFontFamily;
+              font.pixelSize: 18;
+              color: Services.AudioService.muted ? CurrentTheme.text : CurrentTheme.background;
+            }
+
+            TapHandler {
+              enabled: Services.AudioService.available;
+              onTapped: Services.AudioService.toggleMute();
+            }
           }
-  
-          TapHandler {
+
+          SliderPill {
+            Layout.fillWidth: true;
             enabled: Services.AudioService.available;
-            onTapped: Services.AudioService.toggleMute();
+            value: Services.AudioService.volume;
+            valueLabel: Services.AudioService.muted ? "Muted" : Math.round(Services.AudioService.volume * 100) + "%";
+            fillColor: Services.AudioService.muted ? CurrentTheme.subtext : CurrentTheme.accent;
+            onMoved: (fraction) => Services.AudioService.setVolume(fraction);
           }
         }
-  
-        SliderPill {
-          Layout.fillWidth: true;
-          enabled: Services.AudioService.available;
-          value: Services.AudioService.volume;
-          valueLabel: Services.AudioService.muted ? "Muted" : Math.round(Services.AudioService.volume * 100) + "%";
-          fillColor: Services.AudioService.muted ? CurrentTheme.subtext : CurrentTheme.accent;
-          onMoved: (fraction) => Services.AudioService.setVolume(fraction);
-        }
-      }
-  
-      // --- Brightness ---
-      RowLayout {
-        Layout.preferredWidth: panel.contentWidth;
-        spacing: Theme.defaultSpacing;
-  
-        // Tapping toggles auto mode — accent-filled while it's on (plus
-        // the "A" badge below), same fill convention as the mute button
-        // above. Turning it back on also applies the curve immediately
-        // (applyAutoCurves), rather than leaving the old manual value
-        // sitting there until the next minute's tick.
-        Rectangle {
-          implicitWidth: 40;
-          implicitHeight: 40;
-          radius: 20;
-          color: Services.BrightnessService.autoMode ? CurrentTheme.accent : CurrentTheme.background;
-          border.width: Services.BrightnessService.autoMode ? 0 : 1;
-          border.color: CurrentTheme.border;
-  
-          Behavior on color { ColorAnimation { duration: 140 } }
-  
-          Text {
-            anchors.centerIn: parent;
-            text: String.fromCodePoint(0xf05a8); // md-white_balance_sunny
-            font.family: Theme.iconFontFamily;
-            font.pixelSize: 18;
-            color: Services.BrightnessService.autoMode ? CurrentTheme.background : CurrentTheme.text;
-          }
-  
+
+        // --- Brightness ---
+        RowLayout {
+          Layout.preferredWidth: panel.contentWidth;
+          spacing: Theme.defaultSpacing;
+
+          // Tapping toggles auto mode — accent-filled while it's on (plus
+          // the "A" badge below), same fill convention as the mute button
+          // above. Turning it back on also applies the curve immediately
+          // (applyAutoCurves), rather than leaving the old manual value
+          // sitting there until the next minute's tick.
           Rectangle {
-            visible: Services.BrightnessService.autoMode;
-            anchors { right: parent.right; bottom: parent.bottom; rightMargin: -2; bottomMargin: -2; }
-            width: 14;
-            height: 14;
-            radius: 7;
-            color: CurrentTheme.surface;
-            border.width: 1;
+            implicitWidth: 40;
+            implicitHeight: 40;
+            radius: 20;
+            color: Services.BrightnessService.autoMode ? CurrentTheme.accent : CurrentTheme.backgroundGlass;
+            border.width: Services.BrightnessService.autoMode ? 0 : 1;
             border.color: CurrentTheme.border;
-  
+
+            Behavior on color { ColorAnimation { duration: 140 } }
+
             Text {
               anchors.centerIn: parent;
-              text: "A";
-              font.pixelSize: 9;
-              font.weight: Font.Bold;
-              color: CurrentTheme.text;
+              text: String.fromCodePoint(0xf05a8); // md-white_balance_sunny
+              font.family: Theme.iconFontFamily;
+              font.pixelSize: 18;
+              color: Services.BrightnessService.autoMode ? CurrentTheme.background : CurrentTheme.text;
+            }
+
+            Rectangle {
+              visible: Services.BrightnessService.autoMode;
+              anchors { right: parent.right; bottom: parent.bottom; rightMargin: -2; bottomMargin: -2; }
+              width: 14;
+              height: 14;
+              radius: 7;
+              color: CurrentTheme.surface;
+              border.width: 1;
+              border.color: CurrentTheme.border;
+
+              Text {
+                anchors.centerIn: parent;
+                text: "A";
+                font.pixelSize: 9;
+                font.weight: Font.Bold;
+                color: CurrentTheme.text;
+              }
+            }
+
+            TapHandler {
+              onTapped: {
+                Services.BrightnessService.autoMode = !Services.BrightnessService.autoMode;
+                if (Services.BrightnessService.autoMode) Services.BrightnessService.applyAutoCurve();
+              }
             }
           }
-  
-          TapHandler {
-            onTapped: {
-              Services.BrightnessService.autoMode = !Services.BrightnessService.autoMode;
-              if (Services.BrightnessService.autoMode) Services.BrightnessService.applyAutoCurve();
-            }
+
+          SliderPill {
+            Layout.fillWidth: true;
+            value: Services.BrightnessService.brightness;
+            valueLabel: Math.round(Services.BrightnessService.brightness * 100) + "%";
+            onMoved: (fraction) => Services.BrightnessService.setBrightness(fraction);
           }
         }
-  
-        SliderPill {
-          Layout.fillWidth: true;
-          value: Services.BrightnessService.brightness;
-          valueLabel: Math.round(Services.BrightnessService.brightness * 100) + "%";
-          onMoved: (fraction) => Services.BrightnessService.setBrightness(fraction);
-        }
-      }
-  
-      // --- Color temperature ---
-      RowLayout {
-        Layout.preferredWidth: panel.contentWidth;
-        spacing: Theme.defaultSpacing;
-  
-        Rectangle {
-          implicitWidth: 40;
-          implicitHeight: 40;
-          radius: 20;
-          color: Services.TemperatureService.autoMode ? CurrentTheme.accent : CurrentTheme.background;
-          border.width: Services.TemperatureService.autoMode ? 0 : 1;
-          border.color: CurrentTheme.border;
-  
-          Behavior on color { ColorAnimation { duration: 140 } }
-  
-          Text {
-            anchors.centerIn: parent;
-            text: String.fromCodePoint(0xf050f); // md-thermometer
-            font.family: Theme.iconFontFamily;
-            font.pixelSize: 18;
-            color: Services.TemperatureService.autoMode ? CurrentTheme.background : CurrentTheme.text;
-          }
-  
+
+        // --- Color temperature ---
+        RowLayout {
+          Layout.preferredWidth: panel.contentWidth;
+          spacing: Theme.defaultSpacing;
+
           Rectangle {
-            visible: Services.TemperatureService.autoMode;
-            anchors { right: parent.right; bottom: parent.bottom; rightMargin: -2; bottomMargin: -2; }
-            width: 14;
-            height: 14;
-            radius: 7;
-            color: CurrentTheme.surface;
-            border.width: 1;
+            implicitWidth: 40;
+            implicitHeight: 40;
+            radius: 20;
+            color: Services.TemperatureService.autoMode ? CurrentTheme.accent : CurrentTheme.backgroundGlass;
+            border.width: Services.TemperatureService.autoMode ? 0 : 1;
             border.color: CurrentTheme.border;
-  
+
+            Behavior on color { ColorAnimation { duration: 140 } }
+
             Text {
               anchors.centerIn: parent;
-              text: "A";
-              font.pixelSize: 9;
-              font.weight: Font.Bold;
-              color: CurrentTheme.text;
+              text: String.fromCodePoint(0xf050f); // md-thermometer
+              font.family: Theme.iconFontFamily;
+              font.pixelSize: 18;
+              color: Services.TemperatureService.autoMode ? CurrentTheme.background : CurrentTheme.text;
+            }
+
+            Rectangle {
+              visible: Services.TemperatureService.autoMode;
+              anchors { right: parent.right; bottom: parent.bottom; rightMargin: -2; bottomMargin: -2; }
+              width: 14;
+              height: 14;
+              radius: 7;
+              color: CurrentTheme.surface;
+              border.width: 1;
+              border.color: CurrentTheme.border;
+
+              Text {
+                anchors.centerIn: parent;
+                text: "A";
+                font.pixelSize: 9;
+                font.weight: Font.Bold;
+                color: CurrentTheme.text;
+              }
+            }
+
+            TapHandler {
+              onTapped: {
+                Services.TemperatureService.autoMode = !Services.TemperatureService.autoMode;
+                if (Services.TemperatureService.autoMode) Services.TemperatureService.applyAutoCurve();
+              }
             }
           }
-  
-          TapHandler {
-            onTapped: {
-              Services.TemperatureService.autoMode = !Services.TemperatureService.autoMode;
-              if (Services.TemperatureService.autoMode) Services.TemperatureService.applyAutoCurve();
-            }
+
+          SliderPill {
+            Layout.fillWidth: true;
+            value: (Services.TemperatureService.temperatureK - Services.TemperatureService.minTempK) / (Services.TemperatureService.maxTempK - Services.TemperatureService.minTempK);
+            valueLabel: Services.TemperatureService.temperatureK + "K";
+            onMoved: (fraction) => Services.TemperatureService.setTemperature(fraction);
           }
-        }
-  
-        SliderPill {
-          Layout.fillWidth: true;
-          value: (Services.TemperatureService.temperatureK - Services.TemperatureService.minTempK) / (Services.TemperatureService.maxTempK - Services.TemperatureService.minTempK);
-          valueLabel: Services.TemperatureService.temperatureK + "K";
-          onMoved: (fraction) => Services.TemperatureService.setTemperature(fraction);
         }
       }
     }

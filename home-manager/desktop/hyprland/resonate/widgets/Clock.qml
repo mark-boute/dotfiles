@@ -21,7 +21,7 @@ import qs.services as Services
 // an actual window and handling clicks (-> command center) is
 // CenterWidget's job, which reads collapsedSize/expandedWidth/expandedHeight
 // /expanded off this item.
-Rectangle {
+Item {
   id: clock;
 
   readonly property bool hasNotification: Services.NotificationService.latestNotification !== null;
@@ -63,45 +63,19 @@ Rectangle {
   }
 
   // Top edge + horizontal center only (not centerIn) — those two points
-  // never move as this Rectangle's own size animates, so the grow/shrink
+  // never move as this Item's own size animates, so the grow/shrink
   // reads as this pill morphing outward in place, not repositioning first.
   anchors { top: parent.top; horizontalCenter: parent.horizontalCenter; }
 
-  // Not `expanded ? 16 : height / 2` — that flips instantly the moment
-  // expanded toggles, while height is still mid-Behavior-animation, so
-  // radius ends up chasing a continuously-moving target and lags behind
-  // where height actually is, producing squared-off corners mid-animation
-  // (very visible now that the drop shadow outlines the exact silhouette).
-  // Deriving radius directly from height needs no Behavior of its own —
-  // it's already smooth because height already is.
-  // Bottom-rounded "notch" hanging from the bar's connecting strip
-  // (Bar.qml) — no border (would draw a seam right where this meets the
-  // strip; also drops the old hasNotification accent-border cue, see the
-  // accent dot on notificationContent below instead). Square top corners
-  // via per-corner radius, not a same-color Rectangle painted over the
-  // top to flatten it — that approach stacked two translucent layers of
-  // CurrentTheme.surface in the top band, compositing visibly darker
-  // there than the single-layer rest of the pill (confirmed live: a
-  // sharp horizontal color seam right at the patch's own edge).
-  radius: Math.min(16, height / 2);
-  topLeftRadius: 0;
-  topRightRadius: 0;
-  color: CurrentTheme.surface;
-
-  layer.enabled: true;
-  layer.effect: MultiEffect {
-    shadowEnabled: true;
-    shadowColor: Theme.shadowColor;
-    shadowBlur: Theme.shadowBlur;
-    shadowVerticalOffset: Theme.shadowVerticalOffset;
-  }
-
   // Smooths the concave seams where this island's left/right edges meet
   // the connecting strip above (see NotchFillet.qml) — children of this
-  // Rectangle, positioned off its own width/height, so both track this
+  // Item, positioned off the surface's own width/height, so both track this
   // island's Behavior-animated implicitWidth/implicitHeight (hover/
   // notification expand) in lockstep with zero lag, rather than Bar.qml
-  // computing their position externally from outside this component.
+  // computing their position externally from outside this component. Kept
+  // off the shadowed/layered surface Rectangle below so that Rectangle's
+  // layer texture bounds stay fixed at its own size (these fillets render
+  // outside [0, width]).
   NotchFillet {
     id: leftFillet;
     x: -leftFillet.filletRadius;
@@ -119,210 +93,248 @@ Rectangle {
 
   Behavior on implicitWidth  { NumberAnimation { duration: 180; easing.type: Easing.OutExpo } }
   Behavior on implicitHeight { NumberAnimation { duration: 180; easing.type: Easing.OutExpo } }
-  Behavior on color          { ColorAnimation  { duration: 180 } }
 
-  Text {
-    id: collapsedContent;
-    anchors.centerIn: parent;
-    opacity: clock.expanded ? 0 : 1;
-    text: Services.SystemClock.time;
-    color: CurrentTheme.accent;
-    font.pixelSize: 14;
-    font.weight: Font.DemiBold;
+  // The actual painted notch surface — kept separate from clock above so
+  // its layer (shadow) texture bounds stay fixed at exactly this
+  // Rectangle's own size, never needing to grow for the fillets above.
+  Rectangle {
+    id: clockSurface;
+    anchors.fill: parent;
 
-    Behavior on opacity { NumberAnimation { duration: 120 } }
-  }
+    // Not `expanded ? 16 : height / 2` — that flips instantly the moment
+    // expanded toggles, while height is still mid-Behavior-animation, so
+    // radius ends up chasing a continuously-moving target and lags behind
+    // where height actually is, producing squared-off corners mid-animation
+    // (very visible now that the drop shadow outlines the exact silhouette).
+    // Deriving radius directly from height needs no Behavior of its own —
+    // it's already smooth because height already is.
+    // Bottom-rounded "notch" hanging from the bar's connecting strip
+    // (Bar.qml) — no border (would draw a seam right where this meets the
+    // strip; also drops the old hasNotification accent-border cue, see the
+    // accent dot on notificationContent below instead). Square top corners
+    // via per-corner radius, not a same-color Rectangle painted over the
+    // top to flatten it — that approach stacked two translucent layers of
+    // CurrentTheme.surface in the top band, compositing visibly darker
+    // there than the single-layer rest of the pill (confirmed live: a
+    // sharp horizontal color seam right at the patch's own edge).
+    radius: Math.min(16, height / 2);
+    topLeftRadius: 0;
+    topRightRadius: 0;
+    color: CurrentTheme.surface;
 
-  Column {
-    id: notificationContent;
-    // Left-aligned (not centered) with dedicated clearance on the right for
-    // the close button, like a normal toast card rather than a centered one.
-    anchors { left: parent.left; verticalCenter: parent.verticalCenter; leftMargin: Theme.defaultMargin; }
-    spacing: 3;
-    width: 200;
-    opacity: clock.expanded && clock.bigMode === "notification" ? 1 : 0;
-    visible: opacity > 0;
+    Behavior on color { ColorAnimation { duration: 180 } }
 
-    Behavior on opacity { NumberAnimation { duration: 160; easing.type: Easing.OutCubic } }
+    layer.enabled: true;
+    layer.effect: MultiEffect {
+      shadowEnabled: true;
+      shadowColor: Theme.shadowColor;
+      shadowBlur: Theme.shadowBlur;
+      shadowVerticalOffset: Theme.shadowVerticalOffset;
+    }
 
-    readonly property var n: Services.NotificationService.latestNotification;
+    Text {
+      id: collapsedContent;
+      anchors.centerIn: parent;
+      opacity: clock.expanded ? 0 : 1;
+      text: Services.SystemClock.time;
+      color: CurrentTheme.accent;
+      font.pixelSize: 14;
+      font.weight: Font.DemiBold;
 
-    Row {
-      spacing: 6;
-      anchors.left: parent.left;
+      Behavior on opacity { NumberAnimation { duration: 120 } }
+    }
 
-      // Replaces the old accent-colored border cue for hasNotification —
-      // that border was dropped along with every island's border (see the
-      // corner-patch comment above) so the notch reads as flush with the
-      // bar's connecting strip instead of outlined.
-      Rectangle {
-        anchors.verticalCenter: parent.verticalCenter;
-        width: 6;
-        height: 6;
-        radius: 3;
-        color: CurrentTheme.accent;
-      }
+    Column {
+      id: notificationContent;
+      // Left-aligned (not centered) with dedicated clearance on the right for
+      // the close button, like a normal toast card rather than a centered one.
+      anchors { left: parent.left; verticalCenter: parent.verticalCenter; leftMargin: Theme.defaultMargin; }
+      spacing: 3;
+      width: 200;
+      opacity: clock.expanded && clock.bigMode === "notification" ? 1 : 0;
+      visible: opacity > 0;
 
-      IconImage {
-        anchors.verticalCenter: parent.verticalCenter;
-        implicitSize: 14;
-        visible: source.toString() !== "";
-        source: {
-          var n = notificationContent.n;
-          if (!n) return "";
-          if (n.image) return n.image;
-          var ic = n.appIcon;
-          if (!ic) return "";
-          return (ic.startsWith("/") || ic.indexOf("://") !== -1) ? ic : Quickshell.iconPath(ic, true);
+      Behavior on opacity { NumberAnimation { duration: 160; easing.type: Easing.OutCubic } }
+
+      readonly property var n: Services.NotificationService.latestNotification;
+
+      Row {
+        spacing: 6;
+        anchors.left: parent.left;
+
+        // Replaces the old accent-colored border cue for hasNotification —
+        // that border was dropped along with every island's border (see the
+        // corner-patch comment above) so the notch reads as flush with the
+        // bar's connecting strip instead of outlined.
+        Rectangle {
+          anchors.verticalCenter: parent.verticalCenter;
+          width: 6;
+          height: 6;
+          radius: 3;
+          color: CurrentTheme.accent;
+        }
+
+        IconImage {
+          anchors.verticalCenter: parent.verticalCenter;
+          implicitSize: 14;
+          visible: source.toString() !== "";
+          source: {
+            var n = notificationContent.n;
+            if (!n) return "";
+            if (n.image) return n.image;
+            var ic = n.appIcon;
+            if (!ic) return "";
+            return (ic.startsWith("/") || ic.indexOf("://") !== -1) ? ic : Quickshell.iconPath(ic, true);
+          }
+        }
+
+        Text {
+          anchors.verticalCenter: parent.verticalCenter;
+          text: notificationContent.n ? notificationContent.n.appName : "";
+          color: CurrentTheme.subtext;
+          font.pixelSize: 11;
         }
       }
 
       Text {
-        anchors.verticalCenter: parent.verticalCenter;
-        text: notificationContent.n ? notificationContent.n.appName : "";
+        width: parent.width;
+        text: notificationContent.n ? notificationContent.n.summary : "";
+        color: CurrentTheme.text;
+        font.pixelSize: 13;
+        font.weight: Font.DemiBold;
+        elide: Text.ElideRight;
+      }
+
+      Text {
+        width: parent.width;
+        visible: notificationContent.n && notificationContent.n.body !== "";
+        text: notificationContent.n ? notificationContent.n.body : "";
         color: CurrentTheme.subtext;
         font.pixelSize: 11;
+        wrapMode: Text.WordWrap;
+        maximumLineCount: 2;
+        elide: Text.ElideRight;
       }
     }
 
-    Text {
-      width: parent.width;
-      text: notificationContent.n ? notificationContent.n.summary : "";
-      color: CurrentTheme.text;
-      font.pixelSize: 13;
-      font.weight: Font.DemiBold;
-      elide: Text.ElideRight;
+    // Top-right dismiss — ported from cappuccino's NotificationOverlay.qml.
+    Rectangle {
+      id: closeBtn;
+      visible: clock.expanded && clock.bigMode === "notification";
+      width: 18;
+      height: 18;
+      radius: 9;
+      anchors { top: parent.top; right: parent.right; topMargin: 6; rightMargin: 6; }
+      color: closeHover.hovered ? CurrentTheme.surfaceHover : "transparent";
+
+      Behavior on color { ColorAnimation { duration: 100 } }
+
+      Text {
+        anchors.centerIn: parent;
+        text: "×";
+        color: CurrentTheme.subtext;
+        font.pixelSize: 13;
+      }
+
+      HoverHandler { id: closeHover; }
+
+      TapHandler {
+        acceptedButtons: Qt.LeftButton;
+        onTapped: {
+          var n = Services.NotificationService.latestNotification;
+          if (n) Services.NotificationService.dismiss(n);
+        }
+      }
     }
 
-    Text {
-      width: parent.width;
-      visible: notificationContent.n && notificationContent.n.body !== "";
-      text: notificationContent.n ? notificationContent.n.body : "";
-      color: CurrentTheme.subtext;
-      font.pixelSize: 11;
-      wrapMode: Text.WordWrap;
-      maximumLineCount: 2;
-      elide: Text.ElideRight;
-    }
-  }
-
-  // Top-right dismiss — ported from cappuccino's NotificationOverlay.qml.
-  Rectangle {
-    id: closeBtn;
-    visible: clock.expanded && clock.bigMode === "notification";
-    width: 18;
-    height: 18;
-    radius: 9;
-    anchors { top: parent.top; right: parent.right; topMargin: 6; rightMargin: 6; }
-    color: closeHover.hovered ? CurrentTheme.surfaceHover : "transparent";
-
-    Behavior on color { ColorAnimation { duration: 100 } }
-
-    Text {
+    Column {
+      id: mediaContent;
       anchors.centerIn: parent;
-      text: "×";
-      color: CurrentTheme.subtext;
-      font.pixelSize: 13;
-    }
+      spacing: 6;
+      opacity: clock.expanded && clock.bigMode === "media" ? 1 : 0;
+      visible: opacity > 0;
 
-    HoverHandler { id: closeHover; }
-
-    TapHandler {
-      acceptedButtons: Qt.LeftButton;
-      onTapped: {
-        var n = Services.NotificationService.latestNotification;
-        if (n) Services.NotificationService.dismiss(n);
-      }
-    }
-  }
-
-  Column {
-    id: mediaContent;
-    anchors.centerIn: parent;
-    spacing: 6;
-    opacity: clock.expanded && clock.bigMode === "media" ? 1 : 0;
-    visible: opacity > 0;
-
-    Behavior on opacity { NumberAnimation { duration: 160; easing.type: Easing.OutCubic } }
-
-    Text {
-      anchors.horizontalCenter: parent.horizontalCenter;
-      width: 180;
-      horizontalAlignment: Text.AlignHCenter;
-      text: Services.MediaService.title;
-      color: CurrentTheme.text;
-      font.pixelSize: 13;
-      font.weight: Font.DemiBold;
-      elide: Text.ElideRight;
-    }
-
-    Text {
-      anchors.horizontalCenter: parent.horizontalCenter;
-      width: 180;
-      horizontalAlignment: Text.AlignHCenter;
-      text: Services.MediaService.artist;
-      color: CurrentTheme.subtext;
-      font.pixelSize: 11;
-      elide: Text.ElideRight;
-    }
-
-    Row {
-      anchors.horizontalCenter: parent.horizontalCenter;
-      spacing: 16;
+      Behavior on opacity { NumberAnimation { duration: 160; easing.type: Easing.OutCubic } }
 
       Text {
-        text: "⏮";
-        color: Services.MediaService.canGoPrevious ? CurrentTheme.text : CurrentTheme.subtext;
-        font.pixelSize: 14;
-        TapHandler { enabled: Services.MediaService.canGoPrevious; onTapped: Services.MediaService.previous(); }
+        anchors.horizontalCenter: parent.horizontalCenter;
+        width: 180;
+        horizontalAlignment: Text.AlignHCenter;
+        text: Services.MediaService.title;
+        color: CurrentTheme.text;
+        font.pixelSize: 13;
+        font.weight: Font.DemiBold;
+        elide: Text.ElideRight;
       }
 
       Text {
-        text: Services.MediaService.playing ? "⏸" : "▶";
+        anchors.horizontalCenter: parent.horizontalCenter;
+        width: 180;
+        horizontalAlignment: Text.AlignHCenter;
+        text: Services.MediaService.artist;
+        color: CurrentTheme.subtext;
+        font.pixelSize: 11;
+        elide: Text.ElideRight;
+      }
+
+      Row {
+        anchors.horizontalCenter: parent.horizontalCenter;
+        spacing: 16;
+
+        Text {
+          text: "⏮";
+          color: Services.MediaService.canGoPrevious ? CurrentTheme.text : CurrentTheme.subtext;
+          font.pixelSize: 14;
+          TapHandler { enabled: Services.MediaService.canGoPrevious; onTapped: Services.MediaService.previous(); }
+        }
+
+        Text {
+          text: Services.MediaService.playing ? "⏸" : "▶";
+          color: CurrentTheme.accent;
+          font.pixelSize: 16;
+          TapHandler { onTapped: Services.MediaService.togglePlaying(); }
+        }
+
+        Text {
+          text: "⏭";
+          color: Services.MediaService.canGoNext ? CurrentTheme.text : CurrentTheme.subtext;
+          font.pixelSize: 14;
+          TapHandler { enabled: Services.MediaService.canGoNext; onTapped: Services.MediaService.next(); }
+        }
+      }
+    }
+
+    Column {
+      id: dateContent;
+      anchors.centerIn: parent;
+      spacing: 2;
+      opacity: clock.expanded && clock.bigMode === "date" ? 1 : 0;
+      visible: opacity > 0;
+
+      Behavior on opacity { NumberAnimation { duration: 160; easing.type: Easing.OutCubic } }
+
+      Text {
+        anchors.horizontalCenter: parent.horizontalCenter;
+        text: Services.SystemClock.weekday;
+        color: CurrentTheme.subtext;
+        font.pixelSize: 12;
+        font.weight: Font.Medium;
+      }
+
+      Text {
+        anchors.horizontalCenter: parent.horizontalCenter;
+        text: Services.SystemClock.time;
         color: CurrentTheme.accent;
-        font.pixelSize: 16;
-        TapHandler { onTapped: Services.MediaService.togglePlaying(); }
+        font.pixelSize: 26;
+        font.weight: Font.Bold;
       }
 
       Text {
-        text: "⏭";
-        color: Services.MediaService.canGoNext ? CurrentTheme.text : CurrentTheme.subtext;
-        font.pixelSize: 14;
-        TapHandler { enabled: Services.MediaService.canGoNext; onTapped: Services.MediaService.next(); }
+        anchors.horizontalCenter: parent.horizontalCenter;
+        text: Services.SystemClock.date;
+        color: CurrentTheme.subtext;
+        font.pixelSize: 12;
       }
-    }
-  }
-
-  Column {
-    id: dateContent;
-    anchors.centerIn: parent;
-    spacing: 2;
-    opacity: clock.expanded && clock.bigMode === "date" ? 1 : 0;
-    visible: opacity > 0;
-
-    Behavior on opacity { NumberAnimation { duration: 160; easing.type: Easing.OutCubic } }
-
-    Text {
-      anchors.horizontalCenter: parent.horizontalCenter;
-      text: Services.SystemClock.weekday;
-      color: CurrentTheme.subtext;
-      font.pixelSize: 12;
-      font.weight: Font.Medium;
-    }
-
-    Text {
-      anchors.horizontalCenter: parent.horizontalCenter;
-      text: Services.SystemClock.time;
-      color: CurrentTheme.accent;
-      font.pixelSize: 26;
-      font.weight: Font.Bold;
-    }
-
-    Text {
-      anchors.horizontalCenter: parent.horizontalCenter;
-      text: Services.SystemClock.date;
-      color: CurrentTheme.subtext;
-      font.pixelSize: 12;
     }
   }
 

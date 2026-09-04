@@ -31,6 +31,15 @@ in
       systemd.enable = true;
     };
 
+    # The ControlPanel's checklist section reads a bearer token (server-side
+    # NUXT_CHECKLIST_LOCAL_TOKEN) from ~/.config/resonate/checklist-token — see
+    # services/ChecklistService.qml / Config.qml. That file is managed by hand
+    # (chmod 600), not by nix, so it's not wired here. To move it into sops
+    # later: add a `checklist-token` key to secrets/mark/mark-secrets.yaml and
+    #   sops.secrets."checklist-token" = { };
+    #   xdg.configFile."resonate/checklist-token".source =
+    #     config.lib.file.mkOutOfStoreSymlink config.sops.secrets."checklist-token".path;
+
     programs.kitty.settings = {
       confirm_os_window_close = 0;
       dynamic_background_opacity = true;

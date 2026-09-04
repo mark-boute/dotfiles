@@ -35,7 +35,6 @@ in
     firefox.enable = true;
 
     element-desktop.enable = true;
-    thunderbird.enable = true;
     vesktop.enable = true;
     spotify-player.enable = true;
   };

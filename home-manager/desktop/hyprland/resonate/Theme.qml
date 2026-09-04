@@ -1,6 +1,7 @@
 pragma Singleton
 
 import Quickshell
+import Quickshell.Io
 import QtQuick
 
 Singleton {
@@ -12,6 +13,22 @@ Singleton {
   // reactively so nothing else needs to know flavors/accents exist.
   property string flavor: "macchiato";
   property string accentName: "rosewater";
+
+  // latte is the only light flavor; the other three are all dark.
+  readonly property bool isLight: flavor === "latte";
+
+  // Push the light/dark choice to the system so apps that honour
+  // `prefers-color-scheme` (browsers via xdg-desktop-portal, libadwaita, …)
+  // flip with the bar's flavour. xdg-desktop-portal-gtk maps this gsettings
+  // key straight onto org.freedesktop.appearance color-scheme.
+  Process { id: colorSchemeProc; }
+  function _syncColorScheme() {
+    colorSchemeProc.command = ["gsettings", "set", "org.gnome.desktop.interface",
+      "color-scheme", theme.isLight ? "prefer-light" : "prefer-dark"];
+    colorSchemeProc.running = true;
+  }
+  onIsLightChanged: _syncColorScheme();
+  Component.onCompleted: _syncColorScheme();
 
   readonly property var accentChoices: [
     "rosewater", "flamingo", "pink", "mauve", "red", "maroon", "peach",
@@ -30,9 +47,9 @@ Singleton {
   readonly property string assetDir: "/home/mark/dotfiles/home-manager/desktop/hyprland/resonate/assets/background/sailboat-daytimes";
 
   function backgroundFor(name) {
-    if (name === "latte") return assetDir + "/day.jpg";
+    if (name === "latte" || name === "frappe") return assetDir + "/day.jpg";
     if (name === "mocha") return assetDir + "/night.jpg";
-    // frappe and macchiato share sunset — there's no dedicated 4th image.
+    // macchiato gets sunset — there's no dedicated 4th image.
     return assetDir + "/sunset.jpg";
   }
 
