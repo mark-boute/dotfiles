@@ -5,6 +5,7 @@ import Quickshell.Hyprland
 
 import qs
 import qs.widgets as Widgets
+import qs.services as Services
 
 PanelWindow {
   id: panel;
@@ -22,9 +23,15 @@ PanelWindow {
   // OnDemand so a click on a text field in an open panel (the Wi-Fi password
   // input) can take keyboard focus — without it, the layer surface never
   // receives key events. Idle/hover states don't grab focus with this mode.
-  WlrLayershell.keyboardFocus: panel.anyPanelOpen ? WlrKeyboardFocus.OnDemand : WlrKeyboardFocus.None;
+  // The launcher needs its search field focused with no click and arrow/tab
+  // keys captured, so it goes Exclusive while open on this screen.
+  WlrLayershell.keyboardFocus:
+    (Services.LauncherService.open && panel.isFocusedScreen) ? WlrKeyboardFocus.Exclusive
+    : panel.anyPanelOpen ? WlrKeyboardFocus.OnDemand
+    : WlrKeyboardFocus.None;
 
   property HyprlandMonitor monitor: Hyprland.monitorFor(screen);
+  readonly property bool isFocusedScreen: !!panel.monitor && panel.monitor.focused;
   readonly property bool screenFullscreen: monitor && monitor.activeWorkspace ? monitor.activeWorkspace.hasFullscreen : false;
   visible: !screenFullscreen;
 
@@ -65,12 +72,39 @@ PanelWindow {
   // to whatever's actually there, same as if the panel weren't open.
   HyprlandFocusGrab {
     windows: [panel];
-    active: panel.anyPanelOpen;
+    // The launcher opens with no click inside the panel, so an immediately-
+    // active grab fires `cleared` at once. Hold off until it's settled;
+    // `launcherGrabReady` is armed 350ms after it opens.
+    active: panel.anyPanelOpen && (!Services.LauncherService.open || panel.launcherGrabReady);
     onCleared: {
       centerWidget.panelOpen = false;
       powerWidget.panelOpen = false;
       workspacesWidget.panelOpen = false;
     }
+  }
+
+  // Launcher ⇄ centre panel. Opening the launcher (global shortcut) morphs
+  // this screen's centre notch onto the launcher page — but only on the
+  // focused monitor. Any close route runs back through launcherDismissed.
+  property bool launcherGrabReady: false;
+  Timer { id: launcherGrabArm; interval: 350; onTriggered: panel.launcherGrabReady = true; }
+
+  Connections {
+    target: Services.LauncherService;
+    function onOpenChanged() {
+      if (Services.LauncherService.open) {
+        panel.launcherGrabReady = false;
+        if (panel.isFocusedScreen) { centerWidget.openLauncher(); launcherGrabArm.restart(); }
+      } else {
+        launcherGrabArm.stop();
+        panel.launcherGrabReady = false;
+        centerWidget.closeLauncher();
+      }
+    }
+  }
+  Connections {
+    target: centerWidget;
+    function onLauncherDismissed() { Services.LauncherService.open = false; }
   }
 
   // The window really does resize for a hover or a panel open — but only

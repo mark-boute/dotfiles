@@ -2,6 +2,7 @@ import QtQuick
 import QtQuick.Layouts
 
 import qs
+import qs.services as Services
 
 // Full-takeover theme picker: Catppuccin flavour swatches + accent hues.
 // Opened from the drawer's Theme tile. Sizes to its content; the panel gives
@@ -15,6 +16,30 @@ ColumnLayout {
 
   readonly property var flavors: ["latte", "frappe", "macchiato", "mocha"];
   function cap(s) { return s.charAt(0).toUpperCase() + s.slice(1); }
+
+  // --- follow-the-sun toggle ---
+  RowLayout {
+    Layout.topMargin: Theme.defaultSpacing;
+    Layout.alignment: Qt.AlignHCenter;
+    spacing: Theme.defaultSpacing;
+
+    Text {
+      text: String.fromCodePoint(0xf0599); // md-weather-sunset
+      font.family: Theme.iconFontFamily;
+      font.pixelSize: Theme.iconSize;
+      color: Services.ThemeService.autoMode ? CurrentTheme.accent : CurrentTheme.subtext;
+    }
+    Text {
+      text: "Follow the sun";
+      color: CurrentTheme.text;
+      font.pixelSize: 12; font.weight: Font.DemiBold;
+    }
+    PillButton {
+      label: Services.ThemeService.autoMode ? "On" : "Off";
+      accent: Services.ThemeService.autoMode;
+      onClicked: Services.ThemeService.autoMode = !Services.ThemeService.autoMode;
+    }
+  }
 
   Text {
     Layout.topMargin: Theme.defaultSpacing;
@@ -69,7 +94,7 @@ ColumnLayout {
           }
         }
 
-        TapHandler { onTapped: Theme.flavor = swatch.modelData; }
+        TapHandler { onTapped: Services.ThemeService.setFlavor(swatch.modelData); }
       }
     }
   }

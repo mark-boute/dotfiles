@@ -88,6 +88,11 @@ Item {
   // close. panelClosing keeps targetWidth/Height on panelWidth/Height
   // for exactly as long as the panel is still visible.
   property bool panelClosing: false;
+
+  // Emitted when the panel closes (by any route) while it was on the launcher
+  // page, so Bar.qml can clear LauncherService.open to match.
+  signal launcherDismissed();
+
   onPanelOpenChanged: {
     if (panelOpen) {
       panelCloseTimer.stop();
@@ -99,9 +104,25 @@ Item {
     } else {
       panelClosing = true;
       panelCloseTimer.restart();
+      if (panelLoader.item && panelLoader.item.openApp === "launcher")
+        holder.launcherDismissed();
     }
   }
   Timer { id: panelCloseTimer; interval: 160; onTriggered: holder.panelClosing = false; }
+
+  // Driven by Bar.qml from LauncherService — opens this island's panel
+  // straight onto the launcher page (openApp === "launcher"), morphing the
+  // notch exactly like a drawer app. openLauncher() must set openApp *after*
+  // panelOpen, since onPanelOpenChanged resets it to "".
+  function openLauncher() {
+    holder.panelOpen = true;
+    if (panelLoader.item && "openApp" in panelLoader.item)
+      panelLoader.item.openApp = "launcher";
+  }
+  function closeLauncher() {
+    if (panelLoader.item && panelLoader.item.openApp === "launcher")
+      holder.panelOpen = false;
+  }
 
   readonly property int targetWidth: (panelOpen || panelClosing)
     ? holder.panelWidth

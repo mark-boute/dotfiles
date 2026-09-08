@@ -18,4 +18,6 @@ Scope {
       Modules.Bar { modelData: screen.modelData; }
     }
   }
+
+  Modules.Lock {}
 }

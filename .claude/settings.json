@@ -3,7 +3,12 @@
     "allow": [
       "Read(//nix/store/**)",
       "Bash(notify-send *)",
-      "Bash(find *)"
+      "Bash(find *)",
+      "Bash(P=/nix/store/0lfamag3fkc5kvv2dd5samhi0r5cfn0m-python3.14-tinytuya-1.20.0/lib/python3.14/site-packages/tinytuya *)",
+      "Read(//nix/store/0lfamag3fkc5kvv2dd5samhi0r5cfn0m-python3.14-tinytuya-1.20.0/lib/python3.14/site-packages/tinytuya/core/**)",
+      "Read(//nix/store/0lfamag3fkc5kvv2dd5samhi0r5cfn0m-python3.14-tinytuya-1.20.0/lib/python3.14/site-packages/tinytuya/**)",
+      "Bash(ps -eo pid,etimes,cmd)",
+      "Bash(hyprctl layers *)"
     ]
   }
 }

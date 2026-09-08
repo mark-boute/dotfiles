@@ -96,17 +96,19 @@ Singleton {
     };
   }
 
-  // Smooth day/night curve shared by brightness and temperature auto
-  // modes: nightValue outside a `transitionHours`-wide window centered
-  // on each of sunrise/sunset, dayValue in between, eased (not a hard
-  // cut) across each transition so it doesn't visibly snap.
-  function curveValue(nightValue, dayValue, transitionHours) {
+  // Day/night curve shared by brightness and temperature auto modes:
+  // nightValue outside a `transitionHours`-wide window centered on each of
+  // sunrise/sunset, dayValue in between, ramped across each transition so it
+  // doesn't visibly snap. `linear` true walks it at a constant rate (one
+  // percent at a time, evenly over the whole window); the default is a
+  // cosine ease (gentler at the ends, quicker through the middle).
+  function curveValue(nightValue, dayValue, transitionHours, linear) {
     var times = sunTimesForToday();
     if (times.sunrise === null || times.sunset === null) return dayValue;
     var now = new Date();
     var h = now.getHours() + now.getMinutes() / 60 + now.getSeconds() / 3600;
 
-    function ease(x) { return (1 - Math.cos(x * Math.PI)) / 2; }
+    function ease(x) { return linear ? x : (1 - Math.cos(x * Math.PI)) / 2; }
 
     var half = transitionHours / 2;
     if (h > times.sunrise - half && h < times.sunrise + half) {
@@ -119,5 +121,23 @@ Singleton {
     }
     if (h > times.sunrise + half && h < times.sunset - half) return dayValue;
     return nightValue;
+  }
+
+  // Coarse three-way sun phase for theme switching (ThemeService):
+  //   "night"    the sun is below the horizon — before sunrise or after
+  //              sunset ("sun fully under")
+  //   "twilight" the `duskHours`-wide window right before sunset — the sun
+  //              still up but visibly getting low
+  //   "day"      everything in between
+  // Deliberately asymmetric: mornings go straight night -> day at sunrise
+  // (the sun is *rising*, not "slowly lowering").
+  function sunPhase(duskHours) {
+    var times = sunTimesForToday();
+    if (times.sunrise === null || times.sunset === null) return "day";
+    var now = new Date();
+    var h = now.getHours() + now.getMinutes() / 60 + now.getSeconds() / 3600;
+    if (h < times.sunrise || h >= times.sunset) return "night";
+    if (h >= times.sunset - duskHours) return "twilight";
+    return "day";
   }
 }

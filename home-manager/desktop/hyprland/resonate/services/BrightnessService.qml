@@ -28,6 +28,19 @@ Singleton {
   property bool autoMode: true;
   property bool showOsd: false;
 
+  // Auto mode never dims the panel below this — the sun curve runs between
+  // autoFloor (deep night) and 1.0 (full day) rather than 0.3..1.0.
+  readonly property real autoFloor: 0.6;
+  // Width of the sunset/sunrise dim, centred on the sun event. Linear (see
+  // the `true` in applyAutoCurve): the panel walks one percent at a time,
+  // evenly, across this whole window — no faster stretch in the middle.
+  readonly property real autoTransitionHours: 2.0;
+  // How fast a *discontinuous* auto change catches up (fraction/sec) — only
+  // switching auto on or the first sync after startup ever moves far enough
+  // to see this; a step of the transition above is a single percent and
+  // lands in one tick.
+  readonly property real autoRampRate: 0.2;
+
   Process {
     id: getProc;
     command: ["brightnessctl", "-d", "amdgpu_bl1", "-m", "i"];
@@ -37,6 +50,10 @@ Singleton {
         var parts = (t || "").trim().split(",");
         var pct = parts.length >= 4 ? parseInt(parts[3]) : NaN;
         if (!isNaN(pct)) root.brightness = pct / 100;
+        if (!root._haveReading) {
+          root._haveReading = true;
+          root.applyAutoCurve(); // now that we know the real level, fade to the curve
+        }
       }
     }
   }
@@ -46,13 +63,21 @@ Singleton {
   // they don't turn auto mode back off or flash the popup — every other
   // caller (a manual panel-slider drag, the popup's own drag/scroll, or
   // a keybind via adjust() below) leaves this at its default, and all of
-  // those should both drop auto mode and flash the popup the same way.
+  // those should both drop auto mode, stop any in-progress auto fade, and
+  // flash the popup the same way.
   function setBrightness(fraction, fromAuto) {
     if (!fromAuto) {
       root.autoMode = false;
+      rampTimer.stop();
       root.showOsd = true;
       osdTimer.restart();
     }
+    root._writeHW(fraction);
+  }
+
+  // The actual backlight write, shared by manual sets and each step of the
+  // auto fade.
+  function _writeHW(fraction) {
     var pct = Math.round(Math.max(0, Math.min(1, fraction)) * 100);
     root.brightness = pct / 100; // optimistic, so callers don't wait on the next poll to catch up
     setProc.command = ["sh", "-c",
@@ -62,8 +87,49 @@ Singleton {
     setProc.running = true;
   }
 
+  property real _rampTarget: 1;
+  property bool _haveReading: false; // getProc has returned at least once
+
   function applyAutoCurve() {
-    if (root.autoMode) root.setBrightness(SunService.curveValue(0.3, 1.0, 1.5), true);
+    if (!root.autoMode || !root._haveReading) return;
+    root._rampTarget = Math.max(0, Math.min(1,
+      SunService.curveValue(root.autoFloor, 1.0, root.autoTransitionHours, true)));
+
+    var gap = Math.abs(root._rampTarget - root.brightness);
+    if (gap <= 0.03) {
+      // A transition step (or nothing) — the linear curve only moves ~0.3%
+      // a minute, so just apply it the moment it rounds to a new percent.
+      if (Math.round(root._rampTarget * 100) !== Math.round(root.brightness * 100))
+        root._writeHW(root._rampTarget);
+    } else if (!rampTimer.running) {
+      // A real discontinuity (auto just switched on, first sync after
+      // startup) — walk it down over a second or two instead of snapping.
+      rampTimer.start();
+    }
+  }
+
+  onAutoModeChanged: if (!root.autoMode) rampTimer.stop();
+
+  // Walks root.brightness toward _rampTarget at autoRampRate for the
+  // discontinuity cases only (auto switched on, first sync after startup) —
+  // the sunset/sunrise transition itself is stepped a percent at a time
+  // straight from applyAutoCurve. ~10Hz, not a frame-rate Behavior, so it
+  // isn't spawning brightnessctl 60×/sec.
+  Timer {
+    id: rampTimer;
+    interval: 100;
+    repeat: true;
+    onTriggered: {
+      if (!root.autoMode) { rampTimer.stop(); return; }
+      var step = root.autoRampRate * (rampTimer.interval / 1000);
+      var d = root._rampTarget - root.brightness;
+      if (Math.abs(d) <= step) {
+        root._writeHW(root._rampTarget);
+        rampTimer.stop();
+      } else {
+        root._writeHW(root.brightness + (d > 0 ? step : -step));
+      }
+    }
   }
 
   // Adjusts by a relative percentage (matching brightnessctl's own
@@ -82,10 +148,10 @@ Singleton {
     onTriggered: getProc.running = true;
   }
 
-  // Rechecked every minute — fine-grained enough that SunService's eased
-  // transition around sunrise/sunset still reads as smooth.
+  // Rechecked every 30s: over a 2h linear window the target moves ~0.3%/min,
+  // so this lands each 1% step within a few seconds of when it's due.
   Timer {
-    interval: 60000;
+    interval: 30000;
     repeat: true;
     running: true;
     triggeredOnStart: true;

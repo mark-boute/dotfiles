@@ -194,7 +194,8 @@ end
 M.binds = {
 	-- Applications
 	{ keys = "SUPER + T", desc = "Open Kitty terminal", action = A.exec_app("kitty") },
-	{ keys = "SUPER + Space", desc = "Run launcher", action = A.exec_app("hyprlauncher") },
+	{ keys = "SUPER + Space", desc = "App launcher", action = A.global("quickshell:launcher") },
+	{ keys = "Super_L", desc = "App launcher (tap SUPER)", action = A.global("quickshell:launcher"), release = true },
 	{ keys = "SUPER + W", desc = "Open Browser", action = A.exec_app("zen-beta") },
 	{ keys = "SUPER + E", desc = "Open File Explorer", action = A.exec_app("nautilus") },
     { keys = "SUPER + C", desc = "Open VSCode", action = A.exec_app("code") },
@@ -375,6 +376,9 @@ function M.register()
 		end
 		if b.locked then
 			flags.locked = true
+		end
+		if b.release then
+			flags.release = true
 		end
 		hl.bind(b.keys, build(b.action), flags)
 	end

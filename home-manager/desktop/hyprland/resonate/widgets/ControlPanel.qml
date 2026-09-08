@@ -89,7 +89,9 @@ Item {
         id: headerLoader;
         Layout.fillWidth: true;
         Layout.preferredHeight: item ? item.implicitHeight : 0;
-        sourceComponent: panel.inApp ? appHeader : homeHeader;
+        // Launcher takes over completely — its own search field is the header.
+        sourceComponent: panel.openApp === "launcher" ? undefined
+          : panel.inApp ? appHeader : homeHeader;
       }
 
       Flickable {
@@ -108,6 +110,9 @@ Item {
           acceptedButtons: Qt.NoButton;
           onWheel: (wheel) => {
             var max = Math.max(0, bodyFlick.contentHeight - bodyFlick.height);
+            // Nothing to scroll here — let the wheel reach whatever's below
+            // (e.g. the launcher's own result list).
+            if (max <= 0) { wheel.accepted = false; return; }
             bodyFlick.contentY = Math.max(0, Math.min(max, bodyFlick.contentY - wheel.angleDelta.y));
           }
         }
@@ -116,7 +121,9 @@ Item {
           id: bodyLoader;
           width: bodyFlick.width;
           sourceComponent: panel.inApp
-            ? (panel.openApp === "theme" ? themeApp : checklistApp)
+            ? (panel.openApp === "theme" ? themeApp
+               : panel.openApp === "lights" ? lightsApp
+               : panel.openApp === "launcher" ? launcherApp : checklistApp)
             : homeBody;
         }
       }
@@ -175,7 +182,8 @@ Item {
 
         Text {
           anchors.verticalCenter: parent.verticalCenter;
-          text: panel.openApp === "theme" ? "Theme" : "Checklist";
+          text: panel.openApp === "theme" ? "Theme"
+            : panel.openApp === "lights" ? "Lights" : "Checklist";
           color: CurrentTheme.text;
           font.pixelSize: 15;
           font.weight: Font.DemiBold;
@@ -220,5 +228,15 @@ Item {
       width: bodyLoader.width;
       panelW: bodyLoader.width;
     }
+  }
+
+  Component {
+    id: lightsApp;
+    LightsApp { width: bodyLoader.width; }
+  }
+
+  Component {
+    id: launcherApp;
+    LauncherApp { width: bodyLoader.width; }
   }
 }

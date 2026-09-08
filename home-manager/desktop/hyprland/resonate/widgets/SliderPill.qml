@@ -13,6 +13,10 @@ Rectangle {
   property real value: 0; // 0..1
   property string valueLabel: "";
   property color fillColor: CurrentTheme.accent;
+  // White-temperature slider: the fill is a cool→warm gradient (blue at 0,
+  // amber at 1) that stretches with the fill instead of a flat fillColor —
+  // so its rounded end matches every other bar.
+  property bool temperature: false;
 
   implicitHeight: 40;
   radius: height / 2;
@@ -21,6 +25,11 @@ Rectangle {
   clip: true;
 
   signal moved(real fraction);
+
+  // Exposed so a consumer can gate its own live-polled state updates while
+  // the user is mid-drag (a poll landing mid-drag would otherwise yank the
+  // fill back to the last-known server value out from under the pointer).
+  readonly property alias dragging: dragHandler.active;
 
   readonly property real minFillWidth: radius * 2;
   readonly property real fillWidth: {
@@ -33,9 +42,25 @@ Rectangle {
     height: parent.height;
     radius: parent.radius;
     width: track.fillWidth;
-    color: track.fillColor;
+    color: track.temperature ? "transparent" : track.fillColor;
 
     Behavior on color { ColorAnimation { duration: 140 } }
+
+    // Cool→warm gradient for the temperature slider. Sized to the fill (not
+    // clipped from a fixed-width strip, which left a straight vertical cut)
+    // so it stretches as the fill grows and its rounded end matches the
+    // other bars.
+    Rectangle {
+      visible: track.temperature;
+      anchors.fill: parent;
+      radius: parent.radius;
+      gradient: Gradient {
+        orientation: Gradient.Horizontal;
+        GradientStop { position: 0.0; color: "#c2dbff" }
+        GradientStop { position: 0.5; color: "#ffe0c2" }
+        GradientStop { position: 1.0; color: "#ff9d4d" }
+      }
+    }
 
     // A child of the fill itself (not the track) so it rides along with
     // the fill's own right edge as it grows/shrinks, rather than sitting
@@ -55,6 +80,7 @@ Rectangle {
   }
 
   DragHandler {
+    id: dragHandler;
     enabled: track.enabled;
     target: null;
     onCentroidChanged: {

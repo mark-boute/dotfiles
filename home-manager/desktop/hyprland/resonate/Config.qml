@@ -31,4 +31,15 @@ Singleton {
   readonly property string checklistTokenFile:
     Quickshell.env("RESONATE_CHECKLIST_TOKEN_FILE")
     || (Quickshell.env("HOME") + "/.config/resonate/checklist-token");
+
+  // --- Lights (WOOX/Tuya bulbs + WiZ devices, see services/LightsService.qml) ---
+  // A JSON list of device entries: Tuya bulbs (tinytuya wizard output + "ip",
+  // contains the local_key secret) and WiZ devices (just "ip", no secret).
+  // Hand-provisioned (chmod 600), not sops-managed, same treatment as
+  // checklistTokenFile above. Absent/empty → the Lights drawer tile just never
+  // becomes visible, no error shown. Override the location with
+  // RESONATE_LIGHTS_DEVICES_FILE.
+  readonly property string lightsDevicesFile:
+    Quickshell.env("RESONATE_LIGHTS_DEVICES_FILE")
+    || (Quickshell.env("HOME") + "/.config/resonate/lights-devices.json");
 }

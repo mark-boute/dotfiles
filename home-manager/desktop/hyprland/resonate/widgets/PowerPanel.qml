@@ -61,6 +61,16 @@ Item {
     return CurrentTheme.success;
   }
 
+  // Poweroff / restart / logout (via hyprshutdown, which shows its own
+  // confirmation overlay before --post-cmd — same invocations as the keybinds
+  // in hypr/keybinds.lua) and lock (straight to the quickshell:Lock global,
+  // no confirmation).
+  Process { id: sessionProc; }
+  function sessionAction(cmd) {
+    sessionProc.command = ["sh", "-c", cmd];
+    sessionProc.running = true;
+  }
+
   // Power-draw history for the graph below, last 5 minutes. Sampled
   // continuously (Timer.running: true, not tied to the panel's own
   // visibility) — this Loader's item is created once and never destroyed
@@ -200,6 +210,46 @@ Item {
 
             Behavior on width { NumberAnimation { duration: 300; easing.type: Easing.OutCubic } }
             Behavior on color { ColorAnimation { duration: 180 } }
+          }
+        }
+
+        // --- Session actions ---
+        RowLayout {
+          Layout.preferredWidth: panel.contentWidth;
+          spacing: Theme.defaultSpacing;
+
+          Repeater {
+            model: [
+              { glyph: 0xf0425, danger: true,  cmd: "hyprshutdown -t 'Shutting down...' --post-cmd 'shutdown -P 0'" },
+              { glyph: 0xf0709, danger: false, cmd: "hyprshutdown -t 'Restarting...' --post-cmd 'reboot'" },
+              { glyph: 0xf0343, danger: false, cmd: "hyprshutdown -t 'Logging out...' --post-cmd \"hyprctl dispatch 'hl.dsp.exit()'\"" },
+              { glyph: 0xf033e, danger: false, cmd: "hyprctl dispatch 'hl.dsp.global(\"quickshell:Lock\")'" },
+            ];
+
+            delegate: Rectangle {
+              required property var modelData;
+              Layout.fillWidth: true;
+              implicitHeight: 40;
+              radius: 10;
+              color: sessionHover.hovered ? CurrentTheme.surfaceHover : CurrentTheme.backgroundGlass;
+              border.width: 1;
+              border.color: CurrentTheme.border;
+
+              Behavior on color { ColorAnimation { duration: 100 } }
+
+              Text {
+                anchors.centerIn: parent;
+                text: String.fromCodePoint(modelData.glyph);
+                font.family: Theme.iconFontFamily;
+                font.pixelSize: Theme.iconSize;
+                color: modelData.danger
+                  ? (sessionHover.hovered ? CurrentTheme.danger : CurrentTheme.text)
+                  : CurrentTheme.text;
+              }
+
+              HoverHandler { id: sessionHover; cursorShape: Qt.PointingHandCursor; }
+              TapHandler { onTapped: panel.sessionAction(modelData.cmd); }
+            }
           }
         }
 
@@ -529,11 +579,14 @@ Item {
             }
           }
 
+          // Reads 0% = coolest, 100% = warmest (TemperatureService's own
+          // fraction is the opposite — 0 = min/warmest K — hence 1 - x).
           SliderPill {
             Layout.fillWidth: true;
-            value: (Services.TemperatureService.temperatureK - Services.TemperatureService.minTempK) / (Services.TemperatureService.maxTempK - Services.TemperatureService.minTempK);
-            valueLabel: Services.TemperatureService.temperatureK + "K";
-            onMoved: (fraction) => Services.TemperatureService.setTemperature(fraction);
+            temperature: true;
+            value: (Services.TemperatureService.maxTempK - Services.TemperatureService.temperatureK) / (Services.TemperatureService.maxTempK - Services.TemperatureService.minTempK);
+            valueLabel: Math.round((Services.TemperatureService.maxTempK - Services.TemperatureService.temperatureK) / (Services.TemperatureService.maxTempK - Services.TemperatureService.minTempK) * 100) + "%";
+            onMoved: (fraction) => Services.TemperatureService.setTemperature(1 - fraction);
           }
         }
       }

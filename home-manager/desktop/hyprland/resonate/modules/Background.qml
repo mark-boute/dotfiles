@@ -3,6 +3,7 @@ import Quickshell
 import Quickshell.Wayland
 
 import qs
+import qs.services as Services
 
 // Wallpaper, on the Background layer (behind everything, including normal
 // windows). Tracks Theme.backgroundImage, which follows Theme.flavor — so
@@ -25,6 +26,12 @@ PanelWindow {
   color: CurrentTheme.background;
 
   property bool topIsA: true;
+
+  // Background is instantiated for every screen at startup; the drawer's
+  // ThemeApp is not. Referencing ThemeService here is what keeps its
+  // sun-phase timer (and the auto flavour/wallpaper switching) actually
+  // running whether or not the panel has ever been opened.
+  readonly property var themeService: Services.ThemeService;
 
   Image {
     id: layerA;
