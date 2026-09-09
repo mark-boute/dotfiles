@@ -27,7 +27,24 @@ in
     ../../modules
   ];
 
-  # programs.tmux.enable = true;
+  programs.bash = {
+    enable = true;
+    shellAliases = {
+      n-rebuild = "sudo nixos-rebuild switch --flake ~/dotfiles";
+      n-update = "sudo nix flake update --flake ~/dotfiles && sudo nixos-rebuild switch --flake ~/dotfiles";
+      n-config = "nano ~/dotfiles/hosts/marijn-laptop/configuration.nix";
+      n-home = "nano ~/dotfiles/hosts/marijn-laptop/home.nix";
+      n-env = "nix develop";
+      n-flake-generate = "cp ~/dotfiles/hosts/marijn-laptop/blank_flake ./flake.nix && nano ./flake.nix";
+      n-flake = "nano ./flake.nix";
+      n-direnv-generate = "touch .envrc && echo \"use flake\" > .envrc && nano ./.envrc";
+      n-direnv-allow = "direnv allow";
+      n-direnv = "nano ./.envrc";
+    };
+  };
+  
+  # Enable direnvs
+  programs.direnv.enable = true;
 
   modules = {
     steam = { enable = true; addprotonup = true; };
@@ -111,6 +128,10 @@ in
 
   # List services that you want to enable:
 
+  networking.extraHosts = 
+  ''
+    10.129.127.92 orion.htb
+  '';
   # Open ports in the firewall.
   # networking.firewall.allowedTCPPorts = [ ... ];
   # networking.firewall.allowedUDPPorts = [ ... ];

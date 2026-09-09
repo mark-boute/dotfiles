@@ -33,6 +33,8 @@
     pkgs.vscode
     pkgs.kitty
     pkgs.arduino-ide
+    pkgs.obsidian
+    pkgs.typst
 
     pkgs.gh
     pkgs.glab
@@ -40,21 +42,19 @@
     
     pkgs.discord
     pkgs.vesktop
-
-    pkgs.eduvpn-client
+    pkgs.signal-desktop
 
     pkgs.gimp
     pkgs.ffmpeg
 
-    pkgs.rpi-imager
-
     inputs.zen-browser.packages.${pkgs.stdenv.system}.default
     
     pkgs.terraform
-    
-    pkgs.obsidian
-    
-    pkgs.signal-desktop
+
+    pkgs.eduvpn-client        
+    pkgs.openvpn
+
+    pkgs.rpi-imager
   ];
 
   programs.git = {
@@ -77,6 +77,13 @@
     extraConfig = {
       push = { autoSetupRemote = true; };
     };
+  };
+  
+  home.shellAliases = {
+    n-rebuild = "sudo nixos-rebuild switch --flake ~/dotfiles";
+    n-config = "nano ~/dotfiles/hosts/marijn-laptop/configuration.nix";
+    n-home = "nano ~/dotfiles/hosts/marijn-laptop/home.nix";
+    n-env = "nix develop";
   };
 
   # Home Manager is pretty good at managing dotfiles. The primary way to manage
