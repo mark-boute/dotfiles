@@ -9,6 +9,7 @@
 
   modules = {
     gnome-settings.enable = true;
+    gnome-settings.preferLight = true;
     # hyprland = { enable = true; style = "nord"; };
     # eww.enable = true;
     latex.enable = true;
@@ -77,13 +78,6 @@
     extraConfig = {
       push = { autoSetupRemote = true; };
     };
-  };
-  
-  home.shellAliases = {
-    n-rebuild = "sudo nixos-rebuild switch --flake ~/dotfiles";
-    n-config = "nano ~/dotfiles/hosts/marijn-laptop/configuration.nix";
-    n-home = "nano ~/dotfiles/hosts/marijn-laptop/home.nix";
-    n-env = "nix develop";
   };
 
   # Home Manager is pretty good at managing dotfiles. The primary way to manage

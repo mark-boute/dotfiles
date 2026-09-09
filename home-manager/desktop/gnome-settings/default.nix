@@ -38,6 +38,8 @@ in {
       '';
     };
 
+    preferLight = mkEnableOption "prefer light color scheme";
+
     shellBlur = mkEnableOption "enable shell blur";
   };
 
@@ -84,7 +86,7 @@ in {
 
       "org/gnome/desktop/interface" = {
         # gtk-theme = "Adwaita";
-        color-scheme = "prefer-dark";
+        color-scheme = if cfg.preferLight then "prefer-light" else "prefer-dark";
         text-scaling-factor = 1.0;
       };
 
