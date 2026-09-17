@@ -20,6 +20,7 @@ PanelWindow {
   // on this screen has a fullscreen window.
   WlrLayershell.layer: WlrLayer.Overlay;
   WlrLayershell.namespace: "quickshell:resonate:bar";
+  
   // OnDemand so a click on a text field in an open panel (the Wi-Fi password
   // input) can take keyboard focus — without it, the layer surface never
   // receives key events. Idle/hover states don't grab focus with this mode.
