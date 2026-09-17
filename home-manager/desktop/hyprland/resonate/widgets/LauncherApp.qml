@@ -82,7 +82,8 @@ Item {
             visible: search.text === "";
             text: root.svc.openWithPath !== "" ? "Open with…"
               : root.svc.browseDir !== "" ? "Filter this folder…"
-              : root.svc.section === "docs" ? "Search Documents…" : "Search apps…";
+              : root.svc.section === "docs" ? "Search Documents…"
+              : root.svc.section === "clip" ? "Filter clipboard…" : "Search apps…";
             color: CurrentTheme.subtext;
             font: search.font;
           }
@@ -109,7 +110,7 @@ Item {
       spacing: 6;
 
       Repeater {
-        model: [{ key: "apps", label: "Apps" }, { key: "docs", label: "Documents" }];
+        model: [{ key: "apps", label: "Apps" }, { key: "docs", label: "Documents" }, { key: "clip", label: "Clipboard" }];
         delegate: Rectangle {
           required property var modelData;
           readonly property bool active: root.svc.section === modelData.key;
@@ -139,7 +140,8 @@ Item {
       Item { Layout.fillWidth: true; }
 
       Text {
-        text: (root.svc.section === "apps" ? root.svc.apps.length : root.svc.docs.length) + "";
+        text: (root.svc.section === "apps" ? root.svc.apps.length
+          : root.svc.section === "clip" ? root.svc.clip.length : root.svc.docs.length) + "";
         color: CurrentTheme.subtext;
         font.pixelSize: 10;
       }
@@ -199,6 +201,15 @@ Item {
 
       LauncherList {
         anchors.fill: parent;
+        visible: root.svc.openWithPath === "" && root.svc.section === "clip";
+        currentIndex: root.svc.clipSel;
+        emptyText: root.svc.query === "" ? "Clipboard history is empty" : "Nothing matches";
+        delegate: clipDelegate;
+        model: root.svc.clip;
+      }
+
+      LauncherList {
+        anchors.fill: parent;
         visible: root.svc.openWithPath !== "";
         currentIndex: root.svc.openWithSel;
         emptyText: "";
@@ -243,6 +254,18 @@ Item {
         if (isUp) root.svc.upDir();
         else root.svc.openWithAt(index);
       }
+    }
+  }
+
+  Component {
+    id: clipDelegate;
+    LauncherRow {
+      required property var modelData;
+      required property int index;
+      selected: ListView.isCurrentItem;
+      glyph: modelData && modelData.isImage ? 0xf021f /* image */ : 0xf018f /* content-copy */;
+      title: modelData ? modelData.preview : "";
+      onTriggered: { root.svc.clipSel = index; root.svc.activate(); }
     }
   }
 

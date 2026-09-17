@@ -114,6 +114,11 @@ in {
 
   services.fwupd.enable = true; # BIOS/firmware updates via LVFS (fwupdmgr)
 
+  services.actual = {
+    enable = true; # finances, http://localhost:5006
+    settings.port = 5006;
+  };
+
   services.udev.extraRules = ''
     # NVIDIA dGPU (PCI 0000:01:00.0)
     KERNEL=="card*", KERNELS=="0000:01:00.0", SUBSYSTEM=="drm", SUBSYSTEMS=="pci", SYMLINK+="dri/nvidia-dgpu"

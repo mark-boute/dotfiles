@@ -68,8 +68,11 @@ Singleton {
     toggleProc.running = true;
   }
 
+  // Wi-Fi radio on/off for the tile — a toggle indicator doesn't need 3s
+  // freshness (toggle() refreshes right after acting). One nmcli spawn per
+  // 12s instead of per 3s.
   Timer {
-    interval: 3000; repeat: true; running: true; triggeredOnStart: true;
+    interval: 12000; repeat: true; running: true; triggeredOnStart: true;
     onTriggered: radioProc.running = true;
   }
 

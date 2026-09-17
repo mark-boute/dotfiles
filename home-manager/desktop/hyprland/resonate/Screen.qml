@@ -20,4 +20,5 @@ Scope {
   }
 
   Modules.Lock {}
+  Modules.SessionOverlay {}
 }

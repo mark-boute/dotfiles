@@ -6,11 +6,11 @@ import QtQuick
 
 // amdgpu_bl1 is always adjusted; nvidia_0 (this is a hybrid AMD iGPU +
 // NVIDIA dGPU laptop, both of which expose a backlight device for the
-// same physical panel) only when the dGPU isn't asleep — matching the
-// original brightness keybinds, for the same D3cold-check reason as the
-// GPU-draw probe elsewhere: touching nvidia_0 while the card is asleep
-// would needlessly wake it. Read back via amdgpu_bl1 alone, which is
-// always available regardless of dGPU state.
+// same physical panel) only when the dGPU isn't asleep — touching
+// nvidia_0 while the card is asleep would needlessly wake it. The check
+// reads `power/runtime_status` ("suspended"), NOT `power_state` — reading
+// power_state on this driver *itself* resumes the card. Read back via
+// amdgpu_bl1 alone, which is always available regardless of dGPU state.
 //
 // A singleton (not local panel state) so PowerPanel's slider and
 // PowerStatus's OSD both read the same live value, and so the
@@ -82,8 +82,8 @@ Singleton {
     root.brightness = pct / 100; // optimistic, so callers don't wait on the next poll to catch up
     setProc.command = ["sh", "-c",
       "brightnessctl -d amdgpu_bl1 set " + pct + "% --min-value=1; " +
-      "s=$(cat /sys/bus/pci/devices/0000:01:00.0/power_state 2>/dev/null); " +
-      "[ \"$s\" = D3cold ] || brightnessctl -d nvidia_0 set " + pct + "% --min-value=1"];
+      "s=$(cat /sys/bus/pci/devices/0000:01:00.0/power/runtime_status 2>/dev/null); " +
+      "[ \"$s\" = suspended ] || brightnessctl -d nvidia_0 set " + pct + "% --min-value=1"];
     setProc.running = true;
   }
 

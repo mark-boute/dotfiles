@@ -72,7 +72,10 @@ in {
         settings = {
           general = {
             lock_cmd = ''hyprctl dispatch 'hl.dsp.global("quickshell:Lock")' '';
-            after_sleep_cmd = ''hyprctl dispatch 'hl.dsp.dpms({ state = "on" })' '';
+            # after hibernate, DPMS-on alone leaves the PRIME (nvidia render ->
+            # amdgpu scanout) handoff stale; reload forces Hyprland to
+            # re-negotiate every output against the freshly resumed GPUs.
+            after_sleep_cmd = ''hyprctl reload && hyprctl dispatch 'hl.dsp.dpms({ state = "on" })' '';
           };
 
           listener = [

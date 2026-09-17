@@ -200,6 +200,8 @@ Item {
       width: bodyLoader.width;
       spacing: Theme.defaultSpacing;
 
+      WeatherCard { Layout.fillWidth: true; }
+
       AppDrawer {
         Layout.fillWidth: true;
         onOpen: (appId) => panel.openApp = appId;

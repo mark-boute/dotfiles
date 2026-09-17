@@ -193,6 +193,13 @@ Item {
     when: panelLoader.item !== null && "monitor" in panelLoader.item;
   }
 
+  Binding {
+    target: panelLoader.item;
+    property: "panelActive";
+    value: holder.panelOpen || holder.panelClosing;
+    when: panelLoader.item !== null && "panelActive" in panelLoader.item;
+  }
+
   // Panel content can ask to close itself (e.g. WorkspacesPanel's header
   // up-chevron). Harmless no-op for panels without the signal.
   Connections {

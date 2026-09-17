@@ -82,8 +82,27 @@ ColumnLayout {
             elide: Text.ElideRight;
             Layout.fillWidth: true;
           }
+          Row {
+            spacing: 4;
+            visible: row.modelData.connected && row.modelData.battery >= 0 && !row.busy;
+            Text {
+              anchors.verticalCenter: parent.verticalCenter;
+              text: String.fromCodePoint(row.modelData.battery <= 15 ? 0xf007a
+                : row.modelData.battery <= 40 ? 0xf007e
+                : row.modelData.battery <= 70 ? 0xf0081 : 0xf0079); // battery-{10,30,60,full}
+              font.family: Theme.iconFontFamily;
+              font.pixelSize: 12;
+              color: row.modelData.battery <= 15 ? CurrentTheme.danger : CurrentTheme.subtext;
+            }
+            Text {
+              anchors.verticalCenter: parent.verticalCenter;
+              text: row.modelData.battery + "%";
+              color: CurrentTheme.subtext;
+              font.pixelSize: 10; font.weight: Font.DemiBold;
+            }
+          }
           Text {
-            visible: row.busy || row.modelData.connected || row.modelData.paired;
+            visible: row.busy || ((row.modelData.connected && row.modelData.battery < 0) || row.modelData.paired);
             text: row.busy ? "…" : (row.modelData.connected ? "Connected" : "Paired");
             color: row.modelData.connected ? CurrentTheme.success : CurrentTheme.subtext;
             font.pixelSize: 10; font.weight: Font.DemiBold;

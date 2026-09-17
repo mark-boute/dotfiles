@@ -252,8 +252,8 @@ Item {
   Process {
     id: gpuPowerProc;
     command: ["sh", "-c",
-      "s=$(cat /sys/bus/pci/devices/0000:01:00.0/power_state 2>/dev/null); " +
-      "[ \"$s\" = D3cold ] && { echo asleep; exit; }; " +
+      "s=$(cat /sys/bus/pci/devices/0000:01:00.0/power/runtime_status 2>/dev/null); " +
+      "[ \"$s\" = suspended ] && { echo asleep; exit; }; " +
       "ls -l /proc/[0-9]*/fd 2>/dev/null | grep -q /dev/nvidia0 " +
       "&& nvidia-smi --query-gpu=power.draw --format=csv,noheader,nounits || echo asleep"];
     stdout: StdioCollector {

@@ -62,8 +62,12 @@ Singleton {
     toggleProc.running = true;
   }
 
+  // Just tracks the on/off state for the tile — spawning bluetoothctl (a
+  // full bluez dbus session each time) every couple of seconds forever, while
+  // BT is usually rfkilled at boot anyway, isn't worth it. 8s is plenty; the
+  // toggle() path refreshes immediately on its own.
   Timer {
-    interval: 2500; repeat: true; triggeredOnStart: true; running: true;
+    interval: 8000; repeat: true; triggeredOnStart: true; running: true;
     onTriggered: statusProc.running = true;
   }
 
@@ -126,11 +130,12 @@ Singleton {
       "conn=$(bluetoothctl devices Connected 2>/dev/null | awk '{print $2}'); " +
       "trust=$(bluetoothctl devices Trusted 2>/dev/null | awk '{print $2}'); " +
       "bluetoothctl devices 2>/dev/null | while read -r _ mac name; do " +
-      "  [ -z \"$mac\" ] && continue; p=n; c=n; t=n; " +
+      "  [ -z \"$mac\" ] && continue; p=n; c=n; t=n; bat=; " +
       "  printf '%s\\n' \"$paired\" | grep -qx \"$mac\" && p=y; " +
       "  printf '%s\\n' \"$conn\"   | grep -qx \"$mac\" && c=y; " +
       "  printf '%s\\n' \"$trust\"  | grep -qx \"$mac\" && t=y; " +
-      "  printf '%s\\t%s\\t%s\\t%s\\t%s\\n' \"$mac\" \"$p\" \"$c\" \"$t\" \"$name\"; done"];
+      "  [ \"$c\" = y ] && bat=$(bluetoothctl info \"$mac\" 2>/dev/null | sed -n 's/.*Battery Percentage:[^(]*(\\([0-9]*\\)).*/\\1/p'); " +
+      "  printf '%s\\t%s\\t%s\\t%s\\t%s\\t%s\\n' \"$mac\" \"$p\" \"$c\" \"$t\" \"$bat\" \"$name\"; done"];
     stdout: StdioCollector {
       onStreamFinished: {
         var tx = (typeof this.text === "function") ? this.text() : this.text;
@@ -141,7 +146,8 @@ Singleton {
           var mac = (f[0] || "").trim().toUpperCase();
           if (!mac) return;
           s[mac] = { paired: f[1] === "y", connected: f[2] === "y", trusted: f[3] === "y",
-                     name: (f[4] || "").trim() };
+                     battery: (f[4] || "").trim() !== "" ? parseInt(f[4]) : -1,
+                     name: (f[5] || "").trim() };
         });
         root._status = s;
         _rebuild();
@@ -169,6 +175,7 @@ Singleton {
         paired: !!st.paired,
         connected: !!st.connected,
         trusted: !!st.trusted,
+        battery: (st.battery === undefined) ? -1 : st.battery,
       });
     }
     list.sort((a, b) => (b.connected - a.connected) || (b.paired - a.paired)

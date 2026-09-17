@@ -32,6 +32,12 @@ PanelWindow {
 
   property HyprlandMonitor monitor: Hyprland.monitorFor(screen);
   readonly property bool isFocusedScreen: !!panel.monitor && panel.monitor.focused;
+
+  // Keep CaffeineService (its systemd-inhibit process) and
+  // PlatformProfileService (its AC<->battery auto-switching) alive from the
+  // always-instantiated bar, not just while the power panel is open.
+  readonly property bool _caffeine: Services.CaffeineService.active;
+  readonly property string _powerProfile: Services.PlatformProfileService.profile;
   readonly property bool screenFullscreen: monitor && monitor.activeWorkspace ? monitor.activeWorkspace.hasFullscreen : false;
   visible: !screenFullscreen;
 
@@ -72,9 +78,11 @@ PanelWindow {
   // to whatever's actually there, same as if the panel weren't open.
   HyprlandFocusGrab {
     windows: [panel];
-    // The launcher opens with no click inside the panel, so an immediately-
-    // active grab fires `cleared` at once. Hold off until it's settled;
-    // `launcherGrabReady` is armed 350ms after it opens.
+    // A click on a pill is what normally starts a panel grab; the launcher
+    // opens from a keybind with the pointer elsewhere, so an immediately-live
+    // grab reads that as "clicked outside" and fires `cleared` at once. Wait
+    // until the launcher is interacted with (pointer enters the panel) or a
+    // short grace period passes — `launcherGrabReady`.
     active: panel.anyPanelOpen && (!Services.LauncherService.open || panel.launcherGrabReady);
     onCleared: {
       centerWidget.panelOpen = false;
@@ -87,7 +95,7 @@ PanelWindow {
   // this screen's centre notch onto the launcher page — but only on the
   // focused monitor. Any close route runs back through launcherDismissed.
   property bool launcherGrabReady: false;
-  Timer { id: launcherGrabArm; interval: 350; onTriggered: panel.launcherGrabReady = true; }
+  Timer { id: launcherGrabArm; interval: 600; onTriggered: panel.launcherGrabReady = true; }
 
   Connections {
     target: Services.LauncherService;
@@ -272,6 +280,12 @@ PanelWindow {
       top: parent.top;
       topMargin: 0;
       horizontalCenter: parent.horizontalCenter;
+    }
+
+    // Arm the click-outside grab the moment the pointer reaches the open
+    // launcher (the timer is just the never-touched-the-mouse fallback).
+    HoverHandler {
+      onHoveredChanged: if (hovered && Services.LauncherService.open) panel.launcherGrabReady = true;
     }
 
     Widgets.Clock { id: clockContent; }

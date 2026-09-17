@@ -26,9 +26,25 @@ in
 
     home.packages = with pkgs; [
       hyprtoolkit
-      hyprlauncher
       lightsCtl
+      cliphist        # clipboard history — ClipboardService + the launcher's clipboard page
+      wl-clipboard    # wl-paste --watch feeds cliphist; wl-copy re-copies a pick
     ];
+
+    # Clipboard history daemon: cliphist stores every wl-clipboard change; the
+    # launcher's clipboard page reads/decodes/re-copies from it.
+    systemd.user.services.cliphist = {
+      Unit = {
+        Description = "clipboard history (cliphist)";
+        PartOf = [ "graphical-session.target" ];
+        After = [ "graphical-session.target" ];
+      };
+      Install.WantedBy = [ "graphical-session.target" ];
+      Service = {
+        ExecStart = "${pkgs.wl-clipboard}/bin/wl-paste --type text --watch ${pkgs.cliphist}/bin/cliphist store";
+        Restart = "on-failure";
+      };
+    };
 
     catppuccin = mkForce {
       enable = true;

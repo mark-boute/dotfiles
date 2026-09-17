@@ -24,9 +24,10 @@ Singleton {
 
   property bool open: false;
   property string query: "";
-  property string section: "apps";   // "apps" | "docs"
+  property string section: "apps";   // "apps" | "docs" | "clip"
   property int appSel: 0;
   property int docSel: 0;
+  property int clipSel: 0;
 
   // Non-empty while the open-with overlay is up: the path being opened.
   property string openWithPath: "";
@@ -52,6 +53,18 @@ Singleton {
       root.toggle();
     }
   }
+  GlobalShortcut {
+    appid: "quickshell";
+    name: "clipboard";
+    onPressed: {
+      var now = Date.now();
+      if (now - root._lastTrigger < 250)
+        return;
+      root._lastTrigger = now;
+      if (root.open && root.section === "clip") root.hide();
+      else root.showClipboard();
+    }
+  }
 
   // --- open/close -----------------------------------------------------
 
@@ -61,11 +74,17 @@ Singleton {
     root.section = "apps";
     root.appSel = 0;
     root.docSel = 0;
+    root.clipSel = 0;
     root.openWithPath = "";
     root.openWithSel = 0;
     root.browseDir = "";
     root.open = true;
     root._runDocs();
+  }
+  function showClipboard() {
+    show();
+    root.section = "clip";
+    ClipboardService.refresh();
   }
   function hide() { root.open = false; }
 
@@ -113,6 +132,9 @@ Singleton {
     } else if (root.section === "apps") {
       var a = root.apps.length;
       if (a > 0) root.appSel = (root.appSel + delta + a) % a;
+    } else if (root.section === "clip") {
+      var c = root.clip.length;
+      if (c > 0) root.clipSel = (root.clipSel + delta + c) % c;
     } else {
       var d = root.docs.length;
       if (d > 0) root.docSel = (root.docSel + delta + d) % d;
@@ -121,8 +143,19 @@ Singleton {
 
   function switchSection() {
     if (root.openWithPath !== "") return;
-    root.section = (root.section === "apps") ? "docs" : "apps";
+    root.section = root.section === "apps" ? "docs"
+      : root.section === "docs" ? "clip" : "apps";
+    if (root.section === "clip") ClipboardService.refresh();
   }
+
+  // Clipboard entries filtered by the query.
+  readonly property var clip: {
+    var q = root.query.trim().toLowerCase();
+    var all = ClipboardService.entries;
+    if (q === "") return all;
+    return all.filter(function (e) { return e.preview.toLowerCase().indexOf(q) >= 0; });
+  }
+  onClipChanged: if (root.clipSel >= clip.length) root.clipSel = 0;
 
   // shift: Shift+Enter — on a folder, force the open-with list instead of
   // browsing into it.
@@ -139,6 +172,11 @@ Singleton {
     if (root.section === "apps") {
       var e = root.apps[root.appSel];
       if (e) { root._bump(e.id); e.execute(); root.hide(); }
+      return;
+    }
+    if (root.section === "clip") {
+      var c = root.clip[root.clipSel];
+      if (c) { ClipboardService.copy(c.raw); root.hide(); }
       return;
     }
     var doc = root.docs[root.docSel];

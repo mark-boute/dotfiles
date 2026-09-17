@@ -18,6 +18,11 @@ Item {
 
   readonly property int contentWidth: 280;
 
+  // Pushed by CenterWidget — true while this panel is actually open/closing.
+  // Gates the power-draw sampler so it isn't spawning a probe every few
+  // seconds (and, when the dGPU is briefly awake, poking nvidia) 24/7.
+  property bool panelActive: false;
+
   // Which device dropdown is open under the Wi-Fi / Bluetooth tiles ("wifi",
   // "bt", or ""). Opening one triggers that service's scan.
   property string openSection: "";
@@ -61,25 +66,32 @@ Item {
     return CurrentTheme.success;
   }
 
-  // Poweroff / restart / logout (via hyprshutdown, which shows its own
-  // confirmation overlay before --post-cmd — same invocations as the keybinds
-  // in hypr/keybinds.lua) and lock (straight to the quickshell:Lock global,
-  // no confirmation).
+  // Poweroff / restart / logout / lock. The first three confirm inline
+  // (pendingSession -> the confirm bar under the row); lock fires straight
+  // away. Raw commands rather than hyprshutdown — its own fullscreen confirm
+  // overlay would just double up with ours, and its --post-cmd wrapping was
+  // what stopped logout working.
+  readonly property var sessionModel: [
+    { glyph: 0xf0425, danger: true,  confirm: "Power off?", cmd: "systemctl poweroff" },
+    { glyph: 0xf0709, danger: false, confirm: "Restart?",   cmd: "systemctl reboot" },
+    { glyph: 0xf0343, danger: false, confirm: "Log out?",   cmd: "hyprctl dispatch 'hl.dsp.exit()'" },
+    { glyph: 0xf033e, danger: false, confirm: "",            cmd: "hyprctl dispatch 'hl.dsp.global(\"quickshell:Lock\")'" },
+  ];
+  property int pendingSession: -1; // index into sessionModel awaiting confirm, -1 = none
+
   Process { id: sessionProc; }
   function sessionAction(cmd) {
     sessionProc.command = ["sh", "-c", cmd];
     sessionProc.running = true;
   }
 
-  // Power-draw history for the graph below, last 5 minutes. Sampled
-  // continuously (Timer.running: true, not tied to the panel's own
-  // visibility) — this Loader's item is created once and never destroyed
-  // as the panel opens/closes (see CenterWidget's panelLoader: `active`
-  // only depends on panelContent being non-null, which it always is), so
-  // sampling in the background means the graph already has real history
-  // to show the moment the panel opens, instead of starting empty.
+  // Power-draw history for the graph below, last 5 minutes. Only sampled
+  // while the panel is open (panelActive) — background sampling every few
+  // seconds forever was measurably costing idle power (each probe reads
+  // dGPU state and, when it's briefly awake, runs nvidia-smi, which keeps
+  // the card out of D3cold). The graph now fills from empty on open.
   readonly property int historyWindowMs: 5 * 60 * 1000;
-  readonly property int sampleIntervalMs: 2000;
+  readonly property int sampleIntervalMs: 4000;
   property var history: []; // [{t, cpu, gpu}], oldest first
 
   // Average *total* draw (cpu+gpu per sample, then averaged) — not the
@@ -106,8 +118,9 @@ Item {
   Process {
     id: gpuPowerProc;
     command: ["sh", "-c",
-      "s=$(cat /sys/bus/pci/devices/0000:01:00.0/power_state 2>/dev/null); " +
-      "[ \"$s\" = D3cold ] && { echo asleep; exit; }; " +
+      // runtime_status, not power_state — reading power_state resumes the card.
+      "s=$(cat /sys/bus/pci/devices/0000:01:00.0/power/runtime_status 2>/dev/null); " +
+      "[ \"$s\" = suspended ] && { echo asleep; exit; }; " +
       "ls -l /proc/[0-9]*/fd 2>/dev/null | grep -q /dev/nvidia0 " +
       "&& nvidia-smi --query-gpu=power.draw --format=csv,noheader,nounits || echo asleep"];
     stdout: StdioCollector {
@@ -137,10 +150,11 @@ Item {
   Timer {
     interval: panel.sampleIntervalMs;
     repeat: true;
-    running: true;
+    running: panel.panelActive;
     triggeredOnStart: true;
     onTriggered: gpuPowerProc.running = true;
   }
+  onPanelActiveChanged: if (!panelActive) { panel.history = []; panel.pendingSession = -1; }
 
   // The actual painted panel surface — kept separate from panel above so
   // its layer (shadow) texture bounds stay fixed at exactly this
@@ -213,27 +227,174 @@ Item {
           }
         }
 
+        // --- Power profile ---
+        RowLayout {
+          Layout.preferredWidth: panel.contentWidth;
+          spacing: 4;
+          visible: Services.PlatformProfileService.available;
+
+          Repeater {
+            model: [
+              { key: "low-power",   glyph: 0xf032a, label: "Save" },
+              { key: "balanced",    glyph: 0xf05d1, label: "Balanced" },
+              { key: "performance", glyph: 0xf0241, label: "Perf" },
+            ];
+            delegate: Rectangle {
+              id: ppSeg;
+              required property var modelData;
+              readonly property bool current: Services.PlatformProfileService.profile === modelData.key;
+              readonly property bool manual: current && !Services.PlatformProfileService.autoMode;
+              Layout.fillWidth: true;
+              Layout.preferredWidth: 1;
+              implicitHeight: 34;
+              radius: 9;
+              color: manual ? CurrentTheme.accent
+                : current ? Qt.rgba(CurrentTheme.accent.r, CurrentTheme.accent.g, CurrentTheme.accent.b, 0.18)
+                : (ppHover.hovered ? CurrentTheme.surfaceHover : CurrentTheme.backgroundGlass);
+              border.width: manual ? 0 : 1;
+              border.color: CurrentTheme.border;
+              Behavior on color { ColorAnimation { duration: 120 } }
+
+              Row {
+                anchors.centerIn: parent;
+                spacing: 5;
+                Text {
+                  anchors.verticalCenter: parent.verticalCenter;
+                  text: String.fromCodePoint(ppSeg.modelData.glyph);
+                  font.family: Theme.iconFontFamily;
+                  font.pixelSize: 14;
+                  color: ppSeg.manual ? CurrentTheme.background : CurrentTheme.text;
+                }
+                Text {
+                  anchors.verticalCenter: parent.verticalCenter;
+                  text: ppSeg.modelData.label;
+                  font.pixelSize: 10; font.weight: Font.DemiBold;
+                  color: ppSeg.manual ? CurrentTheme.background : CurrentTheme.text;
+                }
+              }
+              HoverHandler { id: ppHover; cursorShape: Qt.PointingHandCursor; }
+              TapHandler { onTapped: Services.PlatformProfileService.set(ppSeg.modelData.key); }
+            }
+          }
+
+          Rectangle {
+            id: ppAuto;
+            implicitWidth: 34; implicitHeight: 34;
+            radius: 9;
+            readonly property bool on: Services.PlatformProfileService.autoMode;
+            color: on ? CurrentTheme.accent
+              : (ppAutoHover.hovered ? CurrentTheme.surfaceHover : CurrentTheme.backgroundGlass);
+            border.width: on ? 0 : 1;
+            border.color: CurrentTheme.border;
+            Behavior on color { ColorAnimation { duration: 120 } }
+            Text {
+              anchors.centerIn: parent;
+              text: "A";
+              font.pixelSize: 12; font.weight: Font.Bold;
+              color: ppAuto.on ? CurrentTheme.background : CurrentTheme.text;
+            }
+            HoverHandler { id: ppAutoHover; cursorShape: Qt.PointingHandCursor; }
+            TapHandler {
+              onTapped: Services.PlatformProfileService.autoMode = !Services.PlatformProfileService.autoMode;
+            }
+          }
+        }
+
+        // --- Caffeine toggle + dGPU status ---
+        RowLayout {
+          Layout.preferredWidth: panel.contentWidth;
+          spacing: Theme.defaultSpacing;
+
+          Rectangle {
+            id: cafBtn;
+            Layout.fillWidth: true;
+            Layout.preferredWidth: 1;
+            implicitHeight: 34;
+            radius: 10;
+            readonly property bool on: Services.CaffeineService.active;
+            color: on ? CurrentTheme.accent
+              : (cafHover.hovered ? CurrentTheme.surfaceHover : CurrentTheme.backgroundGlass);
+            border.width: on ? 0 : 1;
+            border.color: CurrentTheme.border;
+            Behavior on color { ColorAnimation { duration: 120 } }
+
+            Row {
+              anchors.centerIn: parent;
+              spacing: 6;
+              Text {
+                anchors.verticalCenter: parent.verticalCenter;
+                text: String.fromCodePoint(0xf0176); // coffee
+                font.family: Theme.iconFontFamily;
+                font.pixelSize: Theme.iconSize;
+                color: cafBtn.on ? CurrentTheme.background : CurrentTheme.text;
+              }
+              Text {
+                anchors.verticalCenter: parent.verticalCenter;
+                text: cafBtn.on ? "Caffeine on" : "Caffeine";
+                color: cafBtn.on ? CurrentTheme.background : CurrentTheme.text;
+                font.pixelSize: 11;
+                font.weight: Font.DemiBold;
+              }
+            }
+            HoverHandler { id: cafHover; cursorShape: Qt.PointingHandCursor; }
+            TapHandler { onTapped: Services.CaffeineService.toggle(); }
+          }
+
+          Rectangle {
+            Layout.fillWidth: true;
+            Layout.preferredWidth: 1;
+            implicitHeight: 34;
+            radius: 10;
+            color: CurrentTheme.backgroundGlass;
+            border.width: 1;
+            border.color: CurrentTheme.border;
+
+            Row {
+              id: gpuRow;
+              anchors.centerIn: parent;
+              spacing: 6;
+              Rectangle {
+                anchors.verticalCenter: parent.verticalCenter;
+                width: 7; height: 7; radius: 3.5;
+                color: Services.GpuService.awake ? CurrentTheme.warning : CurrentTheme.success;
+              }
+              Text {
+                anchors.verticalCenter: parent.verticalCenter;
+                text: "dGPU";
+                color: CurrentTheme.subtext;
+                font.pixelSize: 11;
+              }
+              Text {
+                anchors.verticalCenter: parent.verticalCenter;
+                text: Services.GpuService.awake ? "awake" : "asleep";
+                color: CurrentTheme.text;
+                font.pixelSize: 11;
+                font.weight: Font.DemiBold;
+              }
+            }
+          }
+        }
+
         // --- Session actions ---
         RowLayout {
           Layout.preferredWidth: panel.contentWidth;
           spacing: Theme.defaultSpacing;
 
           Repeater {
-            model: [
-              { glyph: 0xf0425, danger: true,  cmd: "hyprshutdown -t 'Shutting down...' --post-cmd 'shutdown -P 0'" },
-              { glyph: 0xf0709, danger: false, cmd: "hyprshutdown -t 'Restarting...' --post-cmd 'reboot'" },
-              { glyph: 0xf0343, danger: false, cmd: "hyprshutdown -t 'Logging out...' --post-cmd \"hyprctl dispatch 'hl.dsp.exit()'\"" },
-              { glyph: 0xf033e, danger: false, cmd: "hyprctl dispatch 'hl.dsp.global(\"quickshell:Lock\")'" },
-            ];
+            model: panel.sessionModel;
 
             delegate: Rectangle {
               required property var modelData;
+              required property int index;
+              readonly property bool pending: panel.pendingSession === index;
               Layout.fillWidth: true;
               implicitHeight: 40;
               radius: 10;
-              color: sessionHover.hovered ? CurrentTheme.surfaceHover : CurrentTheme.backgroundGlass;
+              color: pending
+                ? Qt.rgba(CurrentTheme.accent.r, CurrentTheme.accent.g, CurrentTheme.accent.b, 0.18)
+                : (sessionHover.hovered ? CurrentTheme.surfaceHover : CurrentTheme.backgroundGlass);
               border.width: 1;
-              border.color: CurrentTheme.border;
+              border.color: pending ? CurrentTheme.accent : CurrentTheme.border;
 
               Behavior on color { ColorAnimation { duration: 100 } }
 
@@ -248,7 +409,81 @@ Item {
               }
 
               HoverHandler { id: sessionHover; cursorShape: Qt.PointingHandCursor; }
-              TapHandler { onTapped: panel.sessionAction(modelData.cmd); }
+              TapHandler {
+                onTapped: {
+                  if (modelData.confirm !== "")
+                    panel.pendingSession = (panel.pendingSession === index ? -1 : index);
+                  else
+                    panel.sessionAction(modelData.cmd);
+                }
+              }
+            }
+          }
+        }
+
+        // Inline confirmation for the destructive session actions — opens
+        // right under the row, Cancel on the left so Confirm is never where
+        // the button you just tapped was.
+        Rectangle {
+          id: sessionConfirm;
+          Layout.preferredWidth: panel.contentWidth;
+          readonly property var act: panel.pendingSession >= 0 ? panel.sessionModel[panel.pendingSession] : null;
+          visible: act !== null;
+          implicitHeight: visible ? 40 : 0;
+          radius: 10;
+          color: CurrentTheme.backgroundGlass;
+          clip: true;
+
+          RowLayout {
+            anchors.fill: parent;
+            anchors.leftMargin: 12;
+            anchors.rightMargin: 6;
+            spacing: 6;
+
+            Text {
+              Layout.fillWidth: true;
+              text: sessionConfirm.act ? sessionConfirm.act.confirm : "";
+              color: CurrentTheme.text;
+              font.pixelSize: 12;
+              font.weight: Font.DemiBold;
+            }
+
+            Rectangle {
+              Layout.preferredWidth: 66;
+              Layout.preferredHeight: 28;
+              radius: 8;
+              color: cancelHover.hovered ? CurrentTheme.surfaceHover : "transparent";
+              border.width: 1;
+              border.color: CurrentTheme.border;
+              Text { anchors.centerIn: parent; text: "Cancel"; color: CurrentTheme.text; font.pixelSize: 11; }
+              HoverHandler { id: cancelHover; cursorShape: Qt.PointingHandCursor; }
+              TapHandler { onTapped: panel.pendingSession = -1; }
+            }
+
+            Rectangle {
+              id: confirmBtn;
+              Layout.preferredWidth: 66;
+              Layout.preferredHeight: 28;
+              radius: 8;
+              readonly property color base: (sessionConfirm.act && sessionConfirm.act.danger)
+                ? CurrentTheme.danger : CurrentTheme.accent;
+              color: confirmHover.hovered ? base : Qt.rgba(base.r, base.g, base.b, 0.18);
+              Behavior on color { ColorAnimation { duration: 100 } }
+              Text {
+                anchors.centerIn: parent;
+                text: "Confirm";
+                color: confirmHover.hovered ? CurrentTheme.background : confirmBtn.base;
+                font.pixelSize: 11;
+                font.weight: Font.DemiBold;
+              }
+              HoverHandler { id: confirmHover; cursorShape: Qt.PointingHandCursor; }
+              TapHandler {
+                onTapped: {
+                  var cmd = sessionConfirm.act.cmd;
+                  panel.pendingSession = -1;
+                  panel.sessionAction(cmd);
+                }
+              }
             }
           }
         }
@@ -463,6 +698,38 @@ Item {
             valueLabel: Services.AudioService.muted ? "Muted" : Math.round(Services.AudioService.volume * 100) + "%";
             fillColor: Services.AudioService.muted ? CurrentTheme.subtext : CurrentTheme.accent;
             onMoved: (fraction) => Services.AudioService.setVolume(fraction);
+          }
+
+          Rectangle {
+            implicitWidth: 30; implicitHeight: 40;
+            radius: 10;
+            readonly property bool open: panel.openSection === "audio";
+            color: open || audioChevHover.hovered ? CurrentTheme.surfaceHover : "transparent";
+            Behavior on color { ColorAnimation { duration: 100 } }
+            Text {
+              anchors.centerIn: parent;
+              text: String.fromCodePoint(parent.open ? 0xf0143 : 0xf0140); // chevron up/down
+              font.family: Theme.iconFontFamily;
+              font.pixelSize: Theme.iconSize;
+              color: CurrentTheme.subtext;
+            }
+            HoverHandler { id: audioChevHover; cursorShape: Qt.PointingHandCursor; }
+            TapHandler { onTapped: panel.openSection = (panel.openSection === "audio" ? "" : "audio"); }
+          }
+        }
+
+        // --- Audio output / per-app dropdown ---
+        Rectangle {
+          Layout.preferredWidth: panel.contentWidth;
+          visible: panel.openSection === "audio";
+          implicitHeight: visible ? audioBody.implicitHeight + 20 : 0;
+          radius: 12;
+          color: CurrentTheme.backgroundGlass;
+          clip: true;
+
+          AudioList {
+            id: audioBody;
+            anchors { left: parent.left; right: parent.right; top: parent.top; margins: 10; }
           }
         }
 

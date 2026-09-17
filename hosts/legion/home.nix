@@ -77,7 +77,6 @@ in {
       # proton
       protonmail-desktop
       proton-vpn
-      protonvpn-gui
       proton-pass
       proton-pass-cli
 

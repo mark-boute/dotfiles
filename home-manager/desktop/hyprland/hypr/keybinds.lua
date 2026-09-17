@@ -196,6 +196,7 @@ M.binds = {
 	{ keys = "SUPER + T", desc = "Open Kitty terminal", action = A.exec_app("kitty") },
 	{ keys = "SUPER + Space", desc = "App launcher", action = A.global("quickshell:launcher") },
 	{ keys = "Super_L", desc = "App launcher (tap SUPER)", action = A.global("quickshell:launcher"), release = true },
+	{ keys = "SUPER + V", desc = "Clipboard history", action = A.global("quickshell:clipboard") },
 	{ keys = "SUPER + W", desc = "Open Browser", action = A.exec_app("zen-beta") },
 	{ keys = "SUPER + E", desc = "Open File Explorer", action = A.exec_app("nautilus") },
     { keys = "SUPER + C", desc = "Open VSCode", action = A.exec_app("code") },
@@ -253,18 +254,14 @@ M.binds = {
     -- System
 	{ keys = "SUPER + ALT + R", desc = "Reload Hyprland", action = A.exec("hyprctl reload") },
 	{ keys = "SUPER + Escape", desc = "Lock screen", action = A.global("quickshell:Lock") },
-	{ keys = "SUPER + SHIFT + Escape", desc = "Log out", action = A.exec("hyprshutdown -t 'Logging out...' --post-cmd \"hyprctl dispatch 'hl.dsp.exit()'\"") },
-    {
-		keys = "SUPER + SHIFT + Delete",
-		desc = "Reboot system",
-		action = A.exec("hyprshutdown -t 'Restarting...' --post-cmd 'reboot'")
-	},
-    {
-		keys = "SUPER + Delete",
-		desc = "Power off system",
-		action = A.exec("hyprshutdown -t 'Shutting down...' --post-cmd 'shutdown -P 0'"),
-		{locked = true}
-	},
+	-- Power off / restart / log out all go through resonate's fullscreen
+	-- confirm (modules/SessionOverlay.qml) — Confirm preselected, Enter
+	-- fires it, and it lists any windows that look like they hold unsaved
+	-- work. Nothing is closed before Confirm. Replaces hyprshutdown, whose
+	-- --post-cmd wrapping had also been eating the logout dispatch.
+	{ keys = "SUPER + SHIFT + Escape", desc = "Log out", action = A.global("quickshell:SessionLogout") },
+	{ keys = "SUPER + SHIFT + Delete", desc = "Reboot system", action = A.global("quickshell:SessionReboot") },
+	{ keys = "SUPER + Delete", desc = "Power off system", action = A.global("quickshell:SessionPoweroff") },
 
 	-- Screenshots
     { keys = "SUPER + SHIFT + S", desc = "Screenshot (region)",  action = A.exec("hyprshot -m region -o ~/Pictures/Screenshots") },

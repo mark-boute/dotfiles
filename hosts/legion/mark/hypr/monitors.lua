@@ -19,6 +19,12 @@ local monitors = {
         position = "2048x-160",
         scale = 1,
     },
+    {
+        output = "desc:Dell Inc. DELL P2425HE 3N3BL34",
+        mode = "1920x1080@100",
+        position = "-100x-1080",
+        scale = 1,
+    },
     { output = "", mode = "preferred", position = "auto", scale = 1, mirror = "desc:California Institute of Technology 0x1637 0x00006000" },
 }
 

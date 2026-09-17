@@ -12,8 +12,31 @@ Singleton {
   id: root;
 
   PwObjectTracker {
-    objects: Pipewire.defaultAudioSink ? [Pipewire.defaultAudioSink] : [];
+    objects: [Pipewire.defaultAudioSink].concat(root.sinks).concat(root.streams)
+      .filter(function (n) { return n; });
   }
+
+  // Output devices and per-app playback streams — for the panel's output
+  // switcher + per-app volume rows.
+  readonly property var sinks: Pipewire.nodes.values.filter(function (n) {
+    return n && n.isSink && !n.isStream && n.audio;
+  });
+  readonly property var streams: Pipewire.nodes.values.filter(function (n) {
+    return n && n.isStream && n.audio
+      && ((n.properties || {})["media.class"] || "") === "Stream/Output/Audio";
+  });
+
+  function setSink(node) { if (node) Pipewire.preferredDefaultAudioSink = node; }
+  function isDefaultSink(node) { return !!node && !!sink && node.id === sink.id; }
+  function nodeLabel(n) {
+    if (!n) return "";
+    return n.description || n.nickname || (n.properties || {})["application.name"]
+      || (n.properties || {})["media.name"] || n.name || "Audio";
+  }
+  function setNodeVolume(n, v) {
+    if (n && n.audio) n.audio.volume = Math.max(0, Math.min(1, v));
+  }
+  function toggleNodeMute(n) { if (n && n.audio) n.audio.muted = !n.audio.muted; }
 
   readonly property var sink: Pipewire.defaultAudioSink;
   readonly property var audio: sink ? sink.audio : null;

@@ -15,6 +15,16 @@ ColumnLayout {
 
   readonly property var notes: Services.NotificationService.trackedNotifications;
   readonly property int count: notes.values.length;
+  readonly property var history: Services.NotificationService.history;
+  property bool showHistory: false;
+
+  function ago(ts) {
+    var s = Math.max(0, (Date.now() - ts) / 1000);
+    if (s < 60) return "now";
+    if (s < 3600) return Math.floor(s / 60) + "m";
+    if (s < 86400) return Math.floor(s / 3600) + "h";
+    return Math.floor(s / 86400) + "d";
+  }
 
   RowLayout {
     Layout.fillWidth: true;
@@ -33,6 +43,14 @@ ColumnLayout {
     }
     Item { Layout.fillWidth: true }
     Text {
+      text: String.fromCodePoint(Services.NotificationService.dnd ? 0xf09a2 : 0xf009a); // bell-off / bell
+      font.family: Theme.iconFontFamily;
+      font.pixelSize: 13;
+      color: Services.NotificationService.dnd ? CurrentTheme.accent : CurrentTheme.subtext;
+      HoverHandler { cursorShape: Qt.PointingHandCursor; }
+      TapHandler { onTapped: Services.NotificationService.toggleDnd(); }
+    }
+    Text {
       visible: root.count > 0;
       text: "Clear all";
       color: CurrentTheme.accent;
@@ -44,7 +62,7 @@ ColumnLayout {
   Text {
     Layout.fillWidth: true;
     Layout.bottomMargin: Theme.defaultSpacing;
-    visible: root.count === 0;
+    visible: root.count === 0 && root.history.length === 0;
     text: "Nothing right now";
     color: CurrentTheme.subtext;
     font.pixelSize: 11;
@@ -134,6 +152,97 @@ ColumnLayout {
           maximumLineCount: 3;
           elide: Text.ElideRight;
         }
+      }
+    }
+  }
+
+  // --- Earlier (persisted history) ---
+  RowLayout {
+    visible: root.history.length > 0;
+    Layout.fillWidth: true;
+    Layout.topMargin: 2;
+    spacing: 6;
+
+    Text {
+      text: "Earlier";
+      color: CurrentTheme.subtext;
+      font.pixelSize: 11; font.weight: Font.DemiBold;
+    }
+    Text {
+      text: root.history.length;
+      color: CurrentTheme.subtext;
+      font.pixelSize: 10;
+    }
+    Item { Layout.fillWidth: true }
+    Text {
+      visible: root.showHistory;
+      text: "Clear";
+      color: CurrentTheme.accent;
+      font.pixelSize: 11; font.weight: Font.DemiBold;
+      TapHandler { onTapped: Services.NotificationService.clearHistory(); }
+    }
+    Text {
+      text: String.fromCodePoint(root.showHistory ? 0xf0143 : 0xf0140); // chevron up/down
+      font.family: Theme.iconFontFamily;
+      font.pixelSize: Theme.iconSize;
+      color: CurrentTheme.subtext;
+    }
+    HoverHandler { cursorShape: Qt.PointingHandCursor; }
+    TapHandler { onTapped: root.showHistory = !root.showHistory; }
+  }
+
+  ListView {
+    visible: root.showHistory && root.history.length > 0;
+    Layout.fillWidth: true;
+    Layout.preferredHeight: visible ? Math.min(contentHeight, 240) : 0;
+    clip: true;
+    interactive: contentHeight > height;
+    spacing: 4;
+    model: root.history;
+
+    delegate: RowLayout {
+      required property var modelData;
+      width: ListView.view ? ListView.view.width : implicitWidth;
+      spacing: 7;
+
+      IconImage {
+        implicitSize: 13;
+        Layout.alignment: Qt.AlignTop;
+        Layout.topMargin: 1;
+        visible: source.toString() !== "";
+        source: {
+          var m = modelData;
+          if (m.image) return m.image;
+          if (!m.icon) return "";
+          return (m.icon.startsWith("/") || m.icon.indexOf("://") !== -1)
+            ? m.icon : Quickshell.iconPath(m.icon, true);
+        }
+      }
+      ColumnLayout {
+        Layout.fillWidth: true;
+        spacing: 0;
+        Text {
+          Layout.fillWidth: true;
+          text: modelData.summary || modelData.app;
+          color: CurrentTheme.subtext;
+          font.pixelSize: 11;
+          elide: Text.ElideRight;
+        }
+        Text {
+          Layout.fillWidth: true;
+          visible: modelData.body !== "";
+          text: modelData.body;
+          color: CurrentTheme.subtext;
+          font.pixelSize: 10;
+          opacity: 0.7;
+          elide: Text.ElideRight;
+        }
+      }
+      Text {
+        text: root.ago(modelData.ts);
+        color: CurrentTheme.subtext;
+        font.pixelSize: 9;
+        Layout.alignment: Qt.AlignTop;
       }
     }
   }

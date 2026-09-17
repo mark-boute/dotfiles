@@ -1,4 +1,4 @@
-{ inputs, ...}:
+{ inputs, pkgs, ...}:
 let 
   hardware-modules = inputs.nixos-hardware.nixosModules;
 in {
@@ -35,6 +35,23 @@ in {
         options snd_hda_intel power_save=1 power_save_controller=Y # Silences the Nvidia Audio link loop
       '';
     };
+
+    # resonate's PlatformProfileService owns the ACPI platform profile
+    # (low-power / balanced / performance — Legion firmware fan/TDP curves).
+    # TLP doesn't set PLATFORM_PROFILE_*, so there's no fight. Open the sysfs
+    # attr to the `users` group so the service writes it without a helper.
+    systemd.tmpfiles.rules = [
+      "z /sys/firmware/acpi/platform_profile 0664 root users - -"
+    ];
+
+    # ACPI S4 (platform) handoff cuts power before the NVMe write cache
+    # commits the hibernation image's final signature block, so every resume
+    # reads a corrupted/missing image (kernel: "PM: Image not found (code
+    # -22)") and either hangs mid-restore or falls through to a cold boot.
+    # Force the kernel-controlled poweroff path instead, which waits for the
+    # write to actually complete before cutting power.
+    systemd.services.systemd-hibernate.serviceConfig.ExecStartPre =
+      "${pkgs.bash}/bin/sh -c 'echo shutdown > /sys/power/disk'";
 
     services = {
       power-profiles-daemon.enable = false;

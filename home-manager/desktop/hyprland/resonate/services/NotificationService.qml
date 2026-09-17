@@ -1,6 +1,7 @@
 pragma Singleton
 
 import Quickshell
+import Quickshell.Io
 import Quickshell.Services.Notifications
 import QtQuick
 
@@ -24,6 +25,54 @@ Singleton {
   // spotlight open indefinitely while you're actually looking at it, same
   // as cappuccino's NotificationOverlay pausing its dismiss timer on hover.
   property bool spotlightHeld: false;
+
+  // Do-not-disturb: still recorded to history, just no spotlight/toast.
+  property bool dnd: false;
+  function toggleDnd() { root.dnd = !root.dnd; }
+
+  // Persisted archive of everything that came through (newest first, capped).
+  property var history: [];
+  function clearHistory() { root.history = []; _saveState(); }
+
+  property bool _stateReady: false;
+
+  FileView {
+    id: stateStore;
+    path: (Quickshell.env("HOME") || "") + "/.config/resonate/notification-history.json";
+    printErrors: false;
+    onLoaded: {
+      root.dnd = stateAdapter.dnd;
+      root.history = stateAdapter.items || [];
+      root._stateReady = true;
+    }
+    onLoadFailed: root._stateReady = true;
+    JsonAdapter {
+      id: stateAdapter;
+      property bool dnd: false;
+      property var items: [];
+    }
+  }
+  function _saveState() {
+    if (!root._stateReady) return;
+    stateAdapter.dnd = root.dnd;
+    stateAdapter.items = root.history;
+    stateStore.writeAdapter();
+  }
+  onDndChanged: _saveState();
+  Component.onCompleted: stateStore.reload();
+
+  function _record(n) {
+    var entry = {
+      app: n.appName || "",
+      summary: n.summary || "",
+      body: n.body || "",
+      icon: n.appIcon || "",
+      image: String(n.image || ""),
+      ts: Date.now(),
+    };
+    root.history = [entry].concat(root.history).slice(0, 120);
+    root._saveState();
+  }
 
   function dismiss(notification) {
     notification.dismiss();
@@ -89,7 +138,9 @@ Singleton {
 
     onNotification: n => {
       n.tracked = true;
-      root.latestNotification = n;
+      root._record(n);
+      if (!root.dnd)
+        root.latestNotification = n;
 
       // dropped is on the Retainable attached property, not n directly.
       n.Retainable.dropped.connect(() => {

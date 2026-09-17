@@ -104,13 +104,15 @@ Singleton {
     }
   }
 
-  // 25s continuous background poll drives `reachable` (and thus the drawer
-  // tile) even when the app isn't open; 5s while it is, for responsive live
-  // status (e.g. a bulb toggled by voice through Google Home). Paused while
-  // `_busy` (dragging, or a write pending/in-flight) so a landing poll can't
-  // fight an optimistic value; `_busy` going false triggers a reconcile poll.
+  // 90s background poll just keeps `reachable` (the drawer tile) roughly
+  // current; 5s while the app is open, for responsive live status (e.g. a
+  // bulb toggled by voice). Each poll spawns python+tinytuya and opens TCP
+  // to every bulb, so a tight background interval is real idle power for
+  // little benefit. Paused while `_busy` (dragging / a write pending) so a
+  // landing poll can't fight an optimistic value; `_busy` clearing
+  // triggers a reconcile poll.
   Timer {
-    interval: root.appActive ? 5000 : 25000;
+    interval: root.appActive ? 5000 : 90000;
     running: root.configured && !root._busy;
     repeat: true; triggeredOnStart: true;
     onTriggered: root.poll();
