@@ -7,7 +7,7 @@ in
     map (name: {
       name = "hypr/${name}";
       value.source = config.lib.file.mkOutOfStoreSymlink "${hyprDir}/${name}";
-    }) 
-    (builtins.attrNames (builtins.readDir ./hypr))
+    })
+    (builtins.filter (name: name != "default.nix") (builtins.attrNames (builtins.readDir ./.)))
   );
 }

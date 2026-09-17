@@ -12,10 +12,7 @@ in {
   imports = [
     ../../home-manager
 
-    ./mark/git.nix
-    ./mark/vscode.nix
-    ./mark/hypr-extra-config.nix
-    ./mark/catppuccin.nix
+    ./mark
   ];
   gtk.gtk4.theme = config.gtk.theme;
 
@@ -114,6 +111,7 @@ in {
     NIXOS_OZONE_WL = "1";
     ELECTRON_OZONE_PLATFORM_HINT = "wayland";
     # QT_QPA_PLATFORMTHEME is set by the qt module (qt.platformTheme.name).
+    JAVA_HOME = "${pkgs.jdk21}/lib/openjdk";
   };
 
   programs.home-manager.enable = true; # Let Home Manager install and manage itself.

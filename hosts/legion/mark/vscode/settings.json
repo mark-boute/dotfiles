@@ -1,0 +1,57 @@
+{
+  "[typst]": {
+    "editor.formatOnSave": true
+  },
+  "catppuccin.accentColor": "rosewater",
+  "editor.cursorBlinking": "smooth",
+  "editor.fontFamily": "JetBrainsMono NF",
+  "editor.fontLigatures": true,
+  "editor.fontSize": 14,
+  "editor.minimap.autohide": "mouseover",
+  "editor.minimap.maxColumn": 50,
+  "editor.minimap.renderCharacters": false,
+  "editor.minimap.scale": 2,
+  "editor.semanticHighlighting.enabled": true,
+  "git.autofetch": true,
+  "github.copilot.enable": {
+    "*": true
+  },
+  "hediet.vscode-drawio.appearance": "automatic",
+  "latex-workshop.latex.outDir": "%DIR%/out",
+  "latex-workshop.view.pdf.color.dark.backgroundColor": "#1e2030",
+  "latex-workshop.view.pdf.color.dark.pageBorderColor": "#181926",
+  "latex-workshop.view.pdf.color.dark.pageColorsBackground": "#24273a",
+  "latex-workshop.view.pdf.color.dark.pageColorsForeground": "#cad3f5",
+  "latex-workshop.view.pdf.zoom": "page-width",
+  "markdown-preview-enhanced.codeBlockTheme": "atom-material.css",
+  "markdown-preview-enhanced.previewTheme": "none.css",
+  "nix.enableLanguageServer": true,
+  "nix.formatterPath": "nixfmt",
+  "nix.serverPath": "nixd",
+  "nix.serverSettings": {
+    "nixd.formatting.command": [
+      "nixfmt"
+    ],
+    "options": {
+      "home-manager.expr": "(builtins.getFlake \"/home/mark/dotfiles/flake.nix\").homeConfigurations.mark.options",
+      "nixos.expr": "(builtins.getFlake \"/home/mark/dotfiles/flake.nix\").nixosConfigurations.legion.options"
+    }
+  },
+  "qt-qml.qmlls.useQmlImportPathEnvVar": true,
+  "tinymist.exportPdf": "onType",
+  "tinymist.formatterMode": "typstfmt",
+  "tinymist.lint.enabled": true,
+  "tinymist.preview.background.enabled": true,
+  "window.menuBarVisibility": "visible",
+  "window.titleBarStyle": "custom",
+  "workbench.colorTheme": "Catppuccin Macchiato",
+  "workbench.editorAssociations": {
+    "*.copilotmd": "vscode.markdown.preview.editor",
+    "{git,gitlens,chat-editing-snapshot-text-model,copilot,git-graph,git-graph-3}:/**/*.qrc": "default",
+    "*.pdf": "latex-workshop-pdf-hook",
+    "*.qrc": "qt-core.qrcEditor"
+  },
+  "workbench.iconTheme": "catppuccin-macchiato",
+  "workbench.secondarySideBar.defaultVisibility": "hidden",
+  "qt-core.showWelcomePageOnActivation": false
+}
