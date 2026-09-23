@@ -14,6 +14,11 @@ in {
 
   config = {
 
+    # Load amdgpu in the initrd so the iGPU always gets the first render node
+    # (renderD128); in stage 2 nvidia-drm can win the race, and apps that open
+    # renderD128 by default then lose VA-API decode (radeonsi on nvidia fails).
+    hardware.amdgpu.initrd.enable = true;
+
     # boot.extraModulePackages = with config.boot.kernelPackages; [
     #   rtw89
     # ];
@@ -21,17 +26,17 @@ in {
     boot = {
       kernelParams = [ 
         "amd_pstate=active"
-        "nvidia-drm.modeset=1"
-        "nvidia-drm.fbdev=1"
         "acpi_osi=Linux"
         # firmware spams wake events (GPE 0x10) at the dGPU root port,
         # yanking it out of D3cold every ~18s; mask until a BIOS fix
         "acpi_mask_gpe=0x10"
-        "amdgpu.abmlevel=3" # panel adaptive backlight, ~0.5-1.5W
+        # panel adaptive backlight (saved ~0.5-1.5W) was silently dimming the
+        # panel well past the requested brightness on dark (Catppuccin)
+        # content — disabled 2026-09-23 so the slider means what it says.
+        "amdgpu.abmlevel=0"
       ];
 
       extraModprobeConfig = ''
-        options nvidia "NVreg_DynamicPowerManagement=0x02"
         options snd_hda_intel power_save=1 power_save_controller=Y # Silences the Nvidia Audio link loop
       '';
     };

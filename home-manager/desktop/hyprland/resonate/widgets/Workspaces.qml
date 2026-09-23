@@ -1,7 +1,6 @@
 import Quickshell
 import Quickshell.Hyprland
 import QtQuick
-import QtQuick.Effects
 
 import qs
 
@@ -19,8 +18,8 @@ import qs
   > New workspaces sweep in (width + opacity animation).
 
   A chevron handle at the far left opens the workspaces panel
-  (WorkspacesPanel.qml) — wired up in Bar.qml via CenterWidget, same as the
-  clock/power panels. This widget exposes the CenterWidget size contract
+  (WorkspacesPanel.qml) — wired up in Bar.qml via ResizeBox, same as the
+  clock/power panels. This widget exposes the ResizeBox size contract
   (collapsedSize/collapsedWidth/expanded/…) for that; it has no hover-expand
   state of its own, so the "expanded" sizes just equal the collapsed ones.
 
@@ -38,62 +37,26 @@ Item {
 
   height: Theme.barHeight;
 
-  // --- CenterWidget size contract -------------------------------------
+  // --- ResizeBox size contract -------------------------------------
   readonly property int collapsedSize: Theme.barHeight;
   readonly property int collapsedWidth: implicitWidth;
   readonly property bool expanded: false;
   readonly property int expandedWidth: implicitWidth;
   readonly property int expandedHeight: collapsedSize;
 
-  // A "notch" hanging from the bar's connecting strip (Bar.qml) — no
-  // border (would draw a seam right where this meets the strip). The
-  // smooth outward-curving transition into the strip itself is drawn by
-  // rightFillet below, a child of this Item (not placed externally
-  // by Bar.qml) so it tracks this island's own size/position with zero
-  // animation lag — not by the surface Rectangle's own corners. Only on the
-  // right: this is the leftmost island, flush with the strip's own left
-  // edge, so there's no seam to smooth on the left.
-  NotchFillet {
-    id: rightFillet;
-    mirrored: true;
-    x: workspacesWidget.width;
-    y: Theme.barConnectorHeight;
-  }
-
   readonly property real chevronWidth: workspacesWidget.dotSize + 4;
   implicitWidth: chevronWidth + dots.implicitWidth + Theme.defaultSpacing * 2;
 
   readonly property real dotSize: Theme.barHeight - Theme.defaultSpacing * 2;
 
-  // The actual painted notch surface — kept separate from workspacesWidget
-  // above so its layer (shadow) texture bounds stay fixed at exactly this
-  // Rectangle's own size, never needing to grow for the fillet above.
-  Rectangle {
-    id: workspacesSurface;
+  // Just the content now — the painted surface (fill + shadow + the outward
+  // curve into the connecting strip) is BarSurface, one shared shape drawn
+  // once for the whole bar in Bar.qml.
+  Item {
     anchors.fill: parent;
 
-    // Square top corners (the outward curve into the connecting strip is
-    // drawn entirely by NotchFillet at the seam, not by rounding here) via
-    // per-corner radius, not a same-color Rectangle painted over the top of
-    // this one to flatten it — that approach stacked two translucent layers
-    // of CurrentTheme.surface in the top band, compositing visibly darker
-    // there than the single-layer rest of the pill (confirmed live: a sharp
-    // horizontal color seam right at the patch's own edge).
-    radius: Math.min(16, height / 2);
-    topLeftRadius: 0;
-    topRightRadius: 0;
-    color: CurrentTheme.surface;
-
-    layer.enabled: true;
-    layer.effect: MultiEffect {
-      shadowEnabled: true;
-      shadowColor: Theme.shadowColor;
-      shadowBlur: Theme.shadowBlur;
-      shadowVerticalOffset: Theme.shadowVerticalOffset;
-    }
-
     // Panel handle — a downward chevron at the far left. Tapping it asks
-    // Bar.qml (via CenterWidget) to open the workspaces panel.
+    // Bar.qml (via ResizeBox) to open the workspaces panel.
     Item {
       id: chevronHandle;
       width: workspacesWidget.chevronWidth;

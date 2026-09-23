@@ -70,6 +70,7 @@ Singleton {
 
   function toggle() { root.open ? hide() : show(); }
   function show() {
+    if (AssistantService.open) AssistantService.hide();
     root.query = "";
     root.section = "apps";
     root.appSel = 0;
@@ -163,15 +164,19 @@ Singleton {
     if (root.openWithPath !== "") {
       var pick = root.openWithApps[root.openWithSel];
       if (pick && pick.isDefault)
-        Quickshell.execDetached(["xdg-open", root.openWithPath]);
+        Quickshell.execDetached(PlatformProfileService.launchCommand(["xdg-open", root.openWithPath]));
       else if (pick && pick.entry)
-        Quickshell.execDetached(["gtk-launch", pick.entry.id, root.openWithPath]);
+        Quickshell.execDetached(PlatformProfileService.launchCommand(["gtk-launch", pick.entry.id, root.openWithPath]));
       root.hide();
       return;
     }
     if (root.section === "apps") {
       var e = root.apps[root.appSel];
-      if (e) { root._bump(e.id); e.execute(); root.hide(); }
+      if (e) {
+        root._bump(e.id);
+        Quickshell.execDetached(PlatformProfileService.launchCommand(e.command, e.workingDirectory));
+        root.hide();
+      }
       return;
     }
     if (root.section === "clip") {

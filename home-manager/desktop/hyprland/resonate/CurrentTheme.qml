@@ -33,6 +33,22 @@ Singleton {
   readonly property color warning:      Theme.palette.peach;
   readonly property color danger:       Theme.palette.red;
 
+  // Battery level (0..1) → a color, shared by the bar's percentage and the
+  // power panel's battery bar: green from 75% up, red below 15%, blended
+  // continuously through peach and yellow in between.
+  function batteryColor(fraction) {
+    var stops = [[0.15, danger], [0.3, warning], [0.45, Theme.palette.yellow], [0.75, success]];
+    if (fraction <= stops[0][0]) return stops[0][1];
+    for (var i = 1; i < stops.length; i++) {
+      if (fraction <= stops[i][0]) {
+        var a = stops[i - 1][1], b = stops[i][1];
+        var f = (fraction - stops[i - 1][0]) / (stops[i][0] - stops[i - 1][0]);
+        return Qt.rgba(a.r + (b.r - a.r) * f, a.g + (b.g - a.g) * f, a.b + (b.b - a.b) * f, 1);
+      }
+    }
+    return stops[stops.length - 1][1];
+  }
+
   // A green-washed row background for finished/checked items — mirrors the
   // website's `--caught-bg: color-mix(in srgb, green 18%, base)`. Frosted to
   // match backgroundGlass.

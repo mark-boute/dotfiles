@@ -80,23 +80,21 @@ Singleton {
   // strip's height — about 2/5 of an island's own idle height.
   readonly property int barConnectorHeight: Math.round(barHeight / 4);
 
-  // Radius of the concave fillet smoothing each seam between a notch and
-  // the connecting strip (NotchFillet.qml) — also read by Bar.qml so the
-  // strip's own gap segments know to stop this far short of each island,
-  // rather than reaching all the way to it and drawing underneath the
-  // fillet (CurrentTheme.surface is translucent, so two overlapping
-  // layers of it composite visibly darker than either alone).
-  readonly property int notchFilletRadius: Math.min(16, barHeight / 2);
+  // Radius of the concave nodge smoothing each seam between a slot and the
+  // connecting strip — one segment of Bar.qml's single BarSurface path
+  // (barOutline()), not a separate item.
+  readonly property int nodgeRadius: Math.min(16, barHeight / 2);
 
   readonly property int defaultMargin: 14;
   readonly property int defaultSpacing: 8;
 
-  // Popout panels (ControlPanel/PowerPanel) cap their content to this
-  // height and scroll past it, rather than growing the layer-shell
-  // window arbitrarily tall — a panel taller than the screen would
-  // otherwise just get clipped at the screen edge with no way to reach
-  // whatever's below.
-  readonly property int maxPanelContentHeight: 640;
+  // Tallest an open panel may get, margins included; past it the body
+  // scrolls. The bar window is sized from this plus panelShadowRoom, so a
+  // full panel still shows its bottom margin, rounded corners and shadow
+  // instead of being cut off at the window edge.
+  readonly property int maxPanelHeight: 668;
+  readonly property int maxPanelContentHeight: maxPanelHeight - defaultMargin * 2;
+  readonly property int panelShadowRoom: 16;
 
   // Drop shadow shared by every bar pill and panel, via layer.effect +
   // MultiEffect on each one's own root Rectangle — gives the frosted-glass

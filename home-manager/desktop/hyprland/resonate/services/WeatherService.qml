@@ -13,8 +13,12 @@ Singleton {
   property real temp: NaN;
   property int code: -1;
   property bool isDay: true;
-  property var hourly: [];   // [{ hour, temp, glyph }]  next ~12h
-  property var daily: [];    // [{ label, min, max, glyph }]  next 3 days
+  property var hourly: [];   // [{ hour, temp, glyph, wind, windDir }]  next ~12h
+  property var daily: [];    // [{ label, min, max, glyph, wind, gust, windDir }]  next 3 days
+  // km/h; direction is where the wind comes FROM, in degrees (meteorological).
+  property real wind: NaN;
+  property real gust: NaN;
+  property real windDir: 0;
 
   readonly property bool ready: !isNaN(temp);
   readonly property string glyph: _glyph(code, isDay);
@@ -58,15 +62,20 @@ Singleton {
         root.temp = cur.temperature_2m;
         root.code = cur.weather_code;
         root.isDay = cur.is_day === 1;
+        root.wind = cur.wind_speed_10m;
+        root.gust = cur.wind_gusts_10m;
+        root.windDir = cur.wind_direction_10m;
 
         var ht = d.hourly.time, hT = d.hourly.temperature_2m, hC = d.hourly.weather_code;
+        var hW = d.hourly.wind_speed_10m, hD = d.hourly.wind_direction_10m;
         var now = new Date(), start = 0;
         for (var i = 0; i < ht.length; i++) {
           if (new Date(ht[i]) >= now) { start = Math.max(0, i - 1); break; }
         }
         var hs = [];
         for (var j = start; j < Math.min(ht.length, start + 12); j++)
-          hs.push({ hour: ht[j].slice(11, 16), temp: Math.round(hT[j]), glyph: root._glyph(hC[j], true) });
+          hs.push({ hour: ht[j].slice(11, 16), temp: Math.round(hT[j]), glyph: root._glyph(hC[j], true),
+                    wind: Math.round(hW[j]), windDir: hD[j] });
         root.hourly = hs;
 
         var ds = [];
@@ -76,6 +85,9 @@ Singleton {
             min: Math.round(d.daily.temperature_2m_min[k]),
             max: Math.round(d.daily.temperature_2m_max[k]),
             glyph: root._glyph(d.daily.weather_code[k], true),
+            wind: Math.round(d.daily.wind_speed_10m_max[k]),
+            gust: Math.round(d.daily.wind_gusts_10m_max[k]),
+            windDir: d.daily.wind_direction_10m_dominant[k],
           });
         root.daily = ds;
       } catch (e) {
@@ -87,9 +99,9 @@ Singleton {
   function refresh() {
     var url = "https://api.open-meteo.com/v1/forecast"
       + "?latitude=" + SunService.latitude + "&longitude=" + SunService.longitude
-      + "&current=temperature_2m,weather_code,is_day"
-      + "&hourly=temperature_2m,weather_code"
-      + "&daily=weather_code,temperature_2m_max,temperature_2m_min"
+      + "&current=temperature_2m,weather_code,is_day,wind_speed_10m,wind_direction_10m,wind_gusts_10m"
+      + "&hourly=temperature_2m,weather_code,wind_speed_10m,wind_direction_10m"
+      + "&daily=weather_code,temperature_2m_max,temperature_2m_min,wind_speed_10m_max,wind_gusts_10m_max,wind_direction_10m_dominant"
       + "&timezone=auto&forecast_days=3";
     proc.command = ["curl", "-s", "--max-time", "8", url];
     proc.running = true;

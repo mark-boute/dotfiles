@@ -1,5 +1,4 @@
 import QtQuick
-import QtQuick.Effects
 import Quickshell
 import Quickshell.Widgets
 
@@ -7,7 +6,7 @@ import qs
 import qs.services as Services
 
 // Collapsed: a small pill showing just "HH:MM" — collapsedSize is the bar's
-// true height (read by CenterWidget/Bar.qml for the exclusiveZone).
+// true height (read by ResizeBox/Bar.qml for the exclusiveZone).
 //
 // "Big" (expanded) state shows one of three things, in priority order:
 //   1. notification — a fresh notification just arrived (see
@@ -18,9 +17,9 @@ import qs.services as Services
 //   3. date — hovering, nothing more interesting going on; weekday + date.
 //
 // This only concerns itself with its own idle/big visuals; sizing them into
-// an actual window and handling clicks (-> command center) is
-// CenterWidget's job, which reads collapsedSize/expandedWidth/expandedHeight
-// /expanded off this item.
+// an actual window and handling clicks (-> command center) is ResizeBox's
+// job, which reads collapsedSize/expandedWidth/expandedHeight/expanded off
+// this item.
 Item {
   id: clock;
 
@@ -34,7 +33,7 @@ Item {
   readonly property int collapsedWidth: collapsedContent.implicitWidth + Theme.defaultMargin * 2;
   readonly property bool expanded: hasNotification || hovered;
 
-  // Read by CenterWidget: while a notification is showing, a tap should
+  // Read by ResizeBox: while a notification is showing, a tap should
   // invoke it (see TapHandler below), not open the command center.
   readonly property bool suppressPanelOpen: hasNotification;
 
@@ -67,70 +66,17 @@ Item {
   // reads as this pill morphing outward in place, not repositioning first.
   anchors { top: parent.top; horizontalCenter: parent.horizontalCenter; }
 
-  // Smooths the concave seams where this island's left/right edges meet
-  // the connecting strip above (see NotchFillet.qml) — children of this
-  // Item, positioned off the surface's own width/height, so both track this
-  // island's Behavior-animated implicitWidth/implicitHeight (hover/
-  // notification expand) in lockstep with zero lag, rather than Bar.qml
-  // computing their position externally from outside this component. Kept
-  // off the shadowed/layered surface Rectangle below so that Rectangle's
-  // layer texture bounds stay fixed at its own size (these fillets render
-  // outside [0, width]).
-  NotchFillet {
-    id: leftFillet;
-    x: -leftFillet.filletRadius;
-    y: Theme.barConnectorHeight;
-  }
-  NotchFillet {
-    id: rightFillet;
-    mirrored: true;
-    x: clock.width;
-    y: Theme.barConnectorHeight;
-  }
-
   implicitWidth: expanded ? expandedWidth : collapsedWidth;
   implicitHeight: expanded ? expandedHeight : collapsedSize;
 
   Behavior on implicitWidth  { NumberAnimation { duration: 180; easing.type: Easing.OutExpo } }
   Behavior on implicitHeight { NumberAnimation { duration: 180; easing.type: Easing.OutExpo } }
 
-  // The actual painted notch surface — kept separate from clock above so
-  // its layer (shadow) texture bounds stay fixed at exactly this
-  // Rectangle's own size, never needing to grow for the fillets above.
-  Rectangle {
-    id: clockSurface;
+  // Just the content now — the painted surface (fill + shadow + the outward
+  // curve into the connecting strip) is BarSurface, one shared shape drawn
+  // once for the whole bar in Bar.qml.
+  Item {
     anchors.fill: parent;
-
-    // Not `expanded ? 16 : height / 2` — that flips instantly the moment
-    // expanded toggles, while height is still mid-Behavior-animation, so
-    // radius ends up chasing a continuously-moving target and lags behind
-    // where height actually is, producing squared-off corners mid-animation
-    // (very visible now that the drop shadow outlines the exact silhouette).
-    // Deriving radius directly from height needs no Behavior of its own —
-    // it's already smooth because height already is.
-    // Bottom-rounded "notch" hanging from the bar's connecting strip
-    // (Bar.qml) — no border (would draw a seam right where this meets the
-    // strip; also drops the old hasNotification accent-border cue, see the
-    // accent dot on notificationContent below instead). Square top corners
-    // via per-corner radius, not a same-color Rectangle painted over the
-    // top to flatten it — that approach stacked two translucent layers of
-    // CurrentTheme.surface in the top band, compositing visibly darker
-    // there than the single-layer rest of the pill (confirmed live: a
-    // sharp horizontal color seam right at the patch's own edge).
-    radius: Math.min(16, height / 2);
-    topLeftRadius: 0;
-    topRightRadius: 0;
-    color: CurrentTheme.surface;
-
-    Behavior on color { ColorAnimation { duration: 180 } }
-
-    layer.enabled: true;
-    layer.effect: MultiEffect {
-      shadowEnabled: true;
-      shadowColor: Theme.shadowColor;
-      shadowBlur: Theme.shadowBlur;
-      shadowVerticalOffset: Theme.shadowVerticalOffset;
-    }
 
     Text {
       id: collapsedContent;
@@ -343,7 +289,7 @@ Item {
     acceptedDevices: PointerDevice.Mouse | PointerDevice.TouchPad;
   }
 
-  // Only live while a notification is showing — CenterWidget's own
+  // Only live while a notification is showing — ResizeBox's own
   // tap-to-open-panel handler checks suppressPanelOpen above and skips
   // itself in that case, so this is the only thing a tap does here.
   // TapHandlers on separate items aren't mutually exclusive (learned the

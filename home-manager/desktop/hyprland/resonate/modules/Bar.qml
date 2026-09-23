@@ -1,4 +1,6 @@
 import QtQuick
+import QtQuick.Shapes
+import QtQuick.Effects
 import Quickshell
 import Quickshell.Wayland
 import Quickshell.Hyprland
@@ -20,19 +22,23 @@ PanelWindow {
   // on this screen has a fullscreen window.
   WlrLayershell.layer: WlrLayer.Overlay;
   WlrLayershell.namespace: "quickshell:resonate:bar";
-  
+
   // OnDemand so a click on a text field in an open panel (the Wi-Fi password
   // input) can take keyboard focus — without it, the layer surface never
   // receives key events. Idle/hover states don't grab focus with this mode.
-  // The launcher needs its search field focused with no click and arrow/tab
-  // keys captured, so it goes Exclusive while open on this screen.
+  // The launcher and the assistant need their text field focused with no
+  // click (and, for the launcher, arrow/tab keys captured), so they go
+  // Exclusive while open on this screen.
   WlrLayershell.keyboardFocus:
-    (Services.LauncherService.open && panel.isFocusedScreen) ? WlrKeyboardFocus.Exclusive
+    (panel.hotkeyAppOpen && panel.isFocusedScreen) ? WlrKeyboardFocus.Exclusive
     : panel.anyPanelOpen ? WlrKeyboardFocus.OnDemand
     : WlrKeyboardFocus.None;
 
   property HyprlandMonitor monitor: Hyprland.monitorFor(screen);
   readonly property bool isFocusedScreen: !!panel.monitor && panel.monitor.focused;
+
+  // A page opened by a global shortcut (SUPER+Space launcher, SUPER+A assistant).
+  readonly property bool hotkeyAppOpen: Services.LauncherService.open || Services.AssistantService.open;
 
   // Keep CaffeineService (its systemd-inhibit process) and
   // PlatformProfileService (its AC<->battery auto-switching) alive from the
@@ -40,22 +46,32 @@ PanelWindow {
   readonly property bool _caffeine: Services.CaffeineService.active;
   readonly property string _powerProfile: Services.PlatformProfileService.profile;
   readonly property bool screenFullscreen: monitor && monitor.activeWorkspace ? monitor.activeWorkspace.hasFullscreen : false;
-  visible: !screenFullscreen;
+
+  // Also hidden behind the poweroff/reboot/logout confirm (SessionOverlay.qml)
+  // — that's a separate PanelWindow on the same WlrLayer.Overlay layer, and
+  // relying on Hyprland's own same-layer stacking order to keep it above the
+  // bar turned out not to be robust once the bar started reserving this
+  // space permanently (see the fixed-height change) rather than only while
+  // something was actually open. Hiding the bar outright sidesteps needing
+  // that stacking order to cooperate at all — same approach already used
+  // for fullscreen content below.
+  readonly property bool sessionOverlayActive: Services.SessionService.pending !== "";
+  visible: !screenFullscreen && !sessionOverlayActive;
 
   // Otherwise a panel left open before going fullscreen would just be
   // sitting there, stale, the moment the bar reappears.
   onScreenFullscreenChanged: if (screenFullscreen) {
-    centerWidget.panelOpen = false;
-    powerWidget.panelOpen = false;
-    workspacesWidget.panelOpen = false;
+    centerSlot.panelOpen = false;
+    powerSlot.panelOpen = false;
+    workspacesSlot.panelOpen = false;
   }
 
   anchors { top: true; left: true; right: true; }
   color: "transparent";
 
-  property alias panelOpen: centerWidget.panelOpen;
-  property alias powerPanelOpen: powerWidget.panelOpen;
-  property alias workspacesPanelOpen: workspacesWidget.panelOpen;
+  property alias panelOpen: centerSlot.panelOpen;
+  property alias powerPanelOpen: powerSlot.panelOpen;
+  property alias workspacesPanelOpen: workspacesSlot.panelOpen;
   readonly property bool anyPanelOpen: panelOpen || powerPanelOpen || workspacesPanelOpen;
 
   // Only one panel open at a time — besides being the more sensible
@@ -63,9 +79,9 @@ PanelWindow {
   // (sized to fit whichever is open, see implicitHeight below) taller,
   // which widens the HyprlandFocusGrab's "inside" region below and made
   // outside clicks miss more often.
-  onPanelOpenChanged: if (panelOpen) { powerWidget.panelOpen = false; workspacesWidget.panelOpen = false; }
-  onPowerPanelOpenChanged: if (powerPanelOpen) { centerWidget.panelOpen = false; workspacesWidget.panelOpen = false; }
-  onWorkspacesPanelOpenChanged: if (workspacesPanelOpen) { centerWidget.panelOpen = false; powerWidget.panelOpen = false; }
+  onPanelOpenChanged: if (panelOpen) { powerSlot.panelOpen = false; workspacesSlot.panelOpen = false; }
+  onPowerPanelOpenChanged: if (powerPanelOpen) { centerSlot.panelOpen = false; workspacesSlot.panelOpen = false; }
+  onWorkspacesPanelOpenChanged: if (workspacesPanelOpen) { centerSlot.panelOpen = false; powerSlot.panelOpen = false; }
 
   // Click-outside-to-close, via Hyprland's own compositor-level grab —
   // NOT a full-screen invisible window of our own (that was tried first:
@@ -80,171 +96,218 @@ PanelWindow {
   HyprlandFocusGrab {
     windows: [panel];
     // A click on a pill is what normally starts a panel grab; the launcher
-    // opens from a keybind with the pointer elsewhere, so an immediately-live
-    // grab reads that as "clicked outside" and fires `cleared` at once. Wait
-    // until the launcher is interacted with (pointer enters the panel) or a
-    // short grace period passes — `launcherGrabReady`.
-    active: panel.anyPanelOpen && (!Services.LauncherService.open || panel.launcherGrabReady);
+    // and assistant open from a keybind with the pointer elsewhere, so an
+    // immediately-live grab reads that as "clicked outside" and fires
+    // `cleared` at once. Wait until the page is interacted with (pointer
+    // enters the panel) or a short grace period passes — `hotkeyGrabReady`.
+    active: panel.anyPanelOpen && (!panel.hotkeyAppOpen || panel.hotkeyGrabReady);
     onCleared: {
-      centerWidget.panelOpen = false;
-      powerWidget.panelOpen = false;
-      workspacesWidget.panelOpen = false;
+      centerSlot.panelOpen = false;
+      powerSlot.panelOpen = false;
+      workspacesSlot.panelOpen = false;
     }
   }
 
-  // Launcher ⇄ centre panel. Opening the launcher (global shortcut) morphs
-  // this screen's centre notch onto the launcher page — but only on the
-  // focused monitor. Any close route runs back through launcherDismissed.
-  property bool launcherGrabReady: false;
-  Timer { id: launcherGrabArm; interval: 600; onTriggered: panel.launcherGrabReady = true; }
+  // Launcher / assistant ⇄ centre box. Opening one (global shortcut) morphs
+  // this screen's centre box onto its page — but only on the focused
+  // monitor. Any close route runs back through appDismissed.
+  property bool hotkeyGrabReady: false;
+  Timer { id: hotkeyGrabArm; interval: 600; onTriggered: panel.hotkeyGrabReady = true; }
+
+  function syncHotkeyApp(appId, isOpen) {
+    if (isOpen) {
+      panel.hotkeyGrabReady = false;
+      if (panel.isFocusedScreen) { centerSlot.openApp(appId); hotkeyGrabArm.restart(); }
+    } else {
+      hotkeyGrabArm.stop();
+      panel.hotkeyGrabReady = false;
+      centerSlot.closeApp(appId);
+    }
+  }
 
   Connections {
     target: Services.LauncherService;
-    function onOpenChanged() {
-      if (Services.LauncherService.open) {
-        panel.launcherGrabReady = false;
-        if (panel.isFocusedScreen) { centerWidget.openLauncher(); launcherGrabArm.restart(); }
-      } else {
-        launcherGrabArm.stop();
-        panel.launcherGrabReady = false;
-        centerWidget.closeLauncher();
-      }
-    }
+    function onOpenChanged() { panel.syncHotkeyApp("launcher", Services.LauncherService.open); }
   }
   Connections {
-    target: centerWidget;
-    function onLauncherDismissed() { Services.LauncherService.open = false; }
+    target: Services.AssistantService;
+    function onOpenChanged() { panel.syncHotkeyApp("assistant", Services.AssistantService.open); }
+  }
+  Connections {
+    target: centerSlot;
+    function onAppDismissed(appId) {
+      if (appId === "launcher") Services.LauncherService.open = false;
+      else if (appId === "assistant") Services.AssistantService.open = false;
+    }
   }
 
-  // The window really does resize for a hover or a panel open — but only
-  // as a single jump right as it starts, and another single jump after
-  // things have fully settled back down on the way out (see CenterWidget's
-  // windowExpanded/targetHeight). It's never resized mid-animation, which
-  // is what caused the earlier stutter: each resize of a real layer-shell
-  // surface is a full Wayland reconfigure/realloc, not just a repaint, so
-  // doing that every animation frame is what jittered. Content still does
-  // the actual gradual grow/shrink you watch, animating freely within
-  // whichever size the window is currently jumped to. This never reaches
-  // anywhere near full screen height (just enough to fit whichever panel
-  // is open), so it doesn't hit the exclusive-zone problem above.
-  //
-  // barConnectorHeight is not added on top here — each island now starts
-  // flush at y=0 (topMargin: 0, same as the connecting strip) so its own
-  // content overlaps down through the connector band rather than sitting
-  // below it; targetHeight/collapsedSize already account for that band,
-  // so adding barConnectorHeight again would over-reserve space.
-  // barVerticalMargin is kept as the breathing room below the tallest
-  // current content.
-  implicitHeight: Math.max(centerWidget.targetHeight, powerWidget.targetHeight, workspacesWidget.targetHeight) + Theme.barVerticalMargin;
+  // Fixed forever — no debounced windowExpanded/settleTimer machinery
+  // anymore, because there's nothing left to debounce: this never resizes
+  // after startup, so a real layer-shell reconfigure only ever happens
+  // once. Content still does all the actual gradual grow/shrink you watch,
+  // animating freely within this fixed-size surface. Generous enough for
+  // the tallest possible panel (maxPanelContentHeight, the same cap every
+  // panel already respects) plus the same breathing room below content
+  // barVerticalMargin already provided.
+  implicitHeight: Theme.maxPanelHeight + Theme.panelShadowRoom;
 
-  // The space Hyprland reserves for the bar is pinned to the widgets'
-  // collapsed footprint, so hovering/opening a panel never reflows tiled
-  // windows — the expanded content simply paints over them, on the Overlay
-  // layer above.
+  // The space Hyprland reserves for the bar is pinned to the slots'
+  // collapsed footprint (unchanged by the window itself now being fixed at
+  // its generous full height), so hovering/opening a panel never reflows
+  // tiled windows — the expanded content simply paints over them, on the
+  // Overlay layer above.
   exclusionMode: ExclusionMode.Normal;
-  exclusiveZone: Math.max(centerWidget.collapsedSize, powerWidget.collapsedSize, workspacesWidget.collapsedSize) + Theme.barVerticalMargin;
+  exclusiveZone: Math.max(workspacesContent.collapsedSize, clockContent.collapsedSize, powerContent.collapsedSize) + Theme.barVerticalMargin;
 
-  // Only the bar widgets' current (animated) bounds ever accept pointer
+  // Only the bar slots' current (animated) bounds ever accept pointer
   // input — the rest of this window is click-through, always, even while a
-  // panel is open. centerWidget/powerWidget's own bounds already track
-  // whatever they're currently showing (collapsed pill, hover-expanded
-  // pill, or — see CenterWidget's targetWidth/targetHeight — the open
-  // panel itself), so masking against the holders rather than the leaf
-  // widgets covers all three without a null/"accept everywhere" case.
-  // Going wide-open while a panel was open used to be how a click on the
-  // still-full-width-but-visually-empty part of this window got swallowed
-  // by our own surface instead of reaching HyprlandFocusGrab as "outside".
-  // connectorStrip is deliberately not in this mask — it's purely visual,
-  // and its full window width would otherwise make everything above the
-  // islands click-through-but-not-really across the whole bar.
+  // panel is open. Each slot's own bounds already track whatever it's
+  // currently showing (collapsed pill, hover-expanded pill, or the open
+  // panel), so masking against the slots rather than their leaf content
+  // covers all three without a null/"accept everywhere" case. barSurface is
+  // deliberately not in this mask — it's purely visual, and its full
+  // bounding box would otherwise make everything above the slots
+  // click-through-but-not-really across the whole bar.
   mask: barMask;
   Region {
     id: barMask;
-    Region { item: centerWidget; }
-    Region { item: workspacesWidget; }
-    Region { item: powerWidget; }
+    Region { item: centerSlot; }
+    Region { item: workspacesSlot; }
+    Region { item: powerSlot; }
   }
 
-  // The connecting strip the three islands hang from as notches — same
-  // frosted-glass fill as each island (CurrentTheme.surface, picked up by
-  // the compositor blur rule in appearance.lua), flush against the
-  // screen's top edge with no margin and no rounding, so together with
-  // each island's own squared-off top corners (see the corner-patch
-  // Rectangle in Workspaces/Clock/PowerStatus) the whole assembly reads as
-  // one continuous shape rather than three separate floating pills.
-  //
-  // Two segments, only in the *gaps* between islands — not one rectangle
-  // spanning underneath them too. CurrentTheme.surface is translucent, so
-  // a segment drawn under an island stacked two semi-transparent layers
-  // of the same color there, compositing visibly darker than either the
-  // gaps (one layer) or the island's own interior (also one layer) — a
-  // real seam, not a rounding error.
-  //
-  // No horizontal margin against the fillets: a margin here was tried and
-  // reverted — each NotchFillet occupies y >= barConnectorHeight (it's
-  // positioned to start exactly at the strip's own bottom edge and grow
-  // downward into the notch), while this strip occupies y < that same
-  // line, so the two never actually overlap in Y regardless of X. Adding
-  // a margin didn't prevent a real overlap; it just carved a gap-shaped
-  // hole between the strip's edge and the fillet's own fill (which itself
-  // only reaches the strip's edge right at the island's corner, not
-  // across its whole bounding box — a plain quarter-disk, not a full
-  // square).
-  //
-  // NOT anchored to centerWidget/powerWidget's own left/right: those
-  // *wrapper* items resize in a single discrete jump the instant a hover/
-  // panel-open starts (see the implicitHeight comment above — a real
-  // layer-shell reconfigure every animation frame is what caused the
-  // earlier stutter), while the actual visible content inside
-  // (clockContent/powerContent, or the open panel once panelOpen/
-  // powerPanelOpen) grows toward that new size gradually via its own
-  // Behavior. Anchoring the strip to the wrapper's edge made it snap to
-  // the fully-expanded position instantly, while the visible content
-  // (and its NotchFillet, a child of it) was still mid-animation and
-  // visibly narrower — a real gap between the strip's end and the
-  // fillet, live and reproducible, not a screenshot artifact.
-  //
-  // clockLeftEdge etc. below compute each *currently visible* piece's
-  // own edge instead — wrapper.x + content.x (and + content.width for
-  // the far edge) — which cancels the wrapper's jump out algebraically
-  // (Clock/ControlPanel's horizontalCenter anchoring and PowerStatus/
-  // PowerPanel's right anchoring both keep the same reference point
-  // fixed regardless of the wrapper's own width), leaving an expression
-  // that depends only on the visible content's own Behavior-animated
-  // size. Once a panel is open its own content.x is 0 by the same
-  // centering logic (CenterWidget's panelLoader ends up exactly as wide
-  // as its now panel-sized wrapper, so there's no centering offset left)
-  // — panelOpen/powerPanelOpen just pick which content is currently the
-  // real visible one, pill or panel.
-  readonly property real clockLeftEdge: centerWidget.x + (panelOpen ? 0 : clockContent.x);
-  readonly property real clockRightEdge: centerWidget.x + (panelOpen ? centerWidget.width : clockContent.x + clockContent.width);
-  readonly property real powerLeftEdge: powerWidget.x + (powerPanelOpen ? 0 : powerContent.x);
+  // The three slots' current (live, animated) bounds — the only thing
+  // barOutline() below depends on. Each slot's own on-screen size (Slot.qml)
+  // is already a direct, non-duplicated read of whichever content (pill or
+  // panel) is currently active, so this needs no debouncing and can't
+  // disagree with what's actually on screen. maxRadius follows the same
+  // pill-vs-panel switch every panel already used on its own IslandSurface.
+  readonly property var slots: [
+    {
+      x: workspacesSlot.x, width: workspacesSlot.implicitWidth, height: workspacesSlot.implicitHeight,
+      maxRadius: (workspacesSlot.panelOpen || workspacesSlot.panelClosing) ? 18 : 16,
+    },
+    {
+      x: centerSlot.x, width: centerSlot.implicitWidth, height: centerSlot.implicitHeight,
+      maxRadius: (centerSlot.panelOpen || centerSlot.panelClosing) ? 18 : 16,
+    },
+    {
+      x: powerSlot.x, width: powerSlot.implicitWidth, height: powerSlot.implicitHeight,
+      maxRadius: (powerSlot.panelOpen || powerSlot.panelClosing) ? 18 : 16,
+    },
+  ];
 
-  Rectangle {
-    y: 0;
-    x: workspacesWidget.x + workspacesWidget.width;
-    // Clamped: an open workspaces panel is wider than this gap, which would
-    // otherwise make the strip segment go negative-width.
-    width: Math.max(0, panel.clockLeftEdge - x);
-    height: Theme.barConnectorHeight;
-    color: CurrentTheme.surface;
-  }
-  Rectangle {
-    y: 0;
-    x: panel.clockRightEdge;
-    width: Math.max(0, panel.powerLeftEdge - x);
-    height: Theme.barConnectorHeight;
-    color: CurrentTheme.surface;
+  // Builds the whole bar's silhouette as one closed SVG path: each slot's
+  // own rounded-bottom body, joined to its neighbours by a thin strip with
+  // a concave "nodge" arc at each junction — the same curve the old
+  // standalone Nodge.qml drew, now just one segment of a single continuous
+  // outline instead of a separately-drawn, separately-antialiased item.
+  // Traversed clockwise: flat across the top (every slot's own top is
+  // square, and the strip sits at that same y=0 line, so the whole top edge
+  // is one straight line), then right-to-left along the bottom, weaving
+  // through each slot's own convex corners and each gap's concave ones.
+  //
+  // Each corner arc's center is placed exactly at the sharp corner it
+  // replaces — a *convex* rounded corner (sweep-flag 1) carves the corner
+  // away; a *concave* nodge (sweep-flag 0 — confirmed live: 1 here drew an
+  // extra convex bulb instead of the intended inward curve) fills the notch
+  // back in instead.
+  //
+  // One shared radius (R below) for every bottom corner and every nodge in
+  // the whole bar, not a size picked independently per corner — requested
+  // live: a notch's two bottom corners and its connecting nodge(s) should
+  // never mismatch in size. Since a middle slot's own two bottom corners
+  // have to match each other, that transitively ties its two (otherwise
+  // unrelated) nodges together too, and from there to the two end slots'
+  // own outer corners as well — in practice this ends up being one number
+  // for the entire assembly, capped wherever a short pill would otherwise
+  // be too short for a full corner radius *and* a full nodge tangent below
+  // it (they're both trying to use the same few pixels of a slot's own
+  // straight edge). A plain derived expression over already-`Behavior`-
+  // animated widths/heights, so it eases smoothly on its own — no separate
+  // animation needed.
+  function barOutline(slots) {
+    if (!slots || slots.length === 0) return "";
+    var S = Theme.barConnectorHeight;
+    var n = slots.length;
+    var first = slots[0];
+    var last = slots[n - 1];
+
+    var R = Theme.nodgeRadius;
+    for (var i = 0; i < n; i++) R = Math.min(R, slots[i].maxRadius, slots[i].height / 2);
+    for (var k = 0; k < n - 1; k++) {
+      var gap = Math.max(0, slots[k + 1].x - (slots[k].x + slots[k].width));
+      R = Math.min(R, gap / 2, (slots[k].height - S) / 2, (slots[k + 1].height - S) / 2);
+    }
+    R = Math.max(0, R);
+
+    var d = "M " + first.x + " 0 ";
+    d += "L " + (last.x + last.width) + " 0 ";
+
+    for (var i = n - 1; i >= 0; i--) {
+      var s = slots[i];
+      var right = s.x + s.width;
+      var hasRightNodge = i < n - 1;
+      var topY = hasRightNodge ? (S + R) : 0;
+
+      if (s.height - R > topY) d += "L " + right + " " + (s.height - R) + " ";
+      d += "A " + R + " " + R + " 0 0 1 " + (right - R) + " " + s.height + " ";
+      d += "L " + (s.x + R) + " " + s.height + " ";
+      d += "A " + R + " " + R + " 0 0 1 " + s.x + " " + (s.height - R) + " ";
+
+      if (i === 0) {
+        d += "L " + s.x + " 0 Z";
+      } else {
+        d += "L " + s.x + " " + (S + R) + " ";
+        d += "A " + R + " " + R + " 0 0 0 " + (s.x - R) + " " + S + " ";
+        var prev = slots[i - 1];
+        var prevRight = prev.x + prev.width;
+        d += "L " + (prevRight + R) + " " + S + " ";
+        d += "A " + R + " " + R + " 0 0 0 " + prevRight + " " + (S + R) + " ";
+      }
+    }
+    return d;
   }
 
-  Widgets.CenterWidget {
-    id: workspacesWidget;
+  // The one background shape for the whole bar — replaces the old
+  // Nodge/IslandSurface/connecting-strip trio. Same frosted fill
+  // (CurrentTheme.surface, picked up by the compositor blur rule in
+  // appearance.lua) as before, just painted once instead of six-plus times:
+  // a single fill with a single antialiased outer boundary can't seam
+  // against itself the way several independently-drawn translucent pieces
+  // could (and did — see the plan for why that hard line between the strip
+  // and the nodges was actually happening).
+  Shape {
+    id: barSurface;
+    anchors.fill: parent;
+    preferredRendererType: Shape.CurveRenderer;
+
+    layer.enabled: true;
+    layer.effect: MultiEffect {
+      // Always on, no resizing-gated fade — confirmed live (brightness-
+      // sampled recordings) that fade was contributing to a subtle flash
+      // during resize. It existed to stop six *separate* shadowed pieces
+      // from visibly warping relative to each other mid-resize; with one
+      // continuous shape now, there's only one silhouette for the shadow
+      // to track and it's always the true current one, so that reason no
+      // longer applies.
+      shadowEnabled: true;
+      shadowColor: Theme.shadowColor;
+      shadowBlur: Theme.shadowBlur;
+      shadowVerticalOffset: Theme.shadowVerticalOffset;
+    }
+
+    ShapePath {
+      fillColor: CurrentTheme.surface;
+      strokeWidth: -1;
+      PathSvg { path: panel.barOutline(panel.slots); }
+    }
+  }
+
+  Widgets.Slot {
+    id: workspacesSlot;
     panelAlign: "left";
-    collapsedSize: workspacesContent.collapsedSize;
-    contentCollapsedWidth: workspacesContent.collapsedWidth;
-    contentExpandedWidth: workspacesContent.expandedWidth;
-    contentExpandedHeight: workspacesContent.expandedHeight;
-    contentExpanded: workspacesContent.expanded;
+    contentItem: workspacesContent;
     // Only the chevron handle opens the panel — the workspace dots keep
     // their own tap-to-activate.
     contentSuppressesTap: true;
@@ -262,17 +325,13 @@ PanelWindow {
     Widgets.Workspaces {
       id: workspacesContent;
       screen: panel.screen;
-      onPanelRequested: workspacesWidget.panelOpen = true;
+      onPanelRequested: workspacesSlot.panelOpen = true;
     }
   }
 
-  Widgets.CenterWidget {
-    id: centerWidget;
-    collapsedSize: clockContent.collapsedSize;
-    contentCollapsedWidth: clockContent.collapsedWidth;
-    contentExpandedWidth: clockContent.expandedWidth;
-    contentExpandedHeight: clockContent.expandedHeight;
-    contentExpanded: clockContent.expanded;
+  Widgets.Slot {
+    id: centerSlot;
+    contentItem: clockContent;
     contentSuppressesTap: clockContent.suppressPanelOpen;
     panelContent: controlPanelComponent;
     panelScreenHeight: panel.screen ? panel.screen.height : 0;
@@ -284,21 +343,17 @@ PanelWindow {
     }
 
     // Arm the click-outside grab the moment the pointer reaches the open
-    // launcher (the timer is just the never-touched-the-mouse fallback).
+    // launcher/assistant (the timer is just the never-touched-the-mouse fallback).
     HoverHandler {
-      onHoveredChanged: if (hovered && Services.LauncherService.open) panel.launcherGrabReady = true;
+      onHoveredChanged: if (hovered && panel.hotkeyAppOpen) panel.hotkeyGrabReady = true;
     }
 
     Widgets.Clock { id: clockContent; }
   }
 
-  Widgets.CenterWidget {
-    id: powerWidget;
-    collapsedSize: powerContent.collapsedSize;
-    contentCollapsedWidth: powerContent.collapsedWidth;
-    contentExpandedWidth: powerContent.expandedWidth;
-    contentExpandedHeight: powerContent.expandedHeight;
-    contentExpanded: powerContent.expanded;
+  Widgets.Slot {
+    id: powerSlot;
+    contentItem: powerContent;
     contentSuppressesTap: powerContent.suppressNextTap;
     contentTapExclusions: powerContent.controlsExclusions;
     panelContent: powerPanelComponent;
@@ -312,13 +367,6 @@ PanelWindow {
 
     Widgets.PowerStatus { id: powerContent; }
   }
-
-  // The concave fillets smoothing each island's seam with the connecting
-  // strip above (see NotchFillet.qml) now live as children of each island
-  // component itself (Workspaces/Clock/PowerStatus), positioned via local
-  // anchors off that island's own edges — not here as external siblings —
-  // so they track content-driven size changes (e.g. Clock's hover/
-  // notification expand) in lockstep with zero animation lag.
 
   Component {
     id: controlPanelComponent;

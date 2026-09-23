@@ -18,6 +18,8 @@ let
   } (builtins.readFile ./scripts/lights_ctl.py);
 in
 {
+  imports = [ ./assistant.nix ];
+
   options.modules.hyprland.resonate = {
     enable = mkEnableOption "Enable the Resonate quickshell system";
   };
@@ -29,7 +31,30 @@ in
       lightsCtl
       cliphist        # clipboard history — ClipboardService + the launcher's clipboard page
       wl-clipboard    # wl-paste --watch feeds cliphist; wl-copy re-copies a pick
-    ];
+    ] ++ catppuccin-cursors.all; # every flavor×accent cursor theme, so ThemeService
+      # (services/ThemeService.qml) can `hyprctl setcursor` to whichever one
+      # matches the live theme picker. All sourced from nixpkgs specifically
+      # (see home.pointerCursor below) — the catppuccin module's own
+      # `cursors.enable` pulls its *own* vendored/pinned catppuccin-cursors
+      # build, and mixing that with nixpkgs's build of the same theme name
+      # is a real conflict for buildEnv (two different store paths wanting
+      # the same `share/icons/catppuccin-<flavor>-<accent>-cursors/...`
+      # path), not something a merge can paper over — confirmed live.
+
+    # Bypasses the catppuccin module's own `cursors.enable` (see above) so
+    # there's only ever one catppuccin-cursors source in play. Matches
+    # cappuccino/quickshell/default.nix's same approach.
+    home.pointerCursor = mkForce {
+      enable = true;
+      name = "catppuccin-macchiato-rosewater-cursors";
+      package = pkgs.catppuccin-cursors.macchiatoRosewater;
+      size = 24;
+      hyprcursor = {
+        enable = true;
+        size = 24;
+      };
+      gtk.enable = true;
+    };
 
     # Clipboard history daemon: cliphist stores every wl-clipboard change; the
     # launcher's clipboard page reads/decodes/re-copies from it.

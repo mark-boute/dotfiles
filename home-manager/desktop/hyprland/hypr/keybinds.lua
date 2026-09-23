@@ -197,6 +197,7 @@ M.binds = {
 	{ keys = "SUPER + Space", desc = "App launcher", action = A.global("quickshell:launcher") },
 	{ keys = "Super_L", desc = "App launcher (tap SUPER)", action = A.global("quickshell:launcher"), release = true },
 	{ keys = "SUPER + V", desc = "Clipboard history", action = A.global("quickshell:clipboard") },
+	{ keys = "SUPER + A", desc = "Assistant", action = A.global("quickshell:assistant") },
 	{ keys = "SUPER + W", desc = "Open Browser", action = A.exec_app("zen-beta") },
 	{ keys = "SUPER + E", desc = "Open File Explorer", action = A.exec_app("nautilus") },
     { keys = "SUPER + C", desc = "Open VSCode", action = A.exec_app("code") },

@@ -48,6 +48,16 @@ Rectangle {
           color: CurrentTheme.subtext;
           font.pixelSize: 11;
         }
+        Row {
+          visible: !isNaN(Services.WeatherService.wind);
+          spacing: 3;
+          WindArrow { dir: Services.WeatherService.windDir; size: 11; }
+          Text {
+            text: Math.round(Services.WeatherService.wind) + " km/h · gusts " + Math.round(Services.WeatherService.gust);
+            color: CurrentTheme.subtext;
+            font.pixelSize: 11;
+          }
+        }
       }
 
       Item { Layout.fillWidth: true; }
@@ -60,6 +70,12 @@ Rectangle {
           Text { Layout.alignment: Qt.AlignHCenter; text: modelData.label; color: CurrentTheme.subtext; font.pixelSize: 9; }
           Text { Layout.alignment: Qt.AlignHCenter; text: modelData.glyph; font.family: Theme.iconFontFamily; font.pixelSize: 15; color: CurrentTheme.text; }
           Text { Layout.alignment: Qt.AlignHCenter; text: modelData.max + "°  " + modelData.min + "°"; color: CurrentTheme.subtext; font.pixelSize: 9; }
+          Row {
+            Layout.alignment: Qt.AlignHCenter;
+            spacing: 2;
+            WindArrow { dir: modelData.windDir; size: 9; }
+            Text { text: modelData.wind + " (" + modelData.gust + ")"; color: CurrentTheme.subtext; font.pixelSize: 9; }
+          }
         }
       }
     }
@@ -67,7 +83,7 @@ Rectangle {
     Flickable {
       visible: root.showHourly && Services.WeatherService.hourly.length > 0;
       Layout.fillWidth: true;
-      implicitHeight: visible ? 54 : 0;
+      implicitHeight: visible ? 70 : 0;
       contentWidth: hourRow.width;
       clip: true;
       flickableDirection: Flickable.HorizontalFlick;
@@ -84,6 +100,12 @@ Rectangle {
             Text { anchors.horizontalCenter: parent.horizontalCenter; text: modelData.hour; color: CurrentTheme.subtext; font.pixelSize: 9; }
             Text { anchors.horizontalCenter: parent.horizontalCenter; text: modelData.glyph; font.family: Theme.iconFontFamily; font.pixelSize: 14; color: CurrentTheme.text; }
             Text { anchors.horizontalCenter: parent.horizontalCenter; text: modelData.temp + "°"; color: CurrentTheme.text; font.pixelSize: 10; }
+            Row {
+              anchors.horizontalCenter: parent.horizontalCenter;
+              spacing: 2;
+              WindArrow { dir: modelData.windDir; size: 9; }
+              Text { text: modelData.wind; color: CurrentTheme.subtext; font.pixelSize: 9; }
+            }
           }
         }
       }

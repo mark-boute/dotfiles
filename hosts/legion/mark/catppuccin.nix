@@ -39,6 +39,11 @@ in
     spotify-player.enable = true;
   };
 
+  # catppuccin's own cursors module (modules/home-manager/cursors.nix) sets
+  # home.pointerCursor.name/package but not .enable — home-manager now wants
+  # that explicit, hence this on its own.
+  home.pointerCursor.enable = true;
+
   gtk = {
     enable = true;
     theme = {

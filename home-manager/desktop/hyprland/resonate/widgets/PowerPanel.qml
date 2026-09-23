@@ -1,6 +1,5 @@
 import QtQuick
 import QtQuick.Layouts
-import QtQuick.Effects
 import Quickshell.Io
 import Quickshell.Services.UPower
 
@@ -16,9 +15,9 @@ import qs.services as Services
 Item {
   id: panel;
 
-  readonly property int contentWidth: 280;
+  readonly property int contentWidth: 320;
 
-  // Pushed by CenterWidget — true while this panel is actually open/closing.
+  // Pushed by ResizeBox — true while this panel is actually open/closing.
   // Gates the power-draw sampler so it isn't spawning a probe every few
   // seconds (and, when the dGPU is briefly awake, poking nvidia) 24/7.
   property bool panelActive: false;
@@ -41,39 +40,20 @@ Item {
     }
   }
 
-  // Smooths the concave seam where this panel's left edge meets the
-  // connecting strip above (see NotchFillet.qml) — same treatment as the
-  // power island itself (PowerStatus.qml), and for the same reason: only
-  // on the left, since this panel is right-anchored flush with the
-  // strip's own right edge, same as the collapsed pill it replaces when
-  // open (see Bar.qml's CenterWidget/panelLoader centering — a panel
-  // exactly as wide as its wrapper renders with zero centering offset).
-  // Kept off the shadowed/layered surface Rectangle below so that
-  // Rectangle's layer texture bounds stay fixed at its own size (this
-  // fillet renders outside [0, width]).
-  NotchFillet {
-    id: leftFillet;
-    x: -leftFillet.filletRadius;
-    y: Theme.barConnectorHeight;
-  }
-
   implicitWidth: layout.implicitWidth + Theme.defaultMargin * 2;
   implicitHeight: Math.min(layout.implicitHeight, Theme.maxPanelContentHeight) + Theme.defaultMargin * 2;
 
-  readonly property color batteryColor: {
-    if (UPower.displayDevice.percentage <= 0.2) return CurrentTheme.danger;
-    if (UPower.displayDevice.percentage <= 0.4) return CurrentTheme.warning;
-    return CurrentTheme.success;
-  }
+  readonly property color batteryColor: CurrentTheme.batteryColor(UPower.displayDevice.percentage);
 
-  // Poweroff / restart / logout / lock. The first three confirm inline
-  // (pendingSession -> the confirm bar under the row); lock fires straight
-  // away. Raw commands rather than hyprshutdown — its own fullscreen confirm
-  // overlay would just double up with ours, and its --post-cmd wrapping was
-  // what stopped logout working.
+  // Poweroff / restart / hibernate / logout / lock. All but lock confirm
+  // inline (pendingSession -> the confirm bar under the row); lock fires
+  // straight away. Raw commands rather than hyprshutdown — its own fullscreen
+  // confirm overlay would just double up with ours, and its --post-cmd
+  // wrapping was what stopped logout working.
   readonly property var sessionModel: [
     { glyph: 0xf0425, danger: true,  confirm: "Power off?", cmd: "systemctl poweroff" },
     { glyph: 0xf0709, danger: false, confirm: "Restart?",   cmd: "systemctl reboot" },
+    { glyph: 0xf0717, danger: false, confirm: "Hibernate?", cmd: "systemctl hibernate" }, // snowflake
     { glyph: 0xf0343, danger: false, confirm: "Log out?",   cmd: "hyprctl dispatch 'hl.dsp.exit()'" },
     { glyph: 0xf033e, danger: false, confirm: "",            cmd: "hyprctl dispatch 'hl.dsp.global(\"quickshell:Lock\")'" },
   ];
@@ -85,102 +65,17 @@ Item {
     sessionProc.running = true;
   }
 
-  // Power-draw history for the graph below, last 5 minutes. Only sampled
-  // while the panel is open (panelActive) — background sampling every few
-  // seconds forever was measurably costing idle power (each probe reads
-  // dGPU state and, when it's briefly awake, runs nvidia-smi, which keeps
-  // the card out of D3cold). The graph now fills from empty on open.
-  readonly property int historyWindowMs: 5 * 60 * 1000;
-  readonly property int sampleIntervalMs: 4000;
-  property var history: []; // [{t, cpu, gpu}], oldest first
-
-  // Average *total* draw (cpu+gpu per sample, then averaged) — not the
-  // same computation as the graph's lo/mid/hi lines, which flatten cpu
-  // and gpu into one combined list; averaging that flattened list would
-  // blend two different signals into a number that doesn't correspond
-  // to any real quantity, whereas total-draw-per-sample does.
-  readonly property real avgWatts: {
-    if (history.length === 0) return 0;
-    var sum = 0;
-    for (var i = 0; i < history.length; i++) sum += history[i].cpu + history[i].gpu;
-    return sum / history.length;
+  onPanelActiveChanged: {
+    Services.PowerUsageService.panelOpen = panelActive;
+    if (!panelActive)
+      panel.pendingSession = -1;
   }
 
-  // No true CPU-only reading is available without root (RAPL energy_uj
-  // under /sys/class/powercap is root-only on this system) — this is
-  // total system draw (via the battery's own discharge rate) minus GPU
-  // draw, so "CPU" here really means "everything that isn't the GPU"
-  // (display, disk, RAM, etc. included), not an isolated CPU package
-  // reading. Chosen deliberately over adding a udev rule for real RAPL
-  // access, to avoid a system-level permission change for this.
-  property real gpuWatts: 0;
-  property bool gpuAsleep: true;
-  Process {
-    id: gpuPowerProc;
-    command: ["sh", "-c",
-      // runtime_status, not power_state — reading power_state resumes the card.
-      "s=$(cat /sys/bus/pci/devices/0000:01:00.0/power/runtime_status 2>/dev/null); " +
-      "[ \"$s\" = suspended ] && { echo asleep; exit; }; " +
-      "ls -l /proc/[0-9]*/fd 2>/dev/null | grep -q /dev/nvidia0 " +
-      "&& nvidia-smi --query-gpu=power.draw --format=csv,noheader,nounits || echo asleep"];
-    stdout: StdioCollector {
-      onStreamFinished: {
-        var t = (typeof this.text === "function") ? this.text() : this.text;
-        t = (t || "").trim();
-        if (t === "asleep" || t === "") {
-          panel.gpuAsleep = true;
-          panel.gpuWatts = 0;
-        } else {
-          panel.gpuAsleep = false;
-          panel.gpuWatts = parseFloat(t) || 0;
-        }
-        // Recorded here rather than in the Timer directly, so each
-        // sample's cpu/gpu values come from the same moment instead of
-        // gpu lagging behind by one interval while its process was
-        // still running.
-        var total = Math.abs(UPower.displayDevice.changeRate);
-        var cpu = Math.max(0, total - panel.gpuWatts);
-        var now = Date.now();
-        var h = panel.history.concat([{ t: now, cpu: cpu, gpu: panel.gpuWatts }]);
-        panel.history = h.filter(s => now - s.t <= panel.historyWindowMs);
-        powerGraph.requestPaint();
-      }
-    }
-  }
-  Timer {
-    interval: panel.sampleIntervalMs;
-    repeat: true;
-    running: panel.panelActive;
-    triggeredOnStart: true;
-    onTriggered: gpuPowerProc.running = true;
-  }
-  onPanelActiveChanged: if (!panelActive) { panel.history = []; panel.pendingSession = -1; }
-
-  // The actual painted panel surface — kept separate from panel above so
-  // its layer (shadow) texture bounds stay fixed at exactly this
-  // Rectangle's own size, never needing to grow for leftFillet above.
-  Rectangle {
-    id: panelSurface;
+  // Just the content now — the painted surface (fill + shadow + the outward
+  // curve into the connecting strip) is BarSurface, one shared shape drawn
+  // once for the whole bar in Bar.qml.
+  Item {
     anchors.fill: parent;
-
-    // No border — the bar's islands went borderless for the same reason
-    // (see Workspaces/Clock/PowerStatus.qml): an outline clashes with the
-    // frosted-glass one-piece look this whole shell is going for now.
-    // Square top corners for the same reason too — this panel opens
-    // directly out of the power island above it, so a fully rounded top
-    // would visually disconnect from it the moment it's open.
-    radius: 18;
-    topLeftRadius: 0;
-    topRightRadius: 0;
-    color: CurrentTheme.surface;
-
-    layer.enabled: true;
-    layer.effect: MultiEffect {
-      shadowEnabled: true;
-      shadowColor: Theme.shadowColor;
-      shadowBlur: Theme.shadowBlur;
-      shadowVerticalOffset: Theme.shadowVerticalOffset;
-    }
 
     // Flickable rather than a plain centered ColumnLayout — see the same
     // comment in ControlPanel.qml. Drag-to-pan is Flickable's own default
@@ -208,170 +103,35 @@ Item {
         anchors.horizontalCenter: parent.horizontalCenter;
         spacing: Theme.defaultSpacing;
 
-        // --- Battery level ---
-        Rectangle {
-          id: batteryBarTrack;
-          Layout.preferredWidth: panel.contentWidth;
-          implicitHeight: 6;
-          radius: height / 2;
-          color: CurrentTheme.backgroundGlass;
-
-          Rectangle {
-            width: parent.width * UPower.displayDevice.percentage;
-            height: parent.height;
-            radius: parent.radius;
-            color: panel.batteryColor;
-
-            Behavior on width { NumberAnimation { duration: 300; easing.type: Easing.OutCubic } }
-            Behavior on color { ColorAnimation { duration: 180 } }
-          }
-        }
-
-        // --- Power profile ---
-        RowLayout {
-          Layout.preferredWidth: panel.contentWidth;
-          spacing: 4;
-          visible: Services.PlatformProfileService.available;
-
-          Repeater {
-            model: [
-              { key: "low-power",   glyph: 0xf032a, label: "Save" },
-              { key: "balanced",    glyph: 0xf05d1, label: "Balanced" },
-              { key: "performance", glyph: 0xf0241, label: "Perf" },
-            ];
-            delegate: Rectangle {
-              id: ppSeg;
-              required property var modelData;
-              readonly property bool current: Services.PlatformProfileService.profile === modelData.key;
-              readonly property bool manual: current && !Services.PlatformProfileService.autoMode;
-              Layout.fillWidth: true;
-              Layout.preferredWidth: 1;
-              implicitHeight: 34;
-              radius: 9;
-              color: manual ? CurrentTheme.accent
-                : current ? Qt.rgba(CurrentTheme.accent.r, CurrentTheme.accent.g, CurrentTheme.accent.b, 0.18)
-                : (ppHover.hovered ? CurrentTheme.surfaceHover : CurrentTheme.backgroundGlass);
-              border.width: manual ? 0 : 1;
-              border.color: CurrentTheme.border;
-              Behavior on color { ColorAnimation { duration: 120 } }
-
-              Row {
-                anchors.centerIn: parent;
-                spacing: 5;
-                Text {
-                  anchors.verticalCenter: parent.verticalCenter;
-                  text: String.fromCodePoint(ppSeg.modelData.glyph);
-                  font.family: Theme.iconFontFamily;
-                  font.pixelSize: 14;
-                  color: ppSeg.manual ? CurrentTheme.background : CurrentTheme.text;
-                }
-                Text {
-                  anchors.verticalCenter: parent.verticalCenter;
-                  text: ppSeg.modelData.label;
-                  font.pixelSize: 10; font.weight: Font.DemiBold;
-                  color: ppSeg.manual ? CurrentTheme.background : CurrentTheme.text;
-                }
-              }
-              HoverHandler { id: ppHover; cursorShape: Qt.PointingHandCursor; }
-              TapHandler { onTapped: Services.PlatformProfileService.set(ppSeg.modelData.key); }
-            }
-          }
-
-          Rectangle {
-            id: ppAuto;
-            implicitWidth: 34; implicitHeight: 34;
-            radius: 9;
-            readonly property bool on: Services.PlatformProfileService.autoMode;
-            color: on ? CurrentTheme.accent
-              : (ppAutoHover.hovered ? CurrentTheme.surfaceHover : CurrentTheme.backgroundGlass);
-            border.width: on ? 0 : 1;
-            border.color: CurrentTheme.border;
-            Behavior on color { ColorAnimation { duration: 120 } }
-            Text {
-              anchors.centerIn: parent;
-              text: "A";
-              font.pixelSize: 12; font.weight: Font.Bold;
-              color: ppAuto.on ? CurrentTheme.background : CurrentTheme.text;
-            }
-            HoverHandler { id: ppAutoHover; cursorShape: Qt.PointingHandCursor; }
-            TapHandler {
-              onTapped: Services.PlatformProfileService.autoMode = !Services.PlatformProfileService.autoMode;
-            }
-          }
-        }
-
-        // --- Caffeine toggle + dGPU status ---
+        // --- Battery level: bar takes the row, percentage only what it needs ---
         RowLayout {
           Layout.preferredWidth: panel.contentWidth;
           spacing: Theme.defaultSpacing;
 
           Rectangle {
-            id: cafBtn;
+            id: batteryBarTrack;
             Layout.fillWidth: true;
-            Layout.preferredWidth: 1;
-            implicitHeight: 34;
-            radius: 10;
-            readonly property bool on: Services.CaffeineService.active;
-            color: on ? CurrentTheme.accent
-              : (cafHover.hovered ? CurrentTheme.surfaceHover : CurrentTheme.backgroundGlass);
-            border.width: on ? 0 : 1;
-            border.color: CurrentTheme.border;
-            Behavior on color { ColorAnimation { duration: 120 } }
+            Layout.alignment: Qt.AlignVCenter;
+            implicitHeight: 6;
+            radius: height / 2;
+            color: CurrentTheme.backgroundGlass;
 
-            Row {
-              anchors.centerIn: parent;
-              spacing: 6;
-              Text {
-                anchors.verticalCenter: parent.verticalCenter;
-                text: String.fromCodePoint(0xf0176); // coffee
-                font.family: Theme.iconFontFamily;
-                font.pixelSize: Theme.iconSize;
-                color: cafBtn.on ? CurrentTheme.background : CurrentTheme.text;
-              }
-              Text {
-                anchors.verticalCenter: parent.verticalCenter;
-                text: cafBtn.on ? "Caffeine on" : "Caffeine";
-                color: cafBtn.on ? CurrentTheme.background : CurrentTheme.text;
-                font.pixelSize: 11;
-                font.weight: Font.DemiBold;
-              }
+            Rectangle {
+              width: parent.width * UPower.displayDevice.percentage;
+              height: parent.height;
+              radius: parent.radius;
+              color: panel.batteryColor;
+
+              Behavior on width { NumberAnimation { duration: 300; easing.type: Easing.OutCubic } }
+              Behavior on color { ColorAnimation { duration: 180 } }
             }
-            HoverHandler { id: cafHover; cursorShape: Qt.PointingHandCursor; }
-            TapHandler { onTapped: Services.CaffeineService.toggle(); }
           }
 
-          Rectangle {
-            Layout.fillWidth: true;
-            Layout.preferredWidth: 1;
-            implicitHeight: 34;
-            radius: 10;
-            color: CurrentTheme.backgroundGlass;
-            border.width: 1;
-            border.color: CurrentTheme.border;
-
-            Row {
-              id: gpuRow;
-              anchors.centerIn: parent;
-              spacing: 6;
-              Rectangle {
-                anchors.verticalCenter: parent.verticalCenter;
-                width: 7; height: 7; radius: 3.5;
-                color: Services.GpuService.awake ? CurrentTheme.warning : CurrentTheme.success;
-              }
-              Text {
-                anchors.verticalCenter: parent.verticalCenter;
-                text: "dGPU";
-                color: CurrentTheme.subtext;
-                font.pixelSize: 11;
-              }
-              Text {
-                anchors.verticalCenter: parent.verticalCenter;
-                text: Services.GpuService.awake ? "awake" : "asleep";
-                color: CurrentTheme.text;
-                font.pixelSize: 11;
-                font.weight: Font.DemiBold;
-              }
-            }
+          Text {
+            text: Math.round(UPower.displayDevice.percentage * 100) + "%";
+            color: CurrentTheme.text;
+            font.pixelSize: 11;
+            font.weight: Font.DemiBold;
           }
         }
 
@@ -488,118 +248,112 @@ Item {
           }
         }
 
-        // --- Power draw graph (CPU/GPU, last 5 minutes) ---
-        ColumnLayout {
+        // --- Power profile + dGPU: a label row over two half-width sliders ---
+        RowLayout {
           Layout.preferredWidth: panel.contentWidth;
-          spacing: 4;
+          spacing: Theme.defaultSpacing;
 
-          RowLayout {
+          Text {
             Layout.fillWidth: true;
-            spacing: Theme.defaultSpacing;
-
-            Row {
-              spacing: 4;
-              Rectangle { width: 8; height: 8; radius: 4; anchors.verticalCenter: parent.verticalCenter; color: CurrentTheme.accent; }
-              Text { text: "CPU " + (panel.history.length > 0 ? panel.history[panel.history.length - 1].cpu.toFixed(1) : "0.0") + "W"; color: CurrentTheme.subtext; font.pixelSize: 11; }
-            }
-            Row {
-              spacing: 4;
-              Rectangle { width: 8; height: 8; radius: 4; anchors.verticalCenter: parent.verticalCenter; color: CurrentTheme.warning; }
-              Text { text: "GPU " + panel.gpuWatts.toFixed(1) + "W"; color: CurrentTheme.subtext; font.pixelSize: 11; }
-            }
-
-            Item { Layout.fillWidth: true; }
-
-            Text { text: "5 min avg: " + panel.avgWatts.toFixed(1) + "W"; color: CurrentTheme.subtext; font.pixelSize: 10; }
+            Layout.preferredWidth: 1;
+            text: "Power profile";
+            color: CurrentTheme.subtext;
+            font.pixelSize: 11;
           }
 
-          // CurrentTheme.background — the same fill PowerTile uses for its
-          // inactive/off state — rather than CurrentTheme.surface, so this
-          // reads as its own little instrument panel against the rest of
-          // the sheet. Radius is a fixed, moderate value rather than
-          // height/2 like the pill controls use: this box is taller than
-          // it is a "pill" shape, so full capsule rounding would look
-          // exaggerated: same curve style, just less of it.
-          Rectangle {
-            Layout.preferredWidth: panel.contentWidth;
-            implicitHeight: 60;
-            radius: 10;
-            color: CurrentTheme.backgroundGlass;
-            clip: true;
+          Item {
+            Layout.fillWidth: true;
+            Layout.preferredWidth: 1;
+            implicitHeight: gpuLabel.implicitHeight;
 
-            Canvas {
-              id: powerGraph;
-              anchors.fill: parent;
-              anchors.margins: 6;
+            Row {
+              id: gpuLabel;
+              spacing: 6;
 
-              readonly property real maxWatts: {
-                var m = 10;
-                for (var i = 0; i < panel.history.length; i++) {
-                  m = Math.max(m, panel.history[i].cpu, panel.history[i].gpu);
-                }
-                return m * 1.15;
+              Rectangle {
+                id: gpuDot;
+                anchors.verticalCenter: parent.verticalCenter;
+                implicitWidth: 8; implicitHeight: 8; radius: 4;
+
+                // Three states rather than a red/green binary: fully off
+                // (suspended, in D3cold) reads as neutral grey, not red —
+                // red should mean something's wrong, not "asleep and saving
+                // power," which is the normal/good state here. "Idle" is
+                // powered on (D0) but nothing currently has it open (the same
+                // fd check PowerPanel's own sampler uses); "on" is powered on
+                // and actually being used.
+                readonly property string state:
+                  !Services.GpuService.awake ? "off" :
+                  Services.PowerUsageService.gpuAsleep ? "idle" : "on";
+                color: gpuDot.state === "off" ? Theme.palette.overlay0 :
+                  gpuDot.state === "idle" ? Theme.palette.blue :
+                  CurrentTheme.success;
+                Behavior on color { ColorAnimation { duration: 150 } }
               }
-
-              onPaint: {
-                var ctx = getContext("2d");
-                ctx.reset();
-                if (panel.history.length < 2) return;
-
-                var now = Date.now();
-                var w = width, h = height;
-                function xFor(t) { return w * (1 - (now - t) / panel.historyWindowMs); }
-                function yFor(watts) { return h - (watts / maxWatts) * h; }
-
-                // Lowest/highest/center reference lines, over every plotted
-                // value (both traces combined) rather than per-trace, so
-                // there's one shared, easy-to-read scale rather than two.
-                var allValues = [];
-                for (var i = 0; i < panel.history.length; i++) {
-                  allValues.push(panel.history[i].cpu, panel.history[i].gpu);
-                }
-                var lo = Math.min.apply(null, allValues);
-                var hi = Math.max.apply(null, allValues);
-                var mid = (lo + hi) / 2;
-
-                // CurrentTheme.text at low alpha, not a hardcoded white —
-                // the background is now theme-aware (CurrentTheme.background,
-                // per PowerTile's own inactive fill), and white would lose
-                // most of its contrast on a light flavor like latte.
-                var tc = CurrentTheme.text;
-                ctx.font = "9px sans-serif";
-                ctx.textBaseline = "middle";
-                [lo, mid, hi].forEach(function(v) {
-                  var y = yFor(v);
-                  ctx.strokeStyle = Qt.rgba(tc.r, tc.g, tc.b, 0.15);
-                  ctx.lineWidth = 1;
-                  ctx.beginPath();
-                  ctx.moveTo(0, y);
-                  ctx.lineTo(w, y);
-                  ctx.stroke();
-                  ctx.fillStyle = Qt.rgba(tc.r, tc.g, tc.b, 0.5);
-                  // Clamped so the highest/lowest labels (whose lines sit
-                  // right at the canvas edge) don't get cut off above/below
-                  // the visible area.
-                  ctx.fillText(v.toFixed(1) + "W", 2, Math.max(6, Math.min(h - 6, y - 5)));
-                });
-
-                function drawLine(key, color) {
-                  ctx.strokeStyle = color;
-                  ctx.lineWidth = 1.5;
-                  ctx.beginPath();
-                  for (var i = 0; i < panel.history.length; i++) {
-                    var s = panel.history[i];
-                    var x = xFor(s.t), y = yFor(s[key]);
-                    if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
-                  }
-                  ctx.stroke();
-                }
-
-                drawLine("gpu", CurrentTheme.warning);
-                drawLine("cpu", CurrentTheme.accent);
+              Text {
+                anchors.verticalCenter: parent.verticalCenter;
+                text: "dGPU";
+                color: CurrentTheme.subtext;
+                font.pixelSize: 11;
+              }
+              Text {
+                anchors.verticalCenter: parent.verticalCenter;
+                text: gpuDot.state === "off" ? "asleep" : gpuDot.state;
+                color: CurrentTheme.text;
+                font.pixelSize: 11;
+                font.weight: Font.DemiBold;
               }
             }
           }
+        }
+
+        RowLayout {
+          Layout.preferredWidth: panel.contentWidth;
+          spacing: Theme.defaultSpacing;
+
+          SegmentSlider {
+            enabled: Services.PlatformProfileService.available;
+            Layout.fillWidth: true;
+            Layout.preferredWidth: 1;
+            // "auto" isn't in PlatformProfileService.profiles (it's the
+            // separate autoMode flag), so index 0 is reserved for it and the
+            // fixed profiles fill the remaining slots in order.
+            options: [
+              { text: "A" },
+              { glyph: 0xf032a }, // low-power
+              { glyph: 0xf05d1 }, // balanced
+              { glyph: 0xf0241 }, // performance
+            ];
+            currentIndex: {
+              if (Services.PlatformProfileService.autoMode) return 0;
+              var i = Services.PlatformProfileService.profiles.indexOf(Services.PlatformProfileService.profile);
+              return i < 0 ? 0 : i + 1;
+            }
+            hintIndex: Services.PlatformProfileService.autoMode
+              ? Services.PlatformProfileService.profiles.indexOf(Services.PlatformProfileService.profile) + 1 : -1;
+            onPicked: (index) => {
+              if (index === 0)
+                Services.PlatformProfileService.autoMode = true;
+              else
+                Services.PlatformProfileService.set(Services.PlatformProfileService.profiles[index - 1]);
+            }
+          }
+
+          // Auto: sleeps when idle. On: kept awake (e.g. to wake it before
+          // plugging in the HDMI monitor). Dimmed without gpucontrol rights.
+          SegmentSlider {
+            enabled: Services.GpuService.controllable;
+            Layout.fillWidth: true;
+            Layout.preferredWidth: 1;
+            options: [{ text: "A" }, { text: "On" }];
+            currentIndex: Services.GpuService.forcedOn ? 1 : 0;
+            onPicked: (index) => Services.GpuService.setForcedOn(index === 1);
+          }
+        }
+
+        // --- Battery history + what is using power ---
+        PowerUsage {
+          Layout.preferredWidth: panel.contentWidth;
         }
 
         GridLayout {
@@ -793,6 +547,31 @@ Item {
             value: Services.BrightnessService.brightness;
             valueLabel: Math.round(Services.BrightnessService.brightness * 100) + "%";
             onMoved: (fraction) => Services.BrightnessService.setBrightness(fraction);
+          }
+
+          // Screen-on (caffeine) toggle — right of the slider, same slot the
+          // audio row's dropdown chevron sits in.
+          Rectangle {
+            id: cafBtn;
+            implicitWidth: 40;
+            implicitHeight: 40;
+            radius: 20;
+            readonly property bool on: Services.CaffeineService.active;
+            color: on ? CurrentTheme.accent
+              : (cafHover.hovered ? CurrentTheme.surfaceHover : CurrentTheme.backgroundGlass);
+            border.width: on ? 0 : 1;
+            border.color: CurrentTheme.border;
+            Behavior on color { ColorAnimation { duration: 120 } }
+
+            Text {
+              anchors.centerIn: parent;
+              text: String.fromCodePoint(0xf0176); // coffee
+              font.family: Theme.iconFontFamily;
+              font.pixelSize: 18;
+              color: cafBtn.on ? CurrentTheme.background : CurrentTheme.text;
+            }
+            HoverHandler { id: cafHover; cursorShape: Qt.PointingHandCursor; }
+            TapHandler { onTapped: Services.CaffeineService.toggle(); }
           }
         }
 

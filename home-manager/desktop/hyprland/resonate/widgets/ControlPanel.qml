@@ -1,20 +1,19 @@
 import QtQuick
 import QtQuick.Window
 import QtQuick.Layouts
-import QtQuick.Effects
 import Quickshell
 import Quickshell.Widgets
 
 import qs
 import qs.services as Services
 
-// The center widget's popout. Two modes:
+// The center box's popout. Two modes:
 //   home  — a header (time/date), now-playing, the apps drawer, the
 //           notification centre.
 //   app   — one drawer app taken over the whole panel (wider), with a
 //           back arrow + title, system-tray-menu style.
 //
-// `openApp` drives the mode; CenterWidget resets it to "" each time the panel
+// `openApp` drives the mode; ResizeBox resets it to "" each time the panel
 // opens so you always land on home.
 Item {
   id: panel;
@@ -24,14 +23,14 @@ Item {
 
   // The bar window is full-width, so its Window.width is the monitor width; its
   // height is not the monitor height though, so screenHeight is fed in by
-  // CenterWidget (from Bar's PanelWindow.screen) via a Binding.
+  // ResizeBox (from Bar's PanelWindow.screen) via a Binding.
   readonly property real screenW: Window.width > 0 ? Window.width : 1920;
   property real screenHeight: 0;
 
   // Tallest the panel may get before its body starts scrolling — the screen
   // minus room for the bar above and a little breathing space below.
-  readonly property real maxHeight:
-    (screenHeight > 0 ? screenHeight : 1080) - Theme.barHeight - Theme.defaultMargin * 4;
+  readonly property real maxHeight: Math.min(Theme.maxPanelContentHeight,
+    (screenHeight > 0 ? screenHeight : 1080) - Theme.barHeight - Theme.defaultMargin * 4);
 
   readonly property int homeWidth: 340;
   // Each app declares the width it wants (bodyLoader.item.appWidth); the panel
@@ -49,36 +48,22 @@ Item {
     + Theme.defaultSpacing
     + (bodyLoader.item ? bodyLoader.item.implicitHeight : 0);
 
-  // See NotchFillet.qml — smooths the seam where the panel meets the connector
-  // strip above. Kept off the shadowed surface Rectangle (they render outside
-  // [0, width]).
-  NotchFillet { id: leftFillet;  x: -leftFillet.filletRadius; y: Theme.barConnectorHeight; }
-  NotchFillet { id: rightFillet; mirrored: true; x: panel.width; y: Theme.barConnectorHeight; }
-
   // Grows to fit content, but never past maxHeight — beyond that the body
   // scrolls (see the Flickable below).
   implicitWidth: contentW + Theme.defaultMargin * 2;
   implicitHeight: Math.min(contentH, maxHeight) + Theme.defaultMargin * 2;
 
-  // Width eases (a mode switch, rare); height snaps — animating a layer-shell
-  // surface's height means a Wayland reconfigure every frame (see Bar.qml).
+  // Both ease now — the real window is a fixed size (see Bar.qml), so
+  // there's no longer a layer-shell reconfigure-per-frame cost to avoid by
+  // snapping height.
   Behavior on implicitWidth { NumberAnimation { duration: 130; easing.type: Easing.OutCubic } }
+  Behavior on implicitHeight { NumberAnimation { duration: 130; easing.type: Easing.OutCubic } }
 
-  Rectangle {
-    id: panelSurface;
+  // Just the content now — the painted surface (fill + shadow + the outward
+  // curve into the connecting strip) is BarSurface, one shared shape drawn
+  // once for the whole bar in Bar.qml.
+  Item {
     anchors.fill: parent;
-    radius: 18;
-    topLeftRadius: 0;
-    topRightRadius: 0;
-    color: CurrentTheme.surface;
-
-    layer.enabled: true;
-    layer.effect: MultiEffect {
-      shadowEnabled: true;
-      shadowColor: Theme.shadowColor;
-      shadowBlur: Theme.shadowBlur;
-      shadowVerticalOffset: Theme.shadowVerticalOffset;
-    }
 
     ColumnLayout {
       anchors.fill: parent;
@@ -123,7 +108,8 @@ Item {
           sourceComponent: panel.inApp
             ? (panel.openApp === "theme" ? themeApp
                : panel.openApp === "lights" ? lightsApp
-               : panel.openApp === "launcher" ? launcherApp : checklistApp)
+               : panel.openApp === "launcher" ? launcherApp
+               : panel.openApp === "assistant" ? assistantApp : checklistApp)
             : homeBody;
         }
       }
@@ -183,7 +169,8 @@ Item {
         Text {
           anchors.verticalCenter: parent.verticalCenter;
           text: panel.openApp === "theme" ? "Theme"
-            : panel.openApp === "lights" ? "Lights" : "Checklist";
+            : panel.openApp === "lights" ? "Lights"
+            : panel.openApp === "assistant" ? "Assistant" : "Checklist";
           color: CurrentTheme.text;
           font.pixelSize: 15;
           font.weight: Font.DemiBold;
@@ -240,5 +227,13 @@ Item {
   Component {
     id: launcherApp;
     LauncherApp { width: bodyLoader.width; }
+  }
+
+  Component {
+    id: assistantApp;
+    AssistantApp {
+      width: bodyLoader.width;
+      onBackRequested: panel.openApp = "";
+    }
   }
 }

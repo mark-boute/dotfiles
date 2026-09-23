@@ -1,5 +1,4 @@
 import QtQuick
-import QtQuick.Effects
 import Quickshell
 import Quickshell.Io
 import Quickshell.Widgets
@@ -30,7 +29,7 @@ Item {
   readonly property bool showingMenu: activeMenuItem !== null;
 
   // showingOsd folded in here (not just checked separately at the call
-  // site) because this is also what Bar.qml reads, via CenterWidget's
+  // site) because this is also what Bar.qml reads, via ResizeBox's
   // contentExpanded/contentExpandedWidth/contentExpandedHeight, to size
   // the actual layer-shell window this pill draws inside — miss it here
   // and the window itself stays too small while the OSD is showing, so
@@ -121,7 +120,7 @@ Item {
   // which is worse than the race it was working around. The chevron/
   // collapse/back controls that actually caused that race are now
   // covered by markControlActivated()/suppressNextTap instead (checked
-  // unconditionally, before any geometry, in CenterWidget) and no longer
+  // unconditionally, before any geometry, in ResizeBox) and no longer
   // need to be in this list at all, so going back to "just the current
   // row" is safe again — see their tap handlers below.
   readonly property var controlsExclusions: {
@@ -208,20 +207,6 @@ Item {
 
   anchors { top: parent.top; right: parent.right; }
 
-  // Smooths the concave seam where this island's left edge meets the
-  // connecting strip above (see NotchFillet.qml) — a child of this
-  // Item, positioned off the surface's own width/height, so it stays in
-  // lockstep with this island's own size changes. Only on the left: this
-  // is the rightmost island, flush with the strip's own right edge, so
-  // there's no seam to smooth on the right. Kept off the shadowed/layered
-  // surface Rectangle below so that Rectangle's layer texture bounds stay
-  // fixed at its own size (this fillet renders outside [0, width]).
-  NotchFillet {
-    id: leftFillet;
-    x: -leftFillet.filletRadius;
-    y: Theme.barConnectorHeight;
-  }
-
   // expanded/expandedWidth/expandedHeight above already fold in the OSD
   // case (see the comment on `expanded`), so this needs no separate
   // branch for it.
@@ -231,13 +216,9 @@ Item {
   Behavior on implicitWidth  { NumberAnimation { duration: 180; easing.type: Easing.OutExpo } }
   Behavior on implicitHeight { NumberAnimation { duration: 180; easing.type: Easing.OutExpo } }
 
-  readonly property color levelColor: {
-    if (UPower.displayDevice.state === UPowerDeviceState.FullyCharged) return CurrentTheme.success;
-    if (UPower.displayDevice.state === UPowerDeviceState.Charging) return CurrentTheme.accent;
-    if (UPower.displayDevice.percentage <= 0.2) return CurrentTheme.danger;
-    if (UPower.displayDevice.percentage <= 0.4) return CurrentTheme.warning;
-    return CurrentTheme.success;
-  }
+  // Same blend as the power panel's battery bar; charging/full are still
+  // marked by stateGlyph below.
+  readonly property color levelColor: CurrentTheme.batteryColor(UPower.displayDevice.percentage);
 
   readonly property string stateGlyph: {
     if (UPower.displayDevice.state === UPowerDeviceState.FullyCharged) return "✓ "; // check
@@ -290,35 +271,11 @@ Item {
     menu: (power.activeMenuItem && power.activeMenuItem.menu) || null;
   }
 
-  // The actual painted notch surface — kept separate from power above so
-  // its layer (shadow) texture bounds stay fixed at exactly this
-  // Rectangle's own size, never needing to grow for leftFillet above.
-  Rectangle {
-    id: powerSurface;
+  // Just the content now — the painted surface (fill + shadow + the outward
+  // curve into the connecting strip) is BarSurface, one shared shape drawn
+  // once for the whole bar in Bar.qml.
+  Item {
     anchors.fill: parent;
-
-    // Bottom-rounded "notch" hanging from the bar's connecting strip
-    // (Bar.qml) — no border (would draw a seam right where this meets the
-    // strip). Square top corners via per-corner radius, not a same-color
-    // Rectangle painted over the top to flatten it — that approach stacked
-    // two translucent layers of CurrentTheme.surface in the top band,
-    // compositing visibly darker there than the single-layer rest of the
-    // pill (confirmed live: a sharp horizontal color seam right at the
-    // patch's own edge).
-    radius: Math.min(16, height / 2);
-    topLeftRadius: 0;
-    topRightRadius: 0;
-    color: CurrentTheme.surface;
-
-    Behavior on color { ColorAnimation { duration: 180 } }
-
-    layer.enabled: true;
-    layer.effect: MultiEffect {
-      shadowEnabled: true;
-      shadowColor: Theme.shadowColor;
-      shadowBlur: Theme.shadowBlur;
-      shadowVerticalOffset: Theme.shadowVerticalOffset;
-    }
 
     Row {
       id: collapsedContent;
@@ -347,7 +304,7 @@ Item {
           // level too deep to matter here, which is why tray icons were
           // never actually excluded: left-clicking one correctly fired its
           // own tap handler, but the click also fell through to
-          // CenterWidget's ancestor handler and opened the command center
+          // ResizeBox's ancestor handler and opened the command center
           // every time, since nothing here was ever telling it not to.
           readonly property bool isInteractive: true;
           anchors.verticalCenter: parent.verticalCenter;
@@ -471,7 +428,7 @@ Item {
 
         // markControlActivated() on every interaction here — same reasoning
         // as the chevron/menu controls above: this pill sits inside
-        // CenterWidget's own "tap anywhere opens the command panel"
+        // ResizeBox's own "tap anywhere opens the command panel"
         // handler, and geometric exclusion (controlsExclusions) doesn't
         // cover the popup row at all, so without this a drag/tap here
         // would also pop the full panel open behind it.
@@ -548,7 +505,7 @@ Item {
           // level too deep to matter here, which is why tray icons were
           // never actually excluded: left-clicking one correctly fired its
           // own tap handler, but the click also fell through to
-          // CenterWidget's ancestor handler and opened the command center
+          // ResizeBox's ancestor handler and opened the command center
           // every time, since nothing here was ever telling it not to.
           readonly property bool isInteractive: true;
           anchors.verticalCenter: parent.verticalCenter;

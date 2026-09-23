@@ -28,8 +28,11 @@ in {
     userName = main-user;
     description = "Mark Boute";
     shell = pkgs.zsh;
-    groups = ["docker"];
+    groups = ["docker" "gpucontrol"];
   };
+
+  # resonate's dGPU slider writes the card's runtime-PM switch as this group.
+  users.groups.gpucontrol = { };
 
   virtualisation.docker.enable = true;
   virtualisation.docker.enableOnBoot = true;
@@ -86,7 +89,7 @@ in {
       enable = true;
       mode = "offload";
       cpu = "amd";
-      open = false;
+      open = true;
       setDeviceIds = true;
       integratedGraphicsId = "PCI:6:0:0";
       dedicatedGraphicsId = "PCI:1:0:0";
@@ -135,6 +138,10 @@ in {
     # what actually stop the card from generating the wake event.)
     ACTION=="add", SUBSYSTEM=="pci", KERNEL=="0000:01:00.0", ATTR{power/wakeup}="disabled"
     ACTION=="add", SUBSYSTEM=="pci", KERNEL=="0000:01:00.1", ATTR{power/wakeup}="disabled"
+
+    # dGPU runtime-PM switch (auto = sleep when idle, on = kept awake),
+    # writable by gpucontrol for resonate's dGPU slider.
+    ACTION=="add|bind", SUBSYSTEM=="pci", KERNEL=="0000:01:00.0", RUN+="${pkgs.coreutils}/bin/chgrp gpucontrol /sys%p/power/control", RUN+="${pkgs.coreutils}/bin/chmod 0664 /sys%p/power/control"
   '';
 
   environment.sessionVariables = {

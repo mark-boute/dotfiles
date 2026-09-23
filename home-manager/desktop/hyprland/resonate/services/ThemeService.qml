@@ -86,6 +86,11 @@ Singleton {
         Theme.flavor = adapter.flavor;
       root._ready = true;
       root.applyAuto();
+      // Explicit, not left to onFlavorChanged/onAccentNameChanged above —
+      // those only fire on an actual value change, so a persisted theme
+      // that happens to match Theme.qml's compiled-in defaults would
+      // otherwise never get the cursor applied at all.
+      root._applyCursor();
     }
     onLoadFailed: {
       // No file yet (first run): keep the defaults, let auto mode place the
@@ -93,6 +98,7 @@ Singleton {
       root._ready = true;
       root.applyAuto();
       root._save();
+      root._applyCursor();
     }
 
     JsonAdapter {
@@ -112,10 +118,32 @@ Singleton {
     store.writeAdapter();
   }
 
+  // --- live cursor theme -----------------------------------------------
+
+  // Matches the system pointer cursor to whatever flavor/accent is actually
+  // showing, immediately — `hyprctl setcursor` takes effect on already-open
+  // clients with no relogin. Needs every catppuccin-cursors flavor×accent
+  // theme installed (default.nix: catppuccin-cursors.all) since
+  // home.pointerCursor itself only ever ships the one pair baked in at
+  // build time, which this is specifically here to override.
+  readonly property int cursorSize: 24;
+  Process { id: cursorProc; }
+  // setcursor alone leaves the image already on screen untouched until the
+  // pointer's shape changes, so re-dispatch the pointer to its own position.
+  function _applyCursor() {
+    cursorProc.command = ["sh", "-c",
+      'hyprctl setcursor "$1" "$2"; p=$(hyprctl cursorpos); ' +
+      'hyprctl dispatch "hl.dsp.cursor.move({x=${p%%,*},y=${p##*, }})"',
+      "sh",
+      "catppuccin-" + Theme.flavor + "-" + Theme.accentName + "-cursors",
+      String(root.cursorSize)];
+    cursorProc.running = true;
+  }
+
   Connections {
     target: Theme;
-    function onFlavorChanged() { root._save(); }
-    function onAccentNameChanged() { root._save(); }
+    function onFlavorChanged() { root._save(); root._applyCursor(); }
+    function onAccentNameChanged() { root._save(); root._applyCursor(); }
   }
 
   Component.onCompleted: store.reload();

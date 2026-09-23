@@ -1,5 +1,4 @@
 import QtQuick
-import QtQuick.Effects
 import Quickshell
 import Quickshell.Hyprland
 import Quickshell.Widgets
@@ -24,12 +23,12 @@ import qs.services as Services
 Item {
   id: panel;
 
-  // Raised by the up-chevron in the header; CenterWidget wires it to
+  // Raised by the up-chevron in the header; ResizeBox wires it to
   // panelOpen = false.
   signal closeRequested();
 
-  // This bar's HyprlandMonitor, pushed in by CenterWidget — the header shows
-  // the exact same bullets the collapsed island does for this screen.
+  // This bar's HyprlandMonitor, pushed in by ResizeBox — the header shows
+  // the exact same bullets the collapsed box does for this screen.
   property var monitor: null;
 
   readonly property bool onScreen: panel.visible && panel.width > 0;
@@ -46,7 +45,7 @@ Item {
 
   readonly property int contentWidth: 340;
 
-  // Header geometry, matched pixel-for-pixel to the collapsed island
+  // Header geometry, matched pixel-for-pixel to the collapsed box
   // (Workspaces.qml) so the chevron and bullets don't shift when the panel
   // opens over the top of it.
   readonly property real headerDotSize: Theme.barHeight - Theme.defaultSpacing * 2;
@@ -55,7 +54,8 @@ Item {
 
   implicitWidth: contentWidth + Theme.defaultMargin * 2;
   implicitHeight: Theme.barHeight + Theme.defaultSpacing / 2
-    + Math.min(column.implicitHeight, Theme.maxPanelContentHeight)
+    + Math.min(column.implicitHeight,
+               Theme.maxPanelHeight - Theme.barHeight - Theme.defaultSpacing / 2 - Theme.defaultMargin)
     + Theme.defaultMargin;
 
   // --- drag state ----------------------------------------------------
@@ -98,28 +98,16 @@ Item {
     panel.dragSrcMonId = -1;
   }
 
-  NotchFillet { id: rightFillet; mirrored: true; x: panel.width; y: Theme.barConnectorHeight; }
-
-  Rectangle {
-    id: surface;
+  // Just the content now — the painted surface (fill + shadow + the outward
+  // curve into the connecting strip) is BarSurface, one shared shape drawn
+  // once for the whole bar in Bar.qml.
+  Item {
     anchors.fill: parent;
-    radius: 18;
-    topLeftRadius: 0;
-    topRightRadius: 0;
-    color: CurrentTheme.surface;
-
-    layer.enabled: true;
-    layer.effect: MultiEffect {
-      shadowEnabled: true;
-      shadowColor: Theme.shadowColor;
-      shadowBlur: Theme.shadowBlur;
-      shadowVerticalOffset: Theme.shadowVerticalOffset;
-    }
 
     // Header — an up-chevron (closes the panel) then the same bullet row the
-    // collapsed island shows. Positioned to sit exactly where the island's
-    // own chevron + bullets are (see panel.header* geometry above), so the
-    // bullets don't jump when the panel opens over the island.
+    // collapsed box shows. Positioned to sit exactly where the box's own
+    // chevron + bullets are (see panel.header* geometry above), so the
+    // bullets don't jump when the panel opens over the box.
     Item {
       id: header;
       anchors { left: parent.left; right: parent.right; top: parent.top; }
