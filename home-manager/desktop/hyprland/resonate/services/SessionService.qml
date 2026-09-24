@@ -11,12 +11,13 @@ import QtQuick
 Singleton {
   id: root;
 
-  // "" | "poweroff" | "reboot" | "logout"
+  // "" | "poweroff" | "reboot" | "hibernate" | "logout"
   property string pending: "";
 
   readonly property var _defs: ({
     "poweroff": { title: "Power off", verb: "Power off", cmd: "systemctl poweroff",             danger: true,  glyph: 0xf0425 },
     "reboot":   { title: "Restart",   verb: "Restart",   cmd: "systemctl reboot",               danger: false, glyph: 0xf0709 },
+    "hibernate": { title: "Hibernate", verb: "Hibernate", cmd: "systemctl hibernate",           danger: false, glyph: 0xf0717 },
     "logout":   { title: "Log out",   verb: "Log out",   cmd: "hyprctl dispatch 'hl.dsp.exit()'", danger: false, glyph: 0xf0343 },
   })
   readonly property var def: root._defs[root.pending] || null;
@@ -28,7 +29,8 @@ Singleton {
     if (!root._defs[mode])
       return;
     root.dirty = [];
-    scanProc.running = true;
+    if (mode !== "hibernate")
+      scanProc.running = true;
     root.pending = mode;
   }
 

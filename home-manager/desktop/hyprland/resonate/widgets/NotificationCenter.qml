@@ -18,6 +18,16 @@ ColumnLayout {
   readonly property var history: Services.NotificationService.history;
   property bool showHistory: false;
 
+  // Height this section may take (ControlPanel works it out). The header and
+  // the Earlier row always show; the cards and the opened history share the
+  // rest, each scrolling past its share.
+  property real maxHeight: 100000;
+  readonly property real avail: Math.max(0, maxHeight - headerRow.implicitHeight - earlierRow.implicitHeight
+    - (placeholder.visible ? placeholder.implicitHeight + Theme.defaultSpacing * 2 : 0) - spacing * 3);
+  readonly property real historyH: (showHistory && history.length > 0)
+    ? Math.min(historyList.contentHeight, count > 0 ? avail * 0.45 : avail) : 0;
+  readonly property real cardsH: count > 0 ? Math.max(0, Math.min(notifList.contentHeight, avail - historyH)) : 0;
+
   function ago(ts) {
     var s = Math.max(0, (Date.now() - ts) / 1000);
     if (s < 60) return "now";
@@ -27,6 +37,7 @@ ColumnLayout {
   }
 
   RowLayout {
+    id: headerRow;
     Layout.fillWidth: true;
     spacing: 6;
 
@@ -38,7 +49,7 @@ ColumnLayout {
     Text {
       visible: root.count > 0;
       text: root.count;
-      color: CurrentTheme.accent;
+      color: CurrentTheme.subtext;
       font.pixelSize: 11; font.weight: Font.DemiBold;
     }
     Item { Layout.fillWidth: true }
@@ -46,14 +57,14 @@ ColumnLayout {
       text: String.fromCodePoint(Services.NotificationService.dnd ? 0xf09a2 : 0xf009a); // bell-off / bell
       font.family: Theme.iconFontFamily;
       font.pixelSize: 13;
-      color: Services.NotificationService.dnd ? CurrentTheme.accent : CurrentTheme.subtext;
+      color: Services.NotificationService.dnd ? CurrentTheme.text : CurrentTheme.subtext;
       HoverHandler { cursorShape: Qt.PointingHandCursor; }
       TapHandler { onTapped: Services.NotificationService.toggleDnd(); }
     }
     Text {
       visible: root.count > 0;
       text: "Clear all";
-      color: CurrentTheme.accent;
+      color: CurrentTheme.subtext;
       font.pixelSize: 11; font.weight: Font.DemiBold;
       TapHandler { onTapped: Services.NotificationService.clearAll(); }
     }
@@ -62,7 +73,8 @@ ColumnLayout {
   Text {
     Layout.fillWidth: true;
     Layout.bottomMargin: Theme.defaultSpacing;
-    visible: root.count === 0 && root.history.length === 0;
+    id: placeholder;
+    visible: root.count === 0;
     text: "Nothing right now";
     color: CurrentTheme.subtext;
     font.pixelSize: 11;
@@ -71,7 +83,7 @@ ColumnLayout {
   ListView {
     id: notifList;
     Layout.fillWidth: true;
-    Layout.preferredHeight: Math.min(contentHeight, 340);
+    Layout.preferredHeight: root.cardsH;
     visible: root.count > 0;
     clip: true;
     interactive: contentHeight > height;
@@ -158,7 +170,7 @@ ColumnLayout {
 
   // --- Earlier (persisted history) ---
   RowLayout {
-    visible: root.history.length > 0;
+    id: earlierRow;
     Layout.fillWidth: true;
     Layout.topMargin: 2;
     spacing: 6;
@@ -175,26 +187,27 @@ ColumnLayout {
     }
     Item { Layout.fillWidth: true }
     Text {
-      visible: root.showHistory;
+      visible: root.showHistory && root.history.length > 0;
       text: "Clear";
-      color: CurrentTheme.accent;
+      color: CurrentTheme.subtext;
       font.pixelSize: 11; font.weight: Font.DemiBold;
       TapHandler { onTapped: Services.NotificationService.clearHistory(); }
     }
     Text {
-      text: String.fromCodePoint(root.showHistory ? 0xf0143 : 0xf0140); // chevron up/down
+      text: String.fromCodePoint(root.showHistory && root.history.length > 0 ? 0xf0143 : 0xf0140); // chevron up/down
       font.family: Theme.iconFontFamily;
       font.pixelSize: Theme.iconSize;
       color: CurrentTheme.subtext;
     }
     HoverHandler { cursorShape: Qt.PointingHandCursor; }
-    TapHandler { onTapped: root.showHistory = !root.showHistory; }
+    TapHandler { enabled: root.history.length > 0; onTapped: root.showHistory = !root.showHistory; }
   }
 
   ListView {
+    id: historyList;
     visible: root.showHistory && root.history.length > 0;
     Layout.fillWidth: true;
-    Layout.preferredHeight: visible ? Math.min(contentHeight, 240) : 0;
+    Layout.preferredHeight: root.historyH;
     clip: true;
     interactive: contentHeight > height;
     spacing: 4;

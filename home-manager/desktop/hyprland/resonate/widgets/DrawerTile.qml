@@ -14,10 +14,9 @@ Rectangle {
   radius: 16;
   color: hover.hovered ? CurrentTheme.surfaceHover : CurrentTheme.backgroundGlass;
   border.width: 1;
-  border.color: hover.hovered ? CurrentTheme.accent : CurrentTheme.border;
+  border.color: CurrentTheme.border;
 
   Behavior on color { ColorAnimation { duration: 100 } }
-  Behavior on border.color { ColorAnimation { duration: 100 } }
 
   Item {
     id: inner;

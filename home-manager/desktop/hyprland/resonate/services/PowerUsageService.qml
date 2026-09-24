@@ -246,6 +246,7 @@ Singleton {
 
   property var apps: [];            // [{name, watts, cpu (% of a core), gpu (%)}]
   property var devices: [];         // [{name, value, detail, measured}]
+  property var parts: null;         // {cpu, gpu, total (W or null), awake: [label], asleep: [label]}
   property real windowStart: 0;     // ms epoch
   property real windowSecs: 0;
 
@@ -287,7 +288,7 @@ Singleton {
       end = root.recentSnaps.length ? root.recentSnaps[root.recentSnaps.length - 1] : null;
     }
     if (!base || !end || end.t - base.t < 1000) {
-      root.apps = []; root.devices = []; root.windowSecs = 0;
+      root.apps = []; root.devices = []; root.parts = null; root.windowSecs = 0;
       return;
     }
     var secs = (end.t - base.t) / 1000;
@@ -407,6 +408,16 @@ Singleton {
     if (sleepers.length)
       rows.push({ name: "Asleep or off: " + sleepers.join(", "), value: "", detail: "", measured: false });
     root.devices = rows;
+
+    var awakeChips = end.monitors.map(mo => (end.monitors.length > 1 ? mo.name : "Screen") + " · " + mo.hz + " Hz");
+    for (var aw in awake) awakeChips.push(awake[aw].length > 1 ? aw + " ×" + awake[aw].length : aw);
+    if (BluetoothService.enabled) awakeChips.push("Bluetooth");
+    if (gpuAwake !== null && gpuAwake > 0) awakeChips.push("dGPU");
+    root.parts = {
+      cpu: cpuW, gpu: gpuW, total: totW,
+      awake: awakeChips,
+      asleep: (gpuAwake === 0 ? ["dGPU"] : []).concat(sleepers),
+    };
   }
 
   // ---- unplug / plug-in anchors --------------------------------------

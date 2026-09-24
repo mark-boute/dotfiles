@@ -4,9 +4,9 @@ import QtQuick.Layouts
 import qs
 import qs.services as Services
 
-// Full-takeover theme picker: Catppuccin flavour swatches + accent hues.
-// Opened from the drawer's Theme tile. Sizes to its content; the panel gives
-// it the width.
+// Full-takeover theme picker: Catppuccin flavour swatches. The accent comes
+// with the flavour. Opened from the drawer's Theme tile. Sizes to its content;
+// the panel gives it the width.
 ColumnLayout {
   id: root;
   spacing: Theme.defaultSpacing;
@@ -51,6 +51,7 @@ ColumnLayout {
 
   RowLayout {
     Layout.alignment: Qt.AlignHCenter;
+    Layout.bottomMargin: Theme.defaultSpacing;
     spacing: Theme.defaultSpacing;
 
     Repeater {
@@ -62,10 +63,10 @@ ColumnLayout {
         readonly property var flavorPalette: Theme.paletteFor(modelData);
         readonly property bool active: Theme.flavor === modelData;
 
-        width: 64; height: 64; radius: 16;
+        width: 100; height: 64; radius: 16;
         color: flavorPalette.base;
         border.width: active ? 2 : 1;
-        border.color: active ? flavorPalette.mauve : CurrentTheme.border;
+        border.color: active ? CurrentTheme.accent : CurrentTheme.border;
 
         Behavior on border.color { ColorAnimation { duration: 120 } }
         Behavior on border.width { NumberAnimation { duration: 120 } }
@@ -77,7 +78,7 @@ ColumnLayout {
             anchors.horizontalCenter: parent.horizontalCenter;
             spacing: 3;
             Repeater {
-              model: [swatch.flavorPalette.rosewater, swatch.flavorPalette.mauve, swatch.flavorPalette.blue];
+              model: [Theme.flavorAccents[swatch.modelData], swatch.flavorPalette.text, swatch.flavorPalette.surface2];
               Rectangle {
                 required property color modelData;
                 width: 9; height: 9; radius: 4.5;
@@ -89,46 +90,13 @@ ColumnLayout {
             anchors.horizontalCenter: parent.horizontalCenter;
             text: root.cap(swatch.modelData);
             color: swatch.flavorPalette.text;
-            font.pixelSize: 9;
-            font.weight: swatch.active ? Font.DemiBold : Font.Normal;
+            font.pixelSize: 11;
+            font.weight: swatch.active ? Font.Bold : Font.Normal;
           }
         }
 
+        HoverHandler { cursorShape: Qt.PointingHandCursor; }
         TapHandler { onTapped: Services.ThemeService.setFlavor(swatch.modelData); }
-      }
-    }
-  }
-
-  Text {
-    Layout.topMargin: Theme.defaultSpacing;
-    Layout.alignment: Qt.AlignHCenter;
-    text: "Accent";
-    color: CurrentTheme.subtext;
-    font.pixelSize: 12; font.weight: Font.DemiBold;
-  }
-
-  Grid {
-    Layout.alignment: Qt.AlignHCenter;
-    Layout.bottomMargin: Theme.defaultSpacing;
-    columns: 7;
-    spacing: Theme.defaultSpacing;
-
-    Repeater {
-      model: Theme.accentChoices;
-
-      Rectangle {
-        id: accentSwatch;
-        required property string modelData;
-        readonly property bool active: Theme.accentName === modelData;
-
-        width: 32; height: 32; radius: 16;
-        color: Theme.palette[modelData];
-        border.width: active ? 3 : 0;
-        border.color: CurrentTheme.text;
-
-        Behavior on border.width { NumberAnimation { duration: 120 } }
-
-        TapHandler { onTapped: Theme.accentName = accentSwatch.modelData; }
       }
     }
   }

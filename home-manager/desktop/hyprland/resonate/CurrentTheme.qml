@@ -28,7 +28,16 @@ Singleton {
   readonly property color border:       Theme.palette.surface2;
   readonly property color text:         Theme.palette.text;
   readonly property color subtext:      Theme.palette.subtext0;
-  readonly property color accent:       Theme.palette[Theme.accentName];
+  readonly property color accent:       Theme.accent;
+
+  // Neutral fills — the accent is kept for small "on" marks only.
+  readonly property color fill:         Qt.rgba(Theme.palette.text.r, Theme.palette.text.g, Theme.palette.text.b, 0.9);
+  readonly property color onFill:       Theme.palette.base;
+  readonly property color glass:        Qt.rgba(Theme.palette.base.r, Theme.palette.base.g, Theme.palette.base.b, 0.55);
+  readonly property color well:         Qt.rgba(Theme.palette.base.r, Theme.palette.base.g, Theme.palette.base.b, 0.5);
+  readonly property color chip:         Qt.rgba(Theme.palette.text.r, Theme.palette.text.g, Theme.palette.text.b, 0.12);
+  readonly property color off:          Qt.rgba(Theme.palette.surface1.r, Theme.palette.surface1.g, Theme.palette.surface1.b, 0.9);
+  readonly property color hairline:     Qt.rgba(Theme.palette.text.r, Theme.palette.text.g, Theme.palette.text.b, 0.08);
   readonly property color success:      Theme.palette.green;
   readonly property color warning:      Theme.palette.peach;
   readonly property color danger:       Theme.palette.red;

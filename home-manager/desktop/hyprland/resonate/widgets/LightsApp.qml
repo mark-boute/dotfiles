@@ -8,7 +8,7 @@ import qs.services as Services
 // while Services.LightsService.reachable — see that file for why "a bulb
 // answered on the LAN" is the whole presence check, no separate network
 // detection. One card per bulb: power (PillButton), brightness (SliderPill,
-// same widget/contract PowerPanel.qml uses for screen brightness), and a
+// same widget/contract SystemPanel.qml uses for screen brightness), and a
 // ColorWheel revealed by tapping "Color" — collapsed by default so a
 // multi-bulb list doesn't turn into a wall of pickers.
 ColumnLayout {

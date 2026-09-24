@@ -75,7 +75,7 @@ Item {
 
   // The popup itself is a live control, not just a readout — dragging or
   // scrolling on it (see osdContent below) adjusts whichever value it's
-  // currently showing, same as the matching slider in PowerPanel would.
+  // currently showing, same as the matching slider in SystemPanel would.
   // Routed by osdKind rather than exposing three separate handlers on the
   // bar, since only one kind is ever showing at a time.
   function osdSetValue(fraction) {
@@ -382,7 +382,7 @@ Item {
     }
 
     // Icon + thin fill bar + value label, styled after the battery bar at
-    // the top of PowerPanel.qml — flashed by Brightness/Temperature/
+    // the top of SystemPanel.qml — flashed by Brightness/Temperature/
     // AudioService whenever their value changes (a keybind, this panel's
     // own sliders, or the bar below directly), then auto-hidden again by
     // their own osdTimer. Sized noticeably larger than the row it replaces

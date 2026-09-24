@@ -12,7 +12,7 @@ Singleton {
   id: root;
 
   PwObjectTracker {
-    objects: [Pipewire.defaultAudioSink].concat(root.sinks).concat(root.streams)
+    objects: [Pipewire.defaultAudioSink].concat(root.sinks).concat(root.sources).concat(root.streams)
       .filter(function (n) { return n; });
   }
 
@@ -26,7 +26,13 @@ Singleton {
       && ((n.properties || {})["media.class"] || "") === "Stream/Output/Audio";
   });
 
+  readonly property var sources: Pipewire.nodes.values.filter(function (n) {
+    return n && !n.isSink && !n.isStream && n.audio;
+  });
+
   function setSink(node) { if (node) Pipewire.preferredDefaultAudioSink = node; }
+  function setSource(node) { if (node) Pipewire.preferredDefaultAudioSource = node; }
+  function isDefaultSource(node) { return !!node && !!Pipewire.defaultAudioSource && node.id === Pipewire.defaultAudioSource.id; }
   function isDefaultSink(node) { return !!node && !!sink && node.id === sink.id; }
   function nodeLabel(n) {
     if (!n) return "";

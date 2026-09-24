@@ -104,4 +104,18 @@ Singleton {
     if (!id || !monitorName) return;
     _run(["hl.dsp.workspace.move({ workspace = " + id + ", monitor = \"" + monitorName + "\" })"]);
   }
+
+  // Re-applies the monitor with the same resolution, position and scale at a
+  // new refresh rate. Runtime only: a config reload goes back to monitors.lua.
+  Process { id: modeProc; }
+  Timer { id: monitorsRefresh; interval: 600; onTriggered: Hyprland.refreshMonitors(); }
+  function setRefreshRate(mon, hz) {
+    var io = mon ? mon.lastIpcObject : null;
+    if (!io || !hz) return;
+    modeProc.command = ["hyprctl", "eval",
+      "hl.monitor({ output = \"" + io.name + "\", mode = \"" + io.width + "x" + io.height + "@" + hz + "\", "
+      + "position = \"" + io.x + "x" + io.y + "\", scale = " + io.scale + " })"];
+    modeProc.running = true;
+    monitorsRefresh.restart();
+  }
 }

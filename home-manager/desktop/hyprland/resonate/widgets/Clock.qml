@@ -236,7 +236,7 @@ Item {
 
         Text {
           text: Services.MediaService.playing ? "⏸" : "▶";
-          color: CurrentTheme.accent;
+          color: CurrentTheme.text;
           font.pixelSize: 16;
           TapHandler { onTapped: Services.MediaService.togglePlaying(); }
         }

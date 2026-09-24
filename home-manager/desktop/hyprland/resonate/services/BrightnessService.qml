@@ -13,7 +13,7 @@ import QtQuick
 // power_state on this driver *itself* resumes the card. Read back via
 // amdgpu_bl* alone, which is always available regardless of dGPU state.
 //
-// A singleton (not local panel state) so PowerPanel's slider and
+// A singleton (not local panel state) so SystemPanel's slider and
 // PowerStatus's OSD both read the same live value, and so the
 // IpcHandler below — which the brightness keybinds call into instead of
 // running brightnessctl directly (see hypr/keybinds.lua) — exists

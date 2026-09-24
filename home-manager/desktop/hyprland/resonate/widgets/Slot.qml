@@ -57,7 +57,7 @@ Item {
   // Separately-timed grace period for panelOpen specifically, matching
   // panelLoader's own 160ms opacity fade below. Panel content reads this
   // (as panelActive, below) to keep doing panel-ish things — e.g.
-  // PowerPanel's power-draw sampler — for exactly as long as it's still
+  // SystemPanel's power-draw sampler — for exactly as long as it's still
   // visibly fading out, rather than resetting the instant panelOpen flips.
   // Not used for sizing (see implicitWidth/Height below) — that eases on
   // its own now and doesn't need a grace period to stay in sync with
@@ -102,44 +102,41 @@ Item {
       box.panelOpen = false;
   }
 
-  // box's own on-screen size is a live read of whatever is actually showing
-  // right now — the content's real geometry while it's showing, the panel's
-  // while that's showing — not a second, independently-animated copy of
-  // either value that could drift out of sync with it. This Behavior eases
-  // *this* property, which is the one and only thing everything else (the
-  // mask, BarSurface's shape in Bar.qml) reads — so they all move together,
-  // by construction, rather than needing to be kept in sync by hand.
+  // box's own on-screen size is a live read of whatever is showing — the
+  // content's geometry, or the panel's — and the one thing everything else
+  // (the mask, BarSurface's shape in Bar.qml) reads, so they move together.
   //
-  // Only enabled while opening/closing a panel, though — Clock/PowerStatus
-  // already ease their own implicitWidth/Height for a hover-resize, so
-  // while just mirroring that (panelOpen/panelClosing both false) this
-  // reads it straight through with no Behavior of its own. Confirmed live:
-  // enabling it unconditionally made hover *worse*, not better — this
-  // property would keep re-targeting mid-flight at an already-animating
-  // value (a new one every frame), which compounds into a mushier,
-  // laggier curve than the original single-stage ease it was tracking.
-  // Panel open/close has no such moving target (the panel's own size is
-  // normally already settled by the time you open it), so easing there is
-  // just one clean stage, same as hover always was.
-  implicitWidth: box.panelOpen ? box.panelWidth : (contentItem ? contentItem.width : 0);
-  implicitHeight: box.panelOpen ? box.panelHeight : (contentItem ? contentItem.height : 0);
+  // Opening, closing and resizing an open panel run through split-axis
+  // springs: growing widens first and deepens 40ms later, shrinking flattens
+  // first and narrows 40ms later. Outside a panel morph the content's own
+  // (already eased) hover size is read straight through.
+  readonly property real _rawWidth: box.panelOpen ? box.panelWidth : (contentItem ? contentItem.width : 0);
+  readonly property real _rawHeight: box.panelOpen ? box.panelHeight : (contentItem ? contentItem.height : 0);
+  readonly property bool morphing: box.panelOpen || box.panelClosing || widthSpring.moving || heightSpring.moving;
 
-  Behavior on implicitWidth {
-    enabled: box.panelOpen || box.panelClosing;
-    NumberAnimation { id: widthAnim; duration: 180; easing.type: Easing.OutExpo }
+  Spring {
+    id: widthSpring;
+    to: box._rawWidth;
+    live: box.panelOpen || box.panelClosing;
+    growPeriod: 0.50;
+    shrinkPeriod: 0.40; shrinkDelay: 0.04;
   }
-  Behavior on implicitHeight {
-    enabled: box.panelOpen || box.panelClosing;
-    NumberAnimation { id: heightAnim; duration: 180; easing.type: Easing.OutExpo }
+  Spring {
+    id: heightSpring;
+    to: box._rawHeight;
+    live: box.panelOpen || box.panelClosing;
+    growPeriod: 0.55; growDelay: 0.04;
+    shrinkPeriod: 0.40;
   }
 
-  // Clipped while the size above is actively easing (open, close, or a
-  // hover-resize) so a panel or pill whose content is still rendering at
-  // its *target* size doesn't visibly spill past this box's current,
-  // still-catching-up bounds. Not clipped once fully open and settled —
-  // WorkspacesPanel's drag ghost deliberately follows the cursor outside
-  // its own bounds mid-drag, and that should stay free to do so.
-  clip: !box.panelOpen || widthAnim.running || heightAnim.running;
+  implicitWidth: box.morphing ? widthSpring.value : box._rawWidth;
+  implicitHeight: box.morphing ? heightSpring.value : box._rawHeight;
+
+  // Clipped while the size is still catching up, so content already laid
+  // out at its target size doesn't spill past the shape. Not clipped once
+  // open and settled — WorkspacesPanel's drag ghost follows the cursor
+  // outside its own bounds.
+  clip: !box.panelOpen || widthSpring.moving || heightSpring.moving;
 
   Item {
     id: contentContainer;
@@ -151,7 +148,13 @@ Item {
     // pill", which used to immediately toggle the panel shut again.
     visible: opacity > 0;
 
-    Behavior on opacity { NumberAnimation { duration: 120 } }
+    // Out quickly as the shape starts to grow; back in once it has mostly settled.
+    Behavior on opacity {
+      SequentialAnimation {
+        PauseAnimation { duration: box.panelOpen ? 0 : 150 }
+        NumberAnimation { duration: box.panelOpen ? 100 : 250; easing.type: Easing.OutCubic }
+      }
+    }
 
     // Opens the panel. There's no matching "tap again to close" here on
     // purpose — closing is click-*outside*, handled by the scrim in
@@ -183,7 +186,12 @@ Item {
     opacity: box.panelOpen ? 1 : 0;
     visible: opacity > 0;
 
-    Behavior on opacity { NumberAnimation { duration: 160; easing.type: Easing.OutCubic } }
+    Behavior on opacity {
+      SequentialAnimation {
+        PauseAnimation { duration: box.panelOpen ? 150 : 0 }
+        NumberAnimation { duration: box.panelOpen ? 220 : 90; easing.type: Easing.OutCubic }
+      }
+    }
   }
 
   Binding {

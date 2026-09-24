@@ -187,9 +187,10 @@ Item {
       width: bodyLoader.width;
       spacing: Theme.defaultSpacing;
 
-      WeatherCard { Layout.fillWidth: true; }
+      WeatherCard { id: weatherCard; Layout.fillWidth: true; }
 
       AppDrawer {
+        id: drawer;
         Layout.fillWidth: true;
         onOpen: (appId) => panel.openApp = appId;
       }
@@ -202,7 +203,15 @@ Item {
         color: CurrentTheme.border;
       }
 
-      NotificationCenter { Layout.fillWidth: true; }
+      // Whatever height the rest of home leaves; the list scrolls inside it,
+      // so the panel keeps its bottom margin however many there are.
+      NotificationCenter {
+        Layout.fillWidth: true;
+        maxHeight: panel.maxHeight
+          - (headerLoader.item ? headerLoader.item.implicitHeight : 0) - Theme.defaultSpacing
+          - weatherCard.implicitHeight - drawer.implicitHeight
+          - (1 + Theme.defaultSpacing) - Theme.defaultSpacing * 3;
+      }
     }
   }
 

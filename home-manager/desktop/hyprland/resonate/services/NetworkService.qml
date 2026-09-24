@@ -6,7 +6,7 @@ import QtQuick
 
 // Wi-Fi via nmcli. The radio on/off state (`enabled`) is polled continuously so
 // any icon reading it stays live. The scan list is populated on demand —
-// scan() when the PowerPanel's Wi-Fi dropdown opens, refresh() on a timer while
+// scan() when the SystemPanel's Wi-Fi dropdown opens, refresh() on a timer while
 // it stays open.
 Singleton {
   id: root;

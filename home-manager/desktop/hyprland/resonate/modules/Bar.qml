@@ -30,7 +30,7 @@ PanelWindow {
   // click (and, for the launcher, arrow/tab keys captured), so they go
   // Exclusive while open on this screen.
   WlrLayershell.keyboardFocus:
-    (panel.hotkeyAppOpen && panel.isFocusedScreen) ? WlrKeyboardFocus.Exclusive
+    ((panel.hotkeyAppOpen || panel.sessionConfirming) && panel.isFocusedScreen) ? WlrKeyboardFocus.Exclusive
     : panel.anyPanelOpen ? WlrKeyboardFocus.OnDemand
     : WlrKeyboardFocus.None;
 
@@ -47,16 +47,17 @@ PanelWindow {
   readonly property string _powerProfile: Services.PlatformProfileService.profile;
   readonly property bool screenFullscreen: monitor && monitor.activeWorkspace ? monitor.activeWorkspace.hasFullscreen : false;
 
-  // Also hidden behind the poweroff/reboot/logout confirm (SessionOverlay.qml)
-  // — that's a separate PanelWindow on the same WlrLayer.Overlay layer, and
-  // relying on Hyprland's own same-layer stacking order to keep it above the
-  // bar turned out not to be robust once the bar started reserving this
-  // space permanently (see the fixed-height change) rather than only while
-  // something was actually open. Hiding the bar outright sidesteps needing
-  // that stacking order to cooperate at all — same approach already used
-  // for fullscreen content below.
-  readonly property bool sessionOverlayActive: Services.SessionService.pending !== "";
-  visible: !screenFullscreen && !sessionOverlayActive;
+  // A session confirm (power off etc.) opens in this screen's power slot when
+  // it's the focused one; SessionOverlay only dims the screens underneath.
+  readonly property bool sessionConfirming: Services.SessionService.pending !== "" && powerSlot.panelOpen;
+  Connections {
+    target: Services.SessionService;
+    function onPendingChanged() {
+      if (Services.SessionService.pending === "") powerSlot.panelOpen = false;
+      else if (panel.isFocusedScreen) powerSlot.panelOpen = true;
+    }
+  }
+  visible: !screenFullscreen || (Services.SessionService.pending !== "" && panel.isFocusedScreen);
 
   // Otherwise a panel left open before going fullscreen would just be
   // sitting there, stale, the moment the bar reappears.
@@ -100,8 +101,12 @@ PanelWindow {
     // immediately-live grab reads that as "clicked outside" and fires
     // `cleared` at once. Wait until the page is interacted with (pointer
     // enters the panel) or a short grace period passes — `hotkeyGrabReady`.
-    active: panel.anyPanelOpen && (!panel.hotkeyAppOpen || panel.hotkeyGrabReady);
+    // Off during a session confirm: its dim (SessionOverlay) takes the
+    // outside clicks, and a grab armed by a keybind would clear at once.
+    active: panel.anyPanelOpen && Services.SessionService.pending === ""
+      && (!panel.hotkeyAppOpen || panel.hotkeyGrabReady);
     onCleared: {
+      Services.SessionService.cancel();
       centerSlot.panelOpen = false;
       powerSlot.panelOpen = false;
       workspacesSlot.panelOpen = false;
@@ -375,7 +380,7 @@ PanelWindow {
 
   Component {
     id: powerPanelComponent;
-    Widgets.PowerPanel {}
+    Widgets.SystemPanel {}
   }
 
   Component {

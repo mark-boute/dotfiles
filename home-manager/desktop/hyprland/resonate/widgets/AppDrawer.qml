@@ -66,35 +66,15 @@ Column {
             color: CurrentTheme.subtext;
             font.pixelSize: 10; font.weight: Font.DemiBold;
           }
-          Row {
-            spacing: 4;
-            Text {
-              text: drawer.cap(Theme.flavor);
-              color: CurrentTheme.text;
-              font.pixelSize: 14; font.weight: Font.DemiBold;
-            }
-            Text {
-              visible: Services.ThemeService.autoMode;
-              anchors.verticalCenter: parent.verticalCenter;
-              text: String.fromCodePoint(0xf0599); // md-weather-sunset
-              font.family: Theme.iconFontFamily;
-              font.pixelSize: 12;
-              color: CurrentTheme.subtext;
-            }
+          Text {
+            text: drawer.cap(Theme.flavor);
+            color: CurrentTheme.text;
+            font.pixelSize: 14; font.weight: Font.DemiBold;
           }
-          Row {
-            spacing: 5;
-            Rectangle {
-              width: 10; height: 10; radius: 5;
-              anchors.verticalCenter: parent.verticalCenter;
-              color: CurrentTheme.accent;
-            }
-            Text {
-              text: drawer.cap(Theme.accentName);
-              color: CurrentTheme.subtext;
-              font.pixelSize: 11;
-              anchors.verticalCenter: parent.verticalCenter;
-            }
+          Text {
+            text: Services.ThemeService.autoMode ? "Follows the sun" : "Manual";
+            color: CurrentTheme.subtext;
+            font.pixelSize: 11;
           }
         }
       }
@@ -121,7 +101,7 @@ Column {
           text: String.fromCodePoint(0xf0ae); // nf-fa-tasks
           font.family: Theme.iconFontFamily;
           font.pixelSize: 24;
-          color: CurrentTheme.accent;
+          color: CurrentTheme.text;
         }
         Text {
           anchors.horizontalCenter: parent.horizontalCenter;
@@ -159,7 +139,7 @@ Column {
           text: String.fromCodePoint(0xf0335); // md-lightbulb
           font.family: Theme.iconFontFamily;
           font.pixelSize: 24;
-          color: lightsTile.onCount > 0 ? CurrentTheme.accent : CurrentTheme.subtext;
+          color: lightsTile.onCount > 0 ? CurrentTheme.text : CurrentTheme.subtext;
         }
         Text {
           anchors.horizontalCenter: parent.horizontalCenter;

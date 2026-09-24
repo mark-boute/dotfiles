@@ -15,9 +15,8 @@ import qs
 //
 // Same shape as TemperatureService's auto mode: a bool that any manual pick
 // in ThemeApp switches off, a 60s tick, and SunService for the sun maths.
-// The accent is never touched here.
 //
-// autoMode, the flavour and the accent are persisted to
+// autoMode and the flavour are persisted to
 // ~/.config/resonate/theme.json so a restart doesn't reset the shell to the
 // Theme.qml defaults; the stored flavour is only re-applied on load when
 // autoMode is off (otherwise the sun decides).
@@ -80,13 +79,11 @@ Singleton {
 
     onLoaded: {
       root.autoMode = adapter.autoMode;
-      if (adapter.accent)
-        Theme.accentName = adapter.accent;
       if (!adapter.autoMode && adapter.flavor)
         Theme.flavor = adapter.flavor;
       root._ready = true;
       root.applyAuto();
-      // Explicit, not left to onFlavorChanged/onAccentNameChanged above —
+      // Explicit, not left to onFlavorChanged below —
       // those only fire on an actual value change, so a persisted theme
       // that happens to match Theme.qml's compiled-in defaults would
       // otherwise never get the cursor applied at all.
@@ -105,7 +102,6 @@ Singleton {
       id: adapter;
       property bool autoMode: true;
       property string flavor: "macchiato";
-      property string accent: "rosewater";
     }
   }
 
@@ -113,7 +109,6 @@ Singleton {
     if (!root._ready)
       return;
     adapter.autoMode = root.autoMode;
-    adapter.accent = Theme.accentName;
     adapter.flavor = Theme.flavor; // consulted on load only when autoMode is off
     store.writeAdapter();
   }
@@ -135,7 +130,7 @@ Singleton {
       'hyprctl setcursor "$1" "$2"; p=$(hyprctl cursorpos); ' +
       'hyprctl dispatch "hl.dsp.cursor.move({x=${p%%,*},y=${p##*, }})"',
       "sh",
-      "catppuccin-" + Theme.flavor + "-" + Theme.accentName + "-cursors",
+      "catppuccin-" + Theme.flavor + "-" + Theme.cursorAccent + "-cursors",
       String(root.cursorSize)];
     cursorProc.running = true;
   }
@@ -143,7 +138,6 @@ Singleton {
   Connections {
     target: Theme;
     function onFlavorChanged() { root._save(); root._applyCursor(); }
-    function onAccentNameChanged() { root._save(); root._applyCursor(); }
   }
 
   Component.onCompleted: store.reload();

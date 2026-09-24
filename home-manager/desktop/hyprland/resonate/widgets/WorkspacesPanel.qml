@@ -227,20 +227,83 @@ Item {
             anchors { left: parent.left; right: parent.right; top: parent.top; margins: Theme.defaultSpacing; }
             spacing: 6;
 
-            Row {
-              spacing: 6;
-              Text {
+            Item {
+              width: parent.width;
+              height: 28;
+
+              Row {
                 anchors.verticalCenter: parent.verticalCenter;
-                text: section.mon.name;
-                color: CurrentTheme.text;
-                font.pixelSize: 12;
-                font.weight: Font.DemiBold;
+                spacing: 8;
+                Text {
+                  anchors.verticalCenter: parent.verticalCenter;
+                  text: section.mon.name;
+                  color: CurrentTheme.text;
+                  font.pixelSize: 12;
+                  font.weight: Font.Bold;
+                }
+                Text {
+                  anchors.verticalCenter: parent.verticalCenter;
+                  text: section.mon.width + "×" + section.mon.height;
+                  color: CurrentTheme.subtext;
+                  font.pixelSize: 11;
+                }
               }
-              Text {
-                anchors.verticalCenter: parent.verticalCenter;
-                text: section.mon.width + "×" + section.mon.height;
-                color: CurrentTheme.subtext;
-                font.pixelSize: 10;
+
+              // Refresh rates this monitor offers at its current resolution.
+              Rectangle {
+                id: hzSwitch;
+                readonly property var io: section.mon.lastIpcObject || ({});
+                readonly property var rates: {
+                  var prefix = io.width + "x" + io.height + "@";
+                  var seen = [];
+                  (io.availableModes || []).forEach(function (m) {
+                    if (m.indexOf(prefix) !== 0) return;
+                    var hz = Math.round(parseFloat(m.slice(prefix.length)));
+                    if (hz > 0 && seen.indexOf(hz) < 0) seen.push(hz);
+                  });
+                  return seen.sort((a, b) => b - a);
+                }
+                readonly property int current: Math.round(io.refreshRate || 0);
+
+                visible: rates.length > 1;
+                anchors { right: parent.right; verticalCenter: parent.verticalCenter; }
+                width: hzRow.implicitWidth + 4;
+                height: 28;
+                radius: 14;
+                color: Qt.rgba(Theme.palette.base.r, Theme.palette.base.g, Theme.palette.base.b, 0.72);
+                border.width: 1;
+                border.color: CurrentTheme.border;
+
+                Row {
+                  id: hzRow;
+                  anchors.centerIn: parent;
+                  spacing: 2;
+                  Repeater {
+                    model: hzSwitch.rates;
+                    Rectangle {
+                      id: hzChip;
+                      required property int modelData;
+                      readonly property bool on: hzSwitch.current === modelData;
+                      width: hzLabel.implicitWidth + 20;
+                      height: 22;
+                      radius: 11;
+                      color: on ? CurrentTheme.fill : "transparent";
+                      Behavior on color { ColorAnimation { duration: 180 } }
+                      Text {
+                        id: hzLabel;
+                        anchors.centerIn: parent;
+                        text: hzChip.modelData + " Hz";
+                        color: hzChip.on ? CurrentTheme.onFill : CurrentTheme.text;
+                        font.pixelSize: 11; font.weight: Font.Bold;
+                        Behavior on color { ColorAnimation { duration: 180 } }
+                      }
+                      HoverHandler { cursorShape: Qt.PointingHandCursor; }
+                      TapHandler {
+                        onTapped: if (!hzChip.on) Services.WorkspacesService.setRefreshRate(section.mon, hzChip.modelData);
+                      }
+                    }
+                  }
+                }
               }
             }
 

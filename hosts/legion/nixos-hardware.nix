@@ -30,6 +30,10 @@ in {
         # firmware spams wake events (GPE 0x10) at the dGPU root port,
         # yanking it out of D3cold every ~18s; mask until a BIOS fix
         "acpi_mask_gpe=0x10"
+        # firmware can ACPI-eject the dGPU slot after unplugging AC; with
+        # Hyprland holding the card the removal hangs and pins it awake.
+        # The nvidia driver's runtime D3 does the sleeping instead.
+        "acpiphp.disable=1"
         # panel adaptive backlight (saved ~0.5-1.5W) was silently dimming the
         # panel well past the requested brightness on dark (Catppuccin)
         # content — disabled 2026-09-23 so the slider means what it says.

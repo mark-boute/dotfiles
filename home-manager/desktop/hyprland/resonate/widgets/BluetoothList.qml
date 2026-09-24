@@ -4,44 +4,36 @@ import QtQuick.Layouts
 import qs
 import qs.services as Services
 
-// The Bluetooth dropdown for the power panel: a scan control and the list of
-// known/discovered devices. Tapping a device expands inline Connect /
-// Disconnect / Forget actions.
+// Rows for the system panel's Bluetooth foldout (FoldCard owns the header
+// and Scan). Tapping a device opens Connect / Disconnect and Forget under it.
 ColumnLayout {
   id: root;
 
   readonly property var svc: Services.BluetoothService;
 
-  // One row's action UI open at a time; keyed by mac so it survives rebuilds.
+  // One row open at a time; keyed by mac so it survives rebuilds.
   property string openMac: "";
 
-  spacing: 4;
+  spacing: 2;
 
-  Text {
-    visible: !root.svc.enabled;
-    Layout.fillWidth: true;
-    text: "Bluetooth is off";
-    color: CurrentTheme.subtext;
-    font.pixelSize: 11;
+  function glyphFor(name) {
+    var n = (name || "").toLowerCase();
+    if (/buds|pods|head|ear|wh-|wf-|jabra|bose/.test(n)) return 0xf02cb; // md-headphones
+    if (/mouse|mx /.test(n)) return 0xf037d;                              // md-mouse
+    if (/keyboard|keys/.test(n)) return 0xf030c;                          // md-keyboard
+    if (/phone|pixel|iphone|galaxy/.test(n)) return 0xf011c;              // md-cellphone
+    if (/speaker|soundbar|sonos/.test(n)) return 0xf04c3;                 // md-speaker
+    return 0xf00af;                                                       // md-bluetooth
   }
 
-  RowLayout {
-    visible: root.svc.enabled;
+  Text {
+    visible: !root.svc.enabled || root.svc.devices.length === 0;
     Layout.fillWidth: true;
-    Layout.bottomMargin: 2;
-
-    Text {
-      text: "Devices";
-      color: CurrentTheme.subtext;
-      font.pixelSize: 11; font.weight: Font.DemiBold;
-    }
-    Item { Layout.fillWidth: true; }
-    Text {
-      text: root.svc.scanning ? "Scanning…" : "Scan";
-      color: root.svc.scanning ? CurrentTheme.subtext : CurrentTheme.accent;
-      font.pixelSize: 11; font.weight: Font.DemiBold;
-      TapHandler { enabled: !root.svc.scanning; onTapped: root.svc.scan(); }
-    }
+    Layout.margins: 6;
+    text: !root.svc.enabled ? "Bluetooth is off"
+      : root.svc.scanning ? "Looking for devices…" : "Tap Scan to look for devices";
+    color: CurrentTheme.subtext;
+    font.pixelSize: 11;
   }
 
   Repeater {
@@ -56,123 +48,65 @@ ColumnLayout {
       Layout.fillWidth: true;
       spacing: 0;
 
-      Rectangle {
+      FoldRow {
         Layout.fillWidth: true;
-        implicitHeight: 34;
-        radius: 8;
-        color: rowHover.hovered || row.isOpen ? CurrentTheme.surfaceHover : "transparent";
-
-        RowLayout {
-          anchors.fill: parent;
-          anchors.leftMargin: 8;
-          anchors.rightMargin: 10;
-          spacing: 8;
-
-          Text {
-            text: String.fromCodePoint(row.modelData.connected ? 0xf00b1 : 0xf00af);
-            font.family: Theme.iconFontFamily;
-            font.pixelSize: 13;
-            color: row.modelData.connected ? CurrentTheme.success : CurrentTheme.subtext;
-          }
-          Text {
-            text: row.modelData.name;
-            color: CurrentTheme.text;
-            font.pixelSize: 12;
-            font.weight: row.modelData.connected ? Font.DemiBold : Font.Normal;
-            elide: Text.ElideRight;
-            Layout.fillWidth: true;
-          }
-          Row {
-            spacing: 4;
-            visible: row.modelData.connected && row.modelData.battery >= 0 && !row.busy;
-            Text {
-              anchors.verticalCenter: parent.verticalCenter;
-              text: String.fromCodePoint(row.modelData.battery <= 15 ? 0xf007a
-                : row.modelData.battery <= 40 ? 0xf007e
-                : row.modelData.battery <= 70 ? 0xf0081 : 0xf0079); // battery-{10,30,60,full}
-              font.family: Theme.iconFontFamily;
-              font.pixelSize: 12;
-              color: row.modelData.battery <= 15 ? CurrentTheme.danger : CurrentTheme.subtext;
-            }
-            Text {
-              anchors.verticalCenter: parent.verticalCenter;
-              text: row.modelData.battery + "%";
-              color: CurrentTheme.subtext;
-              font.pixelSize: 10; font.weight: Font.DemiBold;
-            }
-          }
-          Text {
-            visible: row.busy || ((row.modelData.connected && row.modelData.battery < 0) || row.modelData.paired);
-            text: row.busy ? "…" : (row.modelData.connected ? "Connected" : "Paired");
-            color: row.modelData.connected ? CurrentTheme.success : CurrentTheme.subtext;
-            font.pixelSize: 10; font.weight: Font.DemiBold;
-          }
-        }
-
-        HoverHandler { id: rowHover; }
-        TapHandler { onTapped: root.openMac = row.isOpen ? "" : row.modelData.mac; }
+        name: row.modelData.name;
+        bold: row.modelData.connected;
+        highlighted: row.isOpen;
+        glyph: String.fromCodePoint(root.glyphFor(row.modelData.name));
+        busy: row.busy;
+        status: row.busy ? ""
+          : row.modelData.connected
+            ? (row.modelData.battery >= 0 ? "Connected · " + row.modelData.battery + "%" : "Connected")
+            : (row.modelData.paired ? "Paired" : "");
+        onTapped: root.openMac = row.isOpen ? "" : row.modelData.mac;
       }
 
-      Rectangle {
-        Layout.fillWidth: true;
-        Layout.topMargin: row.isOpen ? 4 : 0;
-        implicitHeight: row.isOpen ? inner.implicitHeight + 12 : 0;
-        clip: true;
-        radius: 8;
-        color: CurrentTheme.backgroundGlass;
+      ColumnLayout {
         visible: row.isOpen;
+        Layout.fillWidth: true;
+        Layout.leftMargin: 10;
+        Layout.rightMargin: 10;
+        Layout.topMargin: 4;
+        Layout.bottomMargin: 4;
+        spacing: 6;
 
-        ColumnLayout {
-          id: inner;
-          anchors { left: parent.left; right: parent.right; top: parent.top; margins: 6; }
-          spacing: 6;
+        Text {
+          visible: root.svc.errorMac === row.modelData.mac && root.svc.errorText !== "";
+          Layout.fillWidth: true;
+          text: root.svc.errorText;
+          color: CurrentTheme.danger;
+          font.pixelSize: 10;
+          wrapMode: Text.WordWrap;
+        }
 
-          Text {
-            visible: root.svc.errorMac === row.modelData.mac && root.svc.errorText !== "";
-            Layout.fillWidth: true;
-            text: root.svc.errorText;
-            color: CurrentTheme.danger;
-            font.pixelSize: 10;
-            wrapMode: Text.WordWrap;
+        RowLayout {
+          Layout.fillWidth: true;
+          spacing: 8;
+
+          PillButton {
+            visible: !row.modelData.connected;
+            label: row.modelData.paired ? "Connect" : "Pair & connect";
+            enabled: !row.busy;
+            accent: true;
+            onClicked: root.svc.connect(row.modelData.mac);
           }
-
-          RowLayout {
-            Layout.fillWidth: true;
-            spacing: 6;
-
-            PillButton {
-              visible: !row.modelData.connected;
-              label: row.busy ? "Connecting…" : (row.modelData.paired ? "Connect" : "Pair & connect");
-              enabled: !row.busy;
-              accent: true;
-              onClicked: root.svc.connect(row.modelData.mac);
-            }
-            PillButton {
-              visible: row.modelData.connected;
-              label: "Disconnect";
-              enabled: !row.busy;
-              onClicked: root.svc.disconnect(row.modelData.mac);
-            }
-            Item { Layout.fillWidth: true; }
-            PillButton {
-              visible: row.modelData.paired;
-              label: "Forget";
-              danger: true;
-              enabled: !row.busy;
-              onClicked: { root.svc.forget(row.modelData.mac); root.openMac = ""; }
-            }
+          PillButton {
+            visible: row.modelData.connected;
+            label: "Disconnect";
+            enabled: !row.busy;
+            onClicked: root.svc.disconnect(row.modelData.mac);
+          }
+          Item { Layout.fillWidth: true; }
+          PillButton {
+            visible: row.modelData.paired;
+            label: "Forget";
+            plain: true;
+            enabled: !row.busy;
+            onClicked: { root.svc.forget(row.modelData.mac); root.openMac = ""; }
           }
         }
       }
     }
-  }
-
-  Text {
-    visible: root.svc.enabled && root.svc.devices.length === 0;
-    Layout.fillWidth: true;
-    Layout.topMargin: 4;
-    text: root.svc.scanning ? "Looking for devices…" : "Tap Scan to look for devices";
-    color: CurrentTheme.subtext;
-    font.pixelSize: 11;
   }
 }

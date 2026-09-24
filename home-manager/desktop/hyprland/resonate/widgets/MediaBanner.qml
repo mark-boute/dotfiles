@@ -41,7 +41,7 @@ RowLayout {
   Text {
     text: Services.MediaService.playing ? String.fromCodePoint(0xf04c) : String.fromCodePoint(0xf04b);
     font.family: Theme.iconFontFamily;
-    color: CurrentTheme.accent;
+    color: CurrentTheme.text;
     font.pixelSize: 15;
     TapHandler { onTapped: Services.MediaService.togglePlaying(); }
   }

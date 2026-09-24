@@ -7,12 +7,20 @@ import QtQuick
 Singleton {
   id: theme;
 
-  // Which Catppuccin flavor is active, and which of that flavor's colors is
-  // the accent. Both mutable — this is what the control panel's theme
-  // selector changes; CurrentTheme.qml exposes the resulting colors
-  // reactively so nothing else needs to know flavors/accents exist.
+  // Which Catppuccin flavor is active. The accent is fixed per flavor: same
+  // lightness and softness everywhere, hue taken from that flavor's wallpaper.
   property string flavor: "macchiato";
-  property string accentName: "rosewater";
+
+  readonly property var flavorAccents: ({
+    "latte": "#097689",
+    "frappe": "#99d1db",
+    "macchiato": "#b2baee",
+    "mocha": "#8bc8de",
+  });
+  readonly property color accent: flavorAccents[flavor] || flavorAccents.macchiato;
+
+  // The pointer stays rosewater whatever the flavor.
+  readonly property string cursorAccent: "rosewater";
 
   // latte is the only light flavor; the other three are all dark.
   readonly property bool isLight: flavor === "latte";
@@ -29,11 +37,6 @@ Singleton {
   }
   onIsLightChanged: _syncColorScheme();
   Component.onCompleted: _syncColorScheme();
-
-  readonly property var accentChoices: [
-    "rosewater", "flamingo", "pink", "mauve", "red", "maroon", "peach",
-    "yellow", "green", "teal", "sky", "sapphire", "blue", "lavender"
-  ];
 
   function paletteFor(name) {
     if (name === "latte") return latte;
