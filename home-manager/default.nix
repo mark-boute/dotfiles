@@ -10,6 +10,7 @@
     # standealone
     ./latex
     ./spotify
+    ./obsidian
 
     # modules
     inputs.catppuccin.homeModules.catppuccin

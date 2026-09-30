@@ -34,7 +34,6 @@
     pkgs.vscode
     pkgs.kitty
     pkgs.arduino-ide
-    pkgs.obsidian
     pkgs.typst
 
     pkgs.gh
@@ -56,6 +55,11 @@
     pkgs.openvpn
 
     pkgs.rpi-imager
+    pkgs.flashprint
+    pkgs.openscad
+
+    pkgs.hplip
+    pkgs.usbutils
   ];
 
   programs.git = {
@@ -78,6 +82,12 @@
     extraConfig = {
       push = { autoSetupRemote = true; };
     };
+  };
+
+  programs.obsidian = {
+    enable = true;
+    vaultEnvs.enable = true;
+    vaultEnvs.hideNormalApp = true;
   };
 
   # Home Manager is pretty good at managing dotfiles. The primary way to manage
