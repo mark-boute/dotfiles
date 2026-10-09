@@ -86,3 +86,7 @@ hl.animation({ leaf = "specialWorkspace", enabled = true, speed = 4, bezier = "d
 -- show up as a faint square edge around each pill instead of following its
 -- silhouette.
 hl.layer_rule({ match = { namespace = "quickshell:resonate:bar" }, blur = true, ignore_alpha = 0.5 })
+
+-- Apps that remember being maximized (kitty, browsers) ask for it on every
+-- launch; Hyprland counts that as fullscreen, which hides the resonate bar.
+hl.window_rule({ match = { class = ".*" }, suppress_event = "maximize" })
