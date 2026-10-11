@@ -1,4 +1,4 @@
-{ inputs, pkgs, ...}:
+{ inputs, ...}:
 let 
   hardware-modules = inputs.nixos-hardware.nixosModules;
 in {
@@ -53,14 +53,8 @@ in {
       "z /sys/firmware/acpi/platform_profile 0664 root users - -"
     ];
 
-    # ACPI S4 (platform) handoff cuts power before the NVMe write cache
-    # commits the hibernation image's final signature block, so every resume
-    # reads a corrupted/missing image (kernel: "PM: Image not found (code
-    # -22)") and either hangs mid-restore or falls through to a cold boot.
-    # Force the kernel-controlled poweroff path instead, which waits for the
-    # write to actually complete before cutting power.
-    systemd.services.systemd-hibernate.serviceConfig.ExecStartPre =
-      "${pkgs.bash}/bin/sh -c 'echo shutdown > /sys/power/disk'";
+    # Needed for resume from hibernation to be attempted at all.
+    boot.resumeDevice = "/dev/disk/by-uuid/7cc7f337-c05e-499d-9cc0-02481d10ccc0"; # swap
 
     services = {
       power-profiles-daemon.enable = false;

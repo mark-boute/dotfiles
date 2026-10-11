@@ -145,6 +145,61 @@ A.mresize = function()
 		end,
 	}
 end
+-- The visible window under the cursor; floating ones sit on top, the most
+-- recently focused of those first.
+local function window_under_cursor()
+	local c = hl.get_cursor_pos()
+	if not c then
+		return nil
+	end
+	local best
+	for _, w in ipairs(hl.get_windows()) do
+		if w.mapped and w.visible and not w.hidden
+			and c.x >= w.at.x and c.x < w.at.x + w.size.x
+			and c.y >= w.at.y and c.y < w.at.y + w.size.y then
+			if not best
+				or (w.floating and not best.floating)
+				or (w.floating == best.floating and w.focus_history_id < best.focus_history_id) then
+				best = w
+			end
+		end
+	end
+	return best
+end
+A.toggle_float_hovered = function()
+	return {
+		fn = function()
+			local w = window_under_cursor()
+			if not w then
+				return
+			end
+			hl.dispatch(hl.dsp.focus({ window = "address:" .. w.address }))
+			hl.dispatch(hl.dsp.window.float())
+		end,
+	}
+end
+-- Closes the window normally, unless it's its process's last one: then SIGKILL.
+A.force_kill = function()
+	return {
+		fn = function()
+			local w = hl.get_active_window()
+			if not w then
+				return
+			end
+			local n = 0
+			for _, o in ipairs(hl.get_windows()) do
+				if o.pid == w.pid then
+					n = n + 1
+				end
+			end
+			if n <= 1 then
+				hl.dispatch(hl.dsp.exec_cmd("kill -9 " .. w.pid))
+			else
+				hl.dispatch(hl.dsp.window.close())
+			end
+		end,
+	}
+end
 A.float_and_pin = function()
 	return {
 		fn = function()
@@ -195,7 +250,6 @@ M.binds = {
 	-- Applications
 	{ keys = "SUPER + T", desc = "Open Kitty terminal", action = A.exec_app("kitty") },
 	{ keys = "SUPER + Space", desc = "App launcher", action = A.global("quickshell:launcher") },
-	{ keys = "Super_L", desc = "App launcher (tap SUPER)", action = A.global("quickshell:launcher"), release = true },
 	{ keys = "SUPER + V", desc = "Clipboard history", action = A.global("quickshell:clipboard") },
 	{ keys = "SUPER + A", desc = "Assistant", action = A.global("quickshell:assistant") },
 	{ keys = "SUPER + W", desc = "Open Browser", action = A.exec_app("zen-beta") },
@@ -207,21 +261,15 @@ M.binds = {
 
     -- Window management
     { keys = "SUPER + Q", desc = "Close focused window", action = A.kill() },
-    {
-		keys = "SUPER + SHIFT + Q",
-		desc = "Force kill active window (only SIGKILLs when it's the process's last window)",
-		action = A.exec(
-			"pid=$(hyprctl activewindow -j | jq -r '.pid'); "
-				.. "n=$(hyprctl clients -j | jq --argjson p \"$pid\" '[.[] | select(.pid==$p)] | length'); "
-				.. "if [ \"$n\" -le 1 ]; then kill -9 \"$pid\"; else hyprctl dispatch 'hl.dsp.window.close()'; fi"
-		),
-	},
+	{ keys = "SUPER + SHIFT + Q", desc = "Force kill active window (only SIGKILLs when it's the process's last window)", action = A.force_kill() },
 	{ keys = "SUPER + F", desc = "Fullscreen", action = A.fullscreen("fullscreen") },
 	{ keys = "SUPER + SHIFT + F", desc = "Fake fullscreen", action = A.fullscreen("maximized") },
+	{ keys = "SUPER + SHIFT + Space", desc = "Toggle floating", action = A.toggle_float() },
 
 	-- Mouse
 	{ keys = "SUPER + mouse:272", desc = "Move window (left click drag)", action = A.drag(), mouse = true },
 	{ keys = "SUPER + mouse:273", desc = "Resize window (right click drag)", action = A.mresize(), mouse = true },
+	{ keys = "SUPER + mouse:274", desc = "Toggle floating on the hovered window (middle click)", action = A.toggle_float_hovered() },
 
 	-- Window resize & move
 	{ keys = "SUPER + left", desc = "Move floating window left", action = A.move_xy(-20, 0), repeating = true },

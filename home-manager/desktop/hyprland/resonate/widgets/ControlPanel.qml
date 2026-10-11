@@ -136,6 +136,53 @@ Item {
         color: CurrentTheme.subtext;
         font.pixelSize: 11;
       }
+
+      // Opens the launcher page (same as SUPER+Space).
+      Rectangle {
+        Layout.fillWidth: true;
+        Layout.topMargin: 10;
+        implicitHeight: 36;
+        radius: 18;
+        color: searchHover.hovered ? CurrentTheme.surfaceHover : CurrentTheme.glass;
+        border.width: 1;
+        border.color: CurrentTheme.border;
+        Behavior on color { ColorAnimation { duration: 100 } }
+
+        RowLayout {
+          anchors.fill: parent;
+          anchors.leftMargin: 14;
+          anchors.rightMargin: 8;
+          spacing: 10;
+          Text {
+            text: String.fromCodePoint(0xf0349); // md-magnify
+            font.family: Theme.iconFontFamily;
+            font.pixelSize: 16;
+            color: CurrentTheme.subtext;
+          }
+          Text {
+            Layout.fillWidth: true;
+            text: "Search apps and files";
+            color: CurrentTheme.subtext;
+            font.pixelSize: 12;
+          }
+          Rectangle {
+            implicitWidth: keyHint.implicitWidth + 12;
+            implicitHeight: 20;
+            radius: 6;
+            color: CurrentTheme.chip;
+            Text {
+              id: keyHint;
+              anchors.centerIn: parent;
+              text: "Super Space";
+              color: CurrentTheme.subtext;
+              font.pixelSize: 10; font.weight: Font.Bold;
+            }
+          }
+        }
+
+        HoverHandler { id: searchHover; cursorShape: Qt.PointingHandCursor; }
+        TapHandler { onTapped: Services.LauncherService.show(); }
+      }
     }
   }
 
