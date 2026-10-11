@@ -42,6 +42,7 @@ in
       n-direnv = "nano ./.envrc";
     };
   };
+  services.envfs.enable = true;
   
   # Enable direnvs
   programs.direnv.enable = true;
@@ -95,6 +96,12 @@ in
   services.printing.drivers = with pkgs; [
     hplip
   ];
+
+  environment.etc."samba/smb.conf".text = ''
+    [global]
+      client min protocol = SMB2
+      client max protocol = SMB3
+  '';
 
   # Enable bluetooth
   hardware.bluetooth.enable = true;

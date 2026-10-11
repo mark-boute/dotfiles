@@ -57,6 +57,7 @@
     pkgs.rpi-imager
     pkgs.flashprint
     pkgs.openscad
+    pkgs.orca-slicer
 
     pkgs.hplip
     pkgs.usbutils
