@@ -3,6 +3,7 @@
   pkgs,
   main-user,
   lib,
+  inputs,
   ...
 }: let
   grubLogo = ../../home-manager/desktop/hyprland/cappuccino/assets/coffee_pixel.png;
@@ -20,6 +21,7 @@ in {
   imports = [
     ./hardware-configuration.nix
     ./nixos-hardware.nix
+    inputs.claude-desktop.nixosModules.default
   ];
 
   main-user = {
@@ -39,6 +41,30 @@ in {
   hardware.nvidia-container-toolkit.enable = true;
   boot.extraModulePackages = [ config.boot.kernelPackages.lenovo-legion-module ];
   time.hardwareClockInLocalTime = true;
+  # nixpkgs (2026-10) signs modules with kmodigest and merges each external
+  # module's .ko.cer; these two copy their .ko by hand and ship none
+  boot.kernelPackages = pkgs.linuxPackages_latest.extend (_: prev: let
+    sign = drv: drv.overrideAttrs (old: {
+      postFixup = (old.postFixup or "") + ''
+        find $out -name '*.ko' ! -exec test -e {}.cer \; -exec ${lib.getExe pkgs.buildPackages.kmodigest} {} \;
+      '';
+    });
+  in {
+    zenpower = sign prev.zenpower;
+    lenovo-legion-module = sign prev.lenovo-legion-module;
+  });
+
+  programs.claude-desktop = {
+    enable = true;
+    cowork.users = [ main-user ];
+    # shell wrapper so upstream's ''${VAR:+...} flags expand; keyring isn't autodetected on Hyprland
+    package = (pkgs.callPackage "${inputs.claude-desktop}/package.nix" { }).overrideAttrs (old: {
+      postFixup = builtins.replaceStrings
+        [ "makeWrapper $out/lib/claude-desktop/claude-desktop $out/bin/claude-desktop" ]
+        [ "makeShellWrapper $out/lib/claude-desktop/claude-desktop $out/bin/claude-desktop --add-flags --password-store=gnome-libsecret" ]
+        old.postFixup;
+    });
+  };
 
   programs = {
     tmux.enable = true;

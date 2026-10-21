@@ -31,6 +31,11 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    claude-desktop = {  # official Claude Desktop .deb, repackaged
+      url = "github:kubastick/claude-desktop-nixos";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
     sops-nix = {  # secrets management
       url = "github:Mic92/sops-nix";
       inputs.nixpkgs.follows = "nixpkgs";
