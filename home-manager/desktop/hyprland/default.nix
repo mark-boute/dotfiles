@@ -93,6 +93,11 @@ in {
               on-timeout = ''hyprctl dispatch 'hl.dsp.dpms({ state = "off" })' '';
               on-resume = ''hyprctl dispatch 'hl.dsp.dpms({ state = "on" })' '';
             }
+            { # Let the Arctis headset auto-off 5 minutes after the lock (1 min of silence)
+              timeout = 900;
+              on-timeout = "${pkgs.headsetcontrol}/bin/headsetcontrol --inactive-time 1";
+              on-resume = "${pkgs.headsetcontrol}/bin/headsetcontrol --inactive-time 0";
+            }
           ];
         };
       };

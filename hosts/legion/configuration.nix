@@ -138,6 +138,10 @@ in {
       addprotonup = true;
       controllerpad = true;
     };
+    steelseries = {
+      headsetAlwaysOn = true;
+      rgb = true;
+    };
     sops.enable = true;
   };
 
