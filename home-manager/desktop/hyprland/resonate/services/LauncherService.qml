@@ -11,7 +11,7 @@ import QtQuick
 //         frecency (launch count aged by recency, persisted to
 //         ~/.config/resonate/launcher-usage.json); with a query, by match
 //         relevance then that same frecency. ↑/↓ + Enter.
-//   docs  section (Tab): zoxide (frecency dirs under ~/Documents) merged
+//   docs  section (Tab): zoxide (frecency dirs under ~) merged
 //         with fd (files + dirs there). On a folder, Enter browses into it
 //         (contents listed, Esc / ".." goes back up); Shift+Enter — and
 //         plain Enter on a file — opens a MIME-aware "open with" list
@@ -37,7 +37,7 @@ Singleton {
   property string browseDir: "";
 
   readonly property string home: Quickshell.env("HOME") || "";
-  readonly property string docsRoot: root.home + "/Documents";
+  readonly property string docsRoot: root.home;
 
   // Hyprland fires the bound global on both key-down and key-up of the
   // bind; debounce so one keypress is one toggle.
@@ -346,8 +346,8 @@ Singleton {
       docsProc.command = ["sh", "-c", browse, "sh", root.browseDir, q];
     } else {
       var search =
-        'docs="$HOME/Documents"; [ -d "$docs" ] || exit 0; q="$1";\n' +
-        'zoxide query -l 2>/dev/null | grep -F "$docs" | ' +
+        'docs="$HOME"; [ -d "$docs" ] || exit 0; q="$1";\n' +
+        'zoxide query -l 2>/dev/null | grep -F "$docs/" | ' +
           '{ if [ -n "$q" ]; then grep -iF -- "$q"; else cat; fi; } | ' +
           'head -n 12 | sed "s:/*$:/:";\n' +
         '[ -n "$q" ] && fd --absolute-path -i --fixed-strings --max-results 30 -- "$q" "$docs" 2>/dev/null';
