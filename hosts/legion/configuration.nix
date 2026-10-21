@@ -136,6 +136,7 @@ in {
     steam = {
       enable = true;
       addprotonup = true;
+      controllerpad = true;
     };
     sops.enable = true;
   };
