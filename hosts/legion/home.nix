@@ -92,8 +92,6 @@ in {
       vesktop
       signal-desktop
       element-desktop
-      teamspeak6-client
-      daccord
 
       # cora dependencies
       z3
