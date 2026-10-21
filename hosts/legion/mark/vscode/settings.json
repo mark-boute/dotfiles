@@ -54,5 +54,6 @@
   "workbench.iconTheme": "catppuccin-macchiato",
   "workbench.secondarySideBar.defaultVisibility": "hidden",
   "qt-core.showWelcomePageOnActivation": false,
-  "claudeCode.hideOnboarding": true
+  "claudeCode.hideOnboarding": true,
+  "claudeCode.preferredLocation": "panel"
 }

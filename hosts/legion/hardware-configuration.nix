@@ -30,6 +30,7 @@
   fileSystems."/run/media/${main-user}/windows" = 
     { device = "/dev/disk/by-uuid/D63A9CFF3A9CDDB5";
       fsType = "ntfs";
+      noCheck = true;
       options = [ "nofail" "rw" "uid=1000" "gid=100" "umask=0022" ];
     };
 

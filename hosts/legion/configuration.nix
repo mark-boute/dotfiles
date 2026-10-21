@@ -40,7 +40,6 @@ in {
   virtualisation.docker.enableOnBoot = true;
   hardware.nvidia-container-toolkit.enable = true;
   boot.extraModulePackages = [ config.boot.kernelPackages.lenovo-legion-module ];
-  time.hardwareClockInLocalTime = true;
   # nixpkgs (2026-10) signs modules with kmodigest and merges each external
   # module's .ko.cer; these two copy their .ko by hand and ship none
   boot.kernelPackages = pkgs.linuxPackages_latest.extend (_: prev: let
@@ -143,11 +142,6 @@ in {
 
   services.fwupd.enable = true; # BIOS/firmware updates via LVFS (fwupdmgr)
 
-  services.actual = {
-    enable = true; # finances, http://localhost:5006
-    settings.port = 5006;
-  };
-
   services.udev.extraRules = ''
     # NVIDIA dGPU (PCI 0000:01:00.0)
     KERNEL=="card*", KERNELS=="0000:01:00.0", SUBSYSTEM=="drm", SUBSYSTEMS=="pci", SYMLINK+="dri/nvidia-dgpu"
@@ -241,6 +235,8 @@ in {
   };
 
   boot.loader.grub.theme = customGrubTheme;
+  # 64M initrds on a 1G ESP
+  boot.loader.grub.configurationLimit = 5;
 
   programs.nix-index-database.comma.enable = true;
 
