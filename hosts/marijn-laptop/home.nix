@@ -66,25 +66,24 @@
 
   programs.git = {
     enable = true;
-    userName = "Marijn Meuleman";
-    userEmail = "marijn2312@gmail.com";
-    diff-so-fancy.enable = true;
-
-    aliases = {
-      s = "status";
-      c = "commit";
-      b = "switch";  # yep, this is on purpose
-      d = "diff";
-      l = "log";
-      p = "push";
-      f = "fetch";
-      a = "add";
-    };
-
-    extraConfig = {
+    settings = {
+      user.name = "Marijn Meuleman";
+      user.email = "marijn2312@gmail.com";
+      aliases = {
+        s = "status";
+        c = "commit";
+        b = "switch";  # yep, this is on purpose
+        d = "diff";
+        l = "log";
+        p = "push";
+        f = "fetch";
+        a = "add";
+      };
       push = { autoSetupRemote = true; };
     };
-  };
+  };    
+  
+  programs.diff-so-fancy.enable = true;
 
   programs.obsidian = {
     enable = true;
