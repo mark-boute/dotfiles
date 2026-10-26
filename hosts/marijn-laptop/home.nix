@@ -43,6 +43,7 @@
     pkgs.discord
     pkgs.vesktop
     pkgs.signal-desktop
+    pkgs.slack
 
     pkgs.gimp
     pkgs.ffmpeg

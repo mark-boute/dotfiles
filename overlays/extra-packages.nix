@@ -5,6 +5,9 @@
       (final: prev: {  # make nvchad available system-wide
         nvchad = inputs.nix4nvchad.packages."${pkgs.stdenv.hostPlatform.system}".nvchad;
       })
+      (final: prev: {
+      	km-print = final.callPackage ../pkgs/km-print/km-print.nix {};
+      })
     ];
   };
   # ...

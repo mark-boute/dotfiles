@@ -74,6 +74,7 @@ in
 
   # Enable networking
   networking.networkmanager.enable = true;
+  networking.networkmanager.plugins = with pkgs; [ networkmanager-openvpn ];
 
   # Enable the X11 windowing system.
   services.xserver.enable = true;
@@ -95,6 +96,7 @@ in
   services.printing.enable = true;
   services.printing.drivers = with pkgs; [
     hplip
+    km-print
   ];
 
   environment.etc."samba/smb.conf".text = ''
@@ -131,10 +133,16 @@ in
   programs.nix-ld.enable = true;
 
   programs.nix-ld.libraries = with pkgs; [
-    codeql
-    ruff
-    uv
+    # UV
+    codeql ruff uv
+    # Image stuff
+    xorg.libSM xorg.libICE xorg.libX11 xorg.libxcb libxkbcommon fontconfig freetype libGL glib zlib xorg.xcbutilwm xorg.xcbutilimage xorg.xcbutilkeysyms xorg.xcbutilrenderutil libxcb-cursor
   ];
+
+  virtualisation.libvirtd.enable = true;
+  programs.virt-manager.enable = true;
+  users.groups.libvirtd.members = ["marijn-laptop"];
+
 
   # List services that you want to enable:
 
