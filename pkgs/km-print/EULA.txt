@@ -1,0 +1,45 @@
+Software End User License Agreement
+
+PLEASE READ CAREFULLY THE LICENSE AGREEMENT BELOW BEFORE DOWNLOADING, INSTALLING OR USING THE SOFTWARE. DOWNLOADING, INSTALLING OR USING THE SOFTWARE SHALL BE DEEMED YOUR LAWFUL ACCEPTANCE OF THE TERMS AND CONDITIONS BELOW. IF YOU DO NOT AGREE TO THEM, DO NOT DOWNLOAD, INSTALL, NOR USE THE SOFTWARE. 
+
+1. SOFTWARE 
+"Software" means this computer program (software) downloaded on royalty-free basis (which may include digitally encoded, machine readable, scalable outline font data as encoded in a special format), together with all codes, techniques, software tools, format, design, concepts, methods and ideas associated with the computer program and all documentation related thereto. 
+
+2. COPYRIGHT AND INTELLECTUAL PROPERTY RIGHTS 
+This is a license agreement and not an agreement for sale. Konica Minolta Business Solutions Europe GmbH?("Konica Minolta") owns, or has been licensed from other owners ("Konica Minolta Licensor"), copyrights and other intellectual property rights of the Software, and any and all rights and title to the Software and any copy made from it are retained by Konica Minolta or Konica Minolta Licensor. In no event, this Agreement shall be deemed to assign any copyright and/or any intellectual property rights of the Software from Konica Minolta or Konica Minolta Licensor to you. Except as stated in this Agreement, you are not granted any rights to patents, copyrights, trade names, trademarks (whether registered or unregistered), or any other rights, franchises or licenses in respect of the Software. The Software is protected by copyright laws and international treaty provisions.
+
+3. LICENSE 
+Konica Minolta hereby grants to you, and you agree to accept a non-exclusive, non-transferable and limited license, and you may:
+(i)	install and use the Software only on your computer(s) connected via inhouse network with a product for which this Software is designed;
+(ii)	allow users of the computers described above to use the Software, provided that you assure that all such users comply with the terms of this Agreement;
+(iii)	use the Software only for your own customary business or personal purpose;
+(iv)	make one copy of the Software only for backup or installation purpose in the support of the normal and intended use of the Software;
+(v)	transfer the Software to other party by transferring a copy of this Agreement and all documentation along with the Software, provided that (a) you must, at the same time, either transfer to such other party or destroy all your other copies of the Software, (b) such transfer of possession terminates your license from Konica Minolta, and (c) you must assure that such other party has agreed to accept and be bound by the terms and conditions of this Agreement. If such other party does not accept such terms and conditions then you shall not transfer any copy of the Software.
+
+4. RESTRICTIONS 
+(1) You shall not without the written consent of Konica Minolta:
+(i) 	use, copy, modify, merge or transfer copies of the Software except as provided herein;
+(ii) 	reverse engineer, reverse assemble, reverse compile or any other way analyze the Software except permitted by law;
+(iii) 	sublicense, rent, lease or distribute the Software or any copy thereof; or
+(iv) 	remove, use, or alter any trademark, logo, copyright or other proprietary notices, legends, symbols or labels in the Software.
+(2) You agree that you will not export the Software in any form in violation of any applicable laws and regulations regarding export control of any country.
+
+5. LIMITED WARRANTIES
+THE SOFTWARE IS PROVIDED TO YOU "AS IS" WITHOUT ANY WARRANTIES WHATSOEVER. THE EXPRESS TERMS OF THIS AGREEMENT ARE IN LIEU OF ALL OTHER WARRANTIES, EXPRESS OR IMPLIED AND KONICA MINOLTA, ITS AFFILIATE COMPANIES AND KONICA MINOLTA LICENSOR DISCLAIM ALL WARRANTIES WITH REGARD TO THE SOFTWARE, EXPRESS OR IMPLIED, INCLUDING, WITHOUT LIMITATION, IMPLIED WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT OF THIRD PARTY RIGHTS. The disclaimer of warranty hereunder does not affect your statutory rights. In case of the disclaimer is not allowed by applicable law, the disclaimer shall only apply to you to the maximum extent permitted by the law.
+
+6. LIMITATION OF REMEDIES
+IN NO EVENT WILL KONICA MINOLTA, ITS AFFILIATE COMPANIES NOR KONICA MINOLTA LICENSOR BE LIABLE FOR ANY LOST PROFITS, LOST DATA, OR ANY OTHER INDIRECT, SPECIAL, PUNITIVE, INCIDENTAL OR CONSEQUENTIAL DAMAGES THAT RESULT FROM USE OR INABILITY TO USE THE SOFTWARE, EVEN IF KONICA MINOLTA, ITS AFFILIATE COMPANIES, ITS AUTHORIZED REMARKETERS OR KONICA MINOLTA LICENSOR HAS BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGES OR FOR ANY CLAIM BY YOU BASED ON A THIRD PARTY CLAIM.
+
+7. TERMINATION
+You may terminate this license at any time by destroying the Software and all your copies of it. This Agreement shall also terminate if you fail to comply with any terms hereof.?Upon such termination, you must immediately destroy all copies of the Software in your possession.
+
+8. GOVERNING LAW
+This Agreement shall be governed by the laws of the country where the delivery is made to the original customer.
+
+9. SEVERABILITY
+In the event that any part or parts of this agreement shall be held illegal or null and void by any court or administrative body of competent jurisdiction, such determination shall not effect the remaining parts of this agreement and they shall remain in full force and effect as if such part or parts determined illegal or void had not been included.
+
+10. NOTICE TO US GOVERNMENT END USERS 
+The Software is a "commercial item," as that term is defined at 48 C.F.R. 2.101 (October 1995), consisting of "commercial computer software" and "commercial computer software documentation," as such terms are used in 48 C.F.R. 12.212 (September 1995).  Consistent with 48 C.F.R. 12.212 and 48 C.F.R. 227.7202-1 through 227.7202-4 (June 1995), all U.S. Government End Users shall acquire the Software with only those rights set forth herein.
+
+YOU ACKNOWLEDGE THAT YOU HAVE READ THIS AGREEMENT, UNDERSTAND IT, AND AGREE TO BE BOUND BY ITS TERMS AND CONDITIONS.?NEITHER PARTY SHALL BE BOUND BY ANY OTHER STATEMENTS OR REPRESENTATIONS THAT ARE INCONSISTENT WITH THE TERMS AND CONDITIONS OF THIS AGREEMENT.  NO AMENDMENT TO THIS AGREEMENT IS EFFECTIVE UNLESS WRITTEN AND SIGNED BY PROPERLY AUTHORIZED REPRESENTATIVES OF EACH PARTY. BY DOWNLOADING, INSTALLING OR USING THE SOFTWARE YOU AGREE TO ACCEPT THE TERMS OF THIS AGREEMENT.
