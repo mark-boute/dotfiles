@@ -82,7 +82,7 @@ Item {
             visible: search.text === "";
             text: root.svc.openWithPath !== "" ? "Open with…"
               : root.svc.browseDir !== "" ? "Filter this folder…"
-              : root.svc.section === "docs" ? "Search Documents…"
+              : root.svc.section === "docs" ? "Search home…"
               : root.svc.section === "clip" ? "Filter clipboard…" : "Search apps…";
             color: CurrentTheme.subtext;
             font: search.font;
@@ -193,8 +193,8 @@ Item {
         currentIndex: root.svc.docSel;
         emptyText: root.svc.browseDir !== ""
           ? (root.svc.query === "" ? "Empty folder" : "Nothing here matches")
-          : (root.svc.query === "" ? "Recent folders in Documents appear here"
-             : "Nothing in Documents matches");
+          : (root.svc.query === "" ? "Recent folders appear here"
+             : "Nothing in home matches");
         delegate: docDelegate;
         model: root.svc.docs;
       }

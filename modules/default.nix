@@ -15,5 +15,6 @@
 
      # system programs
      ./steam
+     ./steelseries
     ];
 }

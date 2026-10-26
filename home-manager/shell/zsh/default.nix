@@ -155,12 +155,15 @@ in {
           ni = "nix-inspect --expr 'builtins.getFlake (import ${expandHome cfg.flakePath}/flake.nix)'";
  
           # Nix
-          switch = if cfg.enableNH 
-            then "sudo -v && nh os switch -I ${cfg.flakePath}"
-            else "sudo nixos-rebuild switch --flake ${cfg.flakePath} --no-reexec";
+          switch = if cfg.enableNH
+            then "sudo -v && nh os switch ${expandHome cfg.flakePath}"
+            else "sudo nixos-rebuild switch --flake ${expandHome cfg.flakePath} --no-reexec";
 
-          rebuild = "switch;  notify-send -a NixOS 'Rebuild complete\!'";
-          update = "sudo nix flake update --flake ~/dotfiles; switch; notify-send -a NixOS 'System updated\!'";
+          rebuild = "switch && notify-send -a NixOS 'Rebuild complete\!'";
+          update = (if cfg.enableNH
+            then "sudo -v && nh os switch -u ${expandHome cfg.flakePath}"
+            else "nix flake update --flake ${expandHome cfg.flakePath} && switch")
+            + " && notify-send -a NixOS 'System updated\!'";
 
           #Programs
           cora = "~/.cora/bin/cora";

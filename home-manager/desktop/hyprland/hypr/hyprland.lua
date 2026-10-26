@@ -42,3 +42,4 @@ require("input")
 
 -- Startup commands, optionally feeds qs config path for per-host overrides.
 require("exec")(try_require("qs-config"))
+try_require("autostart")
