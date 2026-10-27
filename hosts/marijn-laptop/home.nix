@@ -1,8 +1,6 @@
 { config, pkgs, inputs, ... }:
 
 {
-  # Home Manager needs a bit of information about you and the paths it should
-  # manage.
   home.username = "scarletto";
   home.homeDirectory = "/home/scarletto";
   imports = [ ../../home-manager ];
@@ -16,27 +14,7 @@
     # astrovim.enable = true;
   };
 
-  # The home.packages option allows you to install Nix packages into your
-  # environment.
-  home.packages = with pkgs; [
-    (lib.optional (system != "aarch64-linux") (
-      lib.warnIfNot (lib.hasInfix "-firefox-esr-140-bin-unwrapped-" zotero.buildPhase)
-        "EXPIRING OVERRIDE: zotero no longer bundles firefox-esr-140-bin-unwrapped. Remove it from configuration.nix!"
-        zotero
-    ))
-  
-    # # It is sometimes useful to fine-tune packages, for example, by applying
-    # # overrides. You can do that directly here, just don't forget the
-    # # parentheses. Maybe you want to install Nerd Fonts with a limited number of
-    # # fonts?
-    # (pkgs.nerdfonts.override { fonts = [ "FantasqueSansMono" ]; })
-
-    # # You can also create simple shell scripts directly inside your
-    # # configuration. For example, this adds a command 'my-hello' to your
-    # # environment:
-    # (pkgs.writeShellScriptBin "my-hello" ''
-    #   echo "Hello, ${config.home.username}!"
-    # '')
+  home.packages = with pkgs; [ 
     vscode
     typst
 
@@ -62,7 +40,12 @@
 
     hplip
     usbutils
-  ];
+  ] ++
+  lib.optional (system != "aarch64-linux") (
+    lib.warnIfNot (lib.hasInfix "-firefox-esr-140-bin-unwrapped-" zotero.buildPhase)
+      "EXPIRING OVERRIDE: zotero no longer bundles firefox-esr-140-bin-unwrapped. Remove it from configuration.nix!"
+      zotero
+  );
 
   programs.git = {
     enable = true;
