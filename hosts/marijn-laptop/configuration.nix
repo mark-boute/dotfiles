@@ -8,11 +8,18 @@ let
   username = "scarletto";
 in
 {
+  # REMOVE ONCE ZOTERO IS FIXED!!!
+  nixpkgs.config.permittedInsecurePackages = [
+    "firefox-esr-140-bin-unwrapped-140.17.0esr"
+  ];
+
   nix = {
     settings = {
       experimental-features = [ "nix-command" "flakes" ];
       auto-optimise-store = true;
       trusted-users = [ "@wheel" ];
+      cores = 8;
+      max-jobs = 2;
     };
     gc = {
       automatic = true;
@@ -26,7 +33,7 @@ in
     ../../lib
     ../../modules
   ];
-
+    
   programs.bash = {
     enable = true;
     shellAliases = {
