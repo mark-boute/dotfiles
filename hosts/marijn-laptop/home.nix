@@ -18,7 +18,13 @@
 
   # The home.packages option allows you to install Nix packages into your
   # environment.
-  home.packages = [
+  home.packages = with pkgs; [
+    (lib.optional (system != "aarch64-linux") (
+      lib.warnIfNot (lib.hasInfix "-firefox-esr-140-bin-unwrapped-" zotero.buildPhase)
+        "EXPIRING OVERRIDE: zotero no longer bundles firefox-esr-140-bin-unwrapped. Remove it from configuration.nix!"
+        zotero
+    ))
+  
     # # It is sometimes useful to fine-tune packages, for example, by applying
     # # overrides. You can do that directly here, just don't forget the
     # # parentheses. Maybe you want to install Nerd Fonts with a limited number of
@@ -31,31 +37,31 @@
     # (pkgs.writeShellScriptBin "my-hello" ''
     #   echo "Hello, ${config.home.username}!"
     # '')
-    pkgs.vscode
-    pkgs.typst
+    vscode
+    typst
 
-    pkgs.gh
-    pkgs.glab
-    pkgs.zotero
+    gh
+    glab
+    # zotero
     
-    pkgs.discord
-    pkgs.signal-desktop
-    pkgs.slack
+    discord
+    signal-desktop
+    slack
 
-    pkgs.gimp
-    pkgs.ffmpeg
+    gimp
+    ffmpeg
 
     inputs.zen-browser.packages.${pkgs.stdenv.system}.default
     
-    pkgs.eduvpn-client        
-    pkgs.openvpn
+    eduvpn-client        
+    openvpn
 
-    # pkgs.rpi-imager
-    pkgs.openscad
-    pkgs.orca-slicer
+    # rpi-imager
+    openscad
+    orca-slicer
 
-    pkgs.hplip
-    pkgs.usbutils
+    hplip
+    usbutils
   ];
 
   programs.git = {
