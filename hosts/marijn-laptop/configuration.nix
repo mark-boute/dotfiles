@@ -141,7 +141,7 @@ in
 
   programs.nix-ld.libraries = with pkgs; [
     # UV
-    codeql ruff uv
+    # codeql ruff uv
     # Image stuff
     xorg.libSM xorg.libICE xorg.libX11 xorg.libxcb libxkbcommon fontconfig freetype libGL glib zlib xorg.xcbutilwm xorg.xcbutilimage xorg.xcbutilkeysyms xorg.xcbutilrenderutil libxcb-cursor
   ];

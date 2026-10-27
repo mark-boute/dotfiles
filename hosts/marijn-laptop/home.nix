@@ -32,8 +32,6 @@
     #   echo "Hello, ${config.home.username}!"
     # '')
     pkgs.vscode
-    pkgs.kitty
-    pkgs.arduino-ide
     pkgs.typst
 
     pkgs.gh
@@ -41,7 +39,6 @@
     pkgs.zotero
     
     pkgs.discord
-    pkgs.vesktop
     pkgs.signal-desktop
     pkgs.slack
 
@@ -50,13 +47,10 @@
 
     inputs.zen-browser.packages.${pkgs.stdenv.system}.default
     
-    pkgs.terraform
-
     pkgs.eduvpn-client        
     pkgs.openvpn
 
-    pkgs.rpi-imager
-    pkgs.flashprint
+    # pkgs.rpi-imager
     pkgs.openscad
     pkgs.orca-slicer
 
