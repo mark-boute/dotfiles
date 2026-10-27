@@ -14,6 +14,9 @@
       (final: prev: {
       	km-print = final.callPackage ../pkgs/km-print/km-print.nix {};
       })
+      (final: prev: {
+        zen-browser = inputs.zen-browser.packages.${final.stdenv.hostPlatform.system}.default;
+      })
     ];
   };
   # ...

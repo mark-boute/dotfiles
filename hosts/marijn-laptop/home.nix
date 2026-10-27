@@ -51,7 +51,7 @@
     gimp
     ffmpeg
 
-    inputs.zen-browser.packages.${pkgs.stdenv.system}.default
+    zen-browser
     
     eduvpn-client        
     openvpn
