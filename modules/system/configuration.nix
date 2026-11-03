@@ -91,6 +91,8 @@ in
 
   # Allow unfree packages
   nixpkgs.config.allowUnfree = true;
+  # gtk2 is marked broken ahead of its removal (nixpkgs#410814); onlyoffice still needs it
+  nixpkgs.config.problems.handlers."gtk+".broken = "warn";
 
   # Some programs need SUID wrappers, can be configured further or are
   # started in user sessions.

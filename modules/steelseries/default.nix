@@ -35,7 +35,8 @@ in {
         serviceConfig = {
           Type = "oneshot";
           ExecStartPre = "${pkgs.coreutils}/bin/sleep 3";
-          ExecStart = "${pkgs.headsetcontrol}/bin/headsetcontrol --inactive-time 0";
+          # "-": exits 1 when the dongle isn't plugged in, which would fail nixos-rebuild switch
+          ExecStart = "-${pkgs.headsetcontrol}/bin/headsetcontrol --inactive-time 0";
         };
       };
 

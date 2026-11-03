@@ -16,8 +16,10 @@ Rectangle {
   property bool open: false;
   property string chevron: "";   // "", "down" (rotates with chevronTurn) or "right"
   property real chevronTurn: 0;  // 0..1
+  property string actionGlyph: "";  // small round button at the right edge
   signal tapped();
   signal iconTapped();
+  signal actionTapped();
 
   implicitHeight: 56;
   radius: 16;
@@ -32,7 +34,9 @@ Rectangle {
   TapHandler {
     onTapped: (p) => {
       var x = p.position.x;
-      if (x >= 8 && x <= 48) tile.iconTapped(); else tile.tapped();
+      if (x >= 8 && x <= 48) tile.iconTapped();
+      else if (tile.actionGlyph !== "" && x >= tile.width - 40) tile.actionTapped();
+      else tile.tapped();
     }
   }
 
@@ -73,6 +77,23 @@ Rectangle {
         color: CurrentTheme.subtext;
         font.pixelSize: 11;
       }
+    }
+
+    Rectangle {
+      visible: tile.actionGlyph !== "";
+      implicitWidth: 28; implicitHeight: 28; radius: 14;
+      color: actionHover.hovered ? CurrentTheme.chip : "transparent";
+      border.width: 1;
+      border.color: CurrentTheme.border;
+      Behavior on color { ColorAnimation { duration: 120 } }
+      Text {
+        anchors.centerIn: parent;
+        text: tile.actionGlyph;
+        font.family: Theme.iconFontFamily;
+        font.pixelSize: 15;
+        color: CurrentTheme.text;
+      }
+      HoverHandler { id: actionHover; cursorShape: Qt.PointingHandCursor; }
     }
 
     Rectangle {

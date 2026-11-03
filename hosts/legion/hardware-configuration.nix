@@ -27,11 +27,13 @@
       options = [ "fmask=0077" "dmask=0077" ];
     };
 
-  fileSystems."/run/media/${main-user}/windows" = 
+  # ntfs-3g (FUSE) instead of the kernel ntfs driver: deleting large files with
+  # the kernel driver corrupted the volume and needed a Windows chkdsk to repair.
+  fileSystems."/run/media/${main-user}/windows" =
     { device = "/dev/disk/by-uuid/D63A9CFF3A9CDDB5";
-      fsType = "ntfs";
+      fsType = "ntfs-3g";
       noCheck = true;
-      options = [ "nofail" "rw" "uid=1000" "gid=100" "umask=0022" ];
+      options = [ "nofail" "rw" "uid=1000" "gid=100" "umask=0022" "windows_names" ];
     };
 
   swapDevices = [ {

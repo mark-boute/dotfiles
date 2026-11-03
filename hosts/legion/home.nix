@@ -60,14 +60,9 @@ in {
       # networking and authentication
       authenticator
       eduvpn-client
-      bitwarden-cli
-
-      gh
-      glab
       opencpn
 
       # gaming
-      r2modman      
       lunar-client
       prismlauncher
 
@@ -81,25 +76,15 @@ in {
       onlyoffice-desktopeditors
       typst
       prettypst
-      hledger
-      hledger-ui
-      hledger-web
-
-      plex-desktop
 
       # communication
       discord
-      vesktop
       signal-desktop
-      element-desktop
 
       # cora dependencies
       z3
       jdk21
       gradle
-
-      # eclipse
-      eclipses.eclipse-committers
     ]
     ++ [
       inputs.zen-browser.packages.${pkgs.stdenv.system}.default

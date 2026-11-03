@@ -7,7 +7,8 @@ import qs
 import qs.services as Services
 
 // Opened from the power pill. Battery header with lock and a session row
-// behind the power button; Wi-Fi / Bluetooth / Keep awake / Power tiles
+// behind the power button; a full-width system update tile (UpdateService);
+// Wi-Fi / Bluetooth / Keep awake / Power tiles
 // (Wi-Fi and Bluetooth fold a device list open between the tile rows);
 // volume, brightness and warmth sliders (volume folds the audio devices
 // open). The Power tile swaps the panel for PowerPage.
@@ -70,7 +71,7 @@ Item {
 
   // --- sizes ---
   readonly property int sessionH: 68;
-  readonly property int fixedMain: 48 + 12 + 56 + 8 + 56 + 12 + 40 + 8 + 40 + 8 + 40;
+  readonly property int fixedMain: 48 + 12 + 56 + 8 + 56 + 8 + 56 + 12 + 40 + 8 + 40 + 8 + 40;
   readonly property real foldRoom: Theme.maxPanelContentHeight - fixedMain - (session ? sessionH : 0) - 8;
   readonly property real mainHeight: fixedMain + (session ? sessionH : 0)
     + (netOpen ? netCard.implicitHeight + 8 : 0)
@@ -332,6 +333,41 @@ Item {
     }
 
     Item { width: 1; height: 12; }
+
+    // --- system update: tap starts it, or opens the log while running / after a failure ---
+    SysTile {
+      readonly property var us: Services.UpdateService;
+      readonly property bool failed: !us.running && us.last !== null && us.last.status === "failed";
+      width: parent.width;
+      glyph: String.fromCodePoint(failed ? 0xf0026 : 0xf06b0); // md-alert / md-update
+      title: us.running ? "Updating system" : "System update";
+      sub: {
+        if (us.running) {
+          var t = Math.floor(us.elapsed / 60) + ":" + String(us.elapsed % 60).padStart(2, "0");
+          var what = us.phase === "inputs" ? "Updating inputs…"
+            : us.phase === "build" ? (us.total > 0 ? "Building " + us.built + "/" + us.total : "Evaluating…")
+              + (us.detail ? " · " + us.detail : "")
+            : us.phase === "fetch" ? "Fetching " + us.detail
+            : us.phase === "auth" ? "Waiting for password…"
+            : "Working…";
+          return t + " · " + what;
+        }
+        var l = us.last;
+        if (!l) return "Tap to update";
+        var when = Qt.formatDateTime(new Date(l.finished * 1000), "ddd HH:mm");
+        if (l.status === "failed") return "Failed (" + l.phase + ") · " + when + " · tap for log";
+        if (l.status === "uptodate") return "Up to date · " + when;
+        var n = l.changed ? l.changed.length : 0;
+        return "Updated" + (n ? " " + l.changed.slice(0, 3).join(", ") + (n > 3 ? " +" + (n - 3) : "") : "") + " · " + when;
+      }
+      on: us.running;
+      actionGlyph: failed ? String.fromCodePoint(0xf0709) : ""; // md-restart
+      onActionTapped: us.start();
+      onTapped: (us.running || failed) ? us.openLog() : us.start();
+      onIconTapped: us.running ? us.openLog() : us.start();
+    }
+
+    Item { width: 1; height: 8; }
 
     // --- tiles, with the network list folding open between the rows ---
     Row {

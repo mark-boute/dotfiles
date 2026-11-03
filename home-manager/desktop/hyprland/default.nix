@@ -46,7 +46,6 @@ in {
 
       hyprpwcenter
       hypridle
-      hyprpolkitagent
     ] ++ [
       inputs.hyprshutdown.packages.${pkgs.stdenv.hostPlatform.system}.default
     ];
@@ -67,6 +66,7 @@ in {
     # Based on: https://gitlab.com/nicky.tope/nixos-config/-/blob/main/user/desktop/hyprland/default.nix?ref_type=heads
     services = {
       hyprsunset.enable = true;
+      hyprpolkitagent.enable = true;  # password prompts (pkexec, the system panel update)
       hypridle = {
         enable = true;
         settings = {

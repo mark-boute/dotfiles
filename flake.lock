@@ -35,11 +35,19 @@
         "nixpkgs": "nixpkgs"
       },
       "locked": {
+<<<<<<< HEAD
         "lastModified": 1793011355,
         "narHash": "sha256-Nwt7keMo7rYq33UL4sk4YpD63Pbokr0lMU7hmVEtEPI=",
         "owner": "catppuccin",
         "repo": "nix",
         "rev": "96f08f364265c5ac66aa61f8f36946279e2c3b00",
+=======
+        "lastModified": 1793368344,
+        "narHash": "sha256-ojN7KpXLYv6NgJ2OMn7cPioc46g7UB1pd4tBf//3S1U=",
+        "owner": "catppuccin",
+        "repo": "nix",
+        "rev": "feac189528d08ca7c46bf1605d84b78ea5fe8263",
+>>>>>>> 035de62 (loads of changes)
         "type": "github"
       },
       "original": {
@@ -109,11 +117,19 @@
         ]
       },
       "locked": {
+<<<<<<< HEAD
         "lastModified": 1793033486,
         "narHash": "sha256-fXVURa0+CSCgaxLt8tmPNJq2U+fGYOwbk5j2YUe7kSc=",
         "owner": "nix-community",
         "repo": "home-manager",
         "rev": "7db163b2aee7e410e396b48aed02f646d742b9b8",
+=======
+        "lastModified": 1793193205,
+        "narHash": "sha256-X6xa6sGA7RnJQuZGbFMC+K+KToWAlBDCCjJXfTwEPsw=",
+        "owner": "nix-community",
+        "repo": "home-manager",
+        "rev": "095fef2f265c3c0da4fe315efba8f8a04495ab34",
+>>>>>>> 035de62 (loads of changes)
         "type": "github"
       },
       "original": {
@@ -255,11 +271,11 @@
         "systems": "systems_2"
       },
       "locked": {
-        "lastModified": 1790873469,
-        "narHash": "sha256-4gylQ3iZFCghINVP14afDt71wbb26Xd6ybqaJ+aLMD4=",
+        "lastModified": 1793556960,
+        "narHash": "sha256-0EIGGy6ARdYjzm8vQncIxFbsLAxt6QK28ZJA44IoGWI=",
         "owner": "hyprwm",
         "repo": "hyprshutdown",
-        "rev": "867e53ae11100b2ae3788734bfb11761aef00920",
+        "rev": "932dcf06320da94e5f7fa73cf449e8b8c394bf9d",
         "type": "github"
       },
       "original": {
@@ -424,11 +440,19 @@
         ]
       },
       "locked": {
+<<<<<<< HEAD
         "lastModified": 1792915725,
         "narHash": "sha256-v75hPw5NJ+mRRcwUzKi2OQtVSVv1hgq6ceAlPQB2kEE=",
         "owner": "nix-community",
         "repo": "nix-index-database",
         "rev": "93696586f3463024cceb089353539be95a38ae2b",
+=======
+        "lastModified": 1793543282,
+        "narHash": "sha256-PHtGxKYM99f8WhGR5YD7iiCiwemKa2wUD4yVI2oALFg=",
+        "owner": "nix-community",
+        "repo": "nix-index-database",
+        "rev": "cee0f879d338cf08f814210fa6c2b280594ade0a",
+>>>>>>> 035de62 (loads of changes)
         "type": "github"
       },
       "original": {
@@ -445,11 +469,19 @@
         "nvchad-starter": "nvchad-starter"
       },
       "locked": {
+<<<<<<< HEAD
         "lastModified": 1793082508,
         "narHash": "sha256-joN4R39MOZ4Bau8mWsuFT6lEeHLOHqFv+SgdKoNCw5Y=",
         "owner": "nix-community",
         "repo": "nix4nvchad",
         "rev": "b0b0daf5663d494b0e3fd1d1486c68e7aedbf2f1",
+=======
+        "lastModified": 1793543635,
+        "narHash": "sha256-yjDz5vWoymPD/ZZhLlrInN8jm/X7ebgbFhYkmjSTR84=",
+        "owner": "nix-community",
+        "repo": "nix4nvchad",
+        "rev": "94b2d0d1cd82111f48b017a6f8b7bc8160cb9910",
+>>>>>>> 035de62 (loads of changes)
         "type": "github"
       },
       "original": {
@@ -463,11 +495,19 @@
         "nixpkgs": "nixpkgs_4"
       },
       "locked": {
+<<<<<<< HEAD
         "lastModified": 1793054847,
         "narHash": "sha256-mhud3nRH8RoP0h9MydfkJ8mISpj+QE/S//wOt9bNgC0=",
         "owner": "nixos",
         "repo": "nixos-hardware",
         "rev": "8ba09466dc929acf5c8bb3e0cc40f472a7df3630",
+=======
+        "lastModified": 1793355509,
+        "narHash": "sha256-/Zs18x+IW4LuVH0rKxra0WPRgsk0DQsi0Bwkf8sOC5c=",
+        "owner": "nixos",
+        "repo": "nixos-hardware",
+        "rev": "04c6b94fa104bc23650983a4513aea196794d321",
+>>>>>>> 035de62 (loads of changes)
         "type": "github"
       },
       "original": {
@@ -479,24 +519,32 @@
     },
     "nixpkgs": {
       "locked": {
-        "lastModified": 1790652569,
-        "narHash": "sha256-k8Fu4c9Z+4Nh7mUr0cfw++ITQiyEhlWxoJBOkI3tOcQ=",
-        "rev": "b6c8664de9b6cc07fe5666a29f91884ba81197c4",
+        "lastModified": 1793225069,
+        "narHash": "sha256-GYpArmwi/iMuX2ov31oCBhAXRMJdNX9kOl2LZHCuR6M=",
+        "rev": "e62746b0b472753ef019baceab6f1e2e52014980",
         "type": "tarball",
-        "url": "https://releases.nixos.org/nixpkgs/nixpkgs-26.11pre1082290.b6c8664de9b6/nixexprs.tar.xz"
+        "url": "https://releases.nixos.org/nixpkgs/nixpkgs-26.11pre1104102.e62746b0b472/nixexprs.tar.zst"
       },
       "original": {
         "type": "tarball",
-        "url": "https://channels.nixos.org/nixpkgs-unstable/nixexprs.tar.xz"
+        "url": "https://channels.nixos.org/nixpkgs-unstable/nixexprs.tar.zst"
       }
     },
     "nixpkgs-unstable": {
       "locked": {
+<<<<<<< HEAD
         "lastModified": 1793081994,
         "narHash": "sha256-X0neSJGHpIWnmkNyke0AjGWnDuQGo60xSEsM1yZzA/w=",
         "rev": "c4ca38767ade38f4a5a01bd136cb44012d762fe3",
         "type": "tarball",
         "url": "https://releases.nixos.org/nixos/unstable-small/nixos-26.11pre1103068.c4ca38767ade/nixexprs.tar.zst"
+=======
+        "lastModified": 1793580174,
+        "narHash": "sha256-oKgEEN3M8x+rxZm4ubNOAG/kzSdF5dBfVpbIAczKYO0=",
+        "rev": "577e5b3393ab727c2cd3768ef981a7ba7d8c120d",
+        "type": "tarball",
+        "url": "https://releases.nixos.org/nixos/unstable-small/nixos-26.11pre1106666.577e5b3393ab/nixexprs.tar.zst"
+>>>>>>> 035de62 (loads of changes)
       },
       "original": {
         "type": "tarball",
@@ -550,11 +598,19 @@
     },
     "nixpkgs_5": {
       "locked": {
+<<<<<<< HEAD
         "lastModified": 1792773339,
         "narHash": "sha256-17eNBI5Khe4JZaRkL5hRGPWf8MZ6qv+bWAr4V8YeKBw=",
         "rev": "3ec636362e1816bc2f0888fa0fa2c69f1bc9e504",
         "type": "tarball",
         "url": "https://releases.nixos.org/nixos/unstable/nixos-26.11pre1100280.3ec636362e18/nixexprs.tar.zst"
+=======
+        "lastModified": 1793540411,
+        "narHash": "sha256-us2GRWGXbOQpN1blyJGvmdx+g4bv9GoFYq5iiOHRiZ8=",
+        "rev": "0bb2eedc20e4739f29e8045034f2828ad7054f8f",
+        "type": "tarball",
+        "url": "https://releases.nixos.org/nixos/unstable/nixos-26.11pre1106360.0bb2eedc20e4/nixexprs.tar.zst"
+>>>>>>> 035de62 (loads of changes)
       },
       "original": {
         "type": "tarball",
@@ -563,11 +619,19 @@
     },
     "nixpkgs_6": {
       "locked": {
+<<<<<<< HEAD
         "lastModified": 1792773339,
         "narHash": "sha256-17eNBI5Khe4JZaRkL5hRGPWf8MZ6qv+bWAr4V8YeKBw=",
         "rev": "3ec636362e1816bc2f0888fa0fa2c69f1bc9e504",
         "type": "tarball",
         "url": "https://releases.nixos.org/nixos/unstable/nixos-26.11pre1100280.3ec636362e18/nixexprs.tar.xz"
+=======
+        "lastModified": 1793341285,
+        "narHash": "sha256-LOv16TsMYV2/8BUYnhSxHkOASe7es2ORbqMeLlZJ8Hc=",
+        "rev": "1c89083e451e891152365b799595cf7790a43325",
+        "type": "tarball",
+        "url": "https://releases.nixos.org/nixos/unstable/nixos-26.11pre1105037.1c89083e451e/nixexprs.tar.xz"
+>>>>>>> 035de62 (loads of changes)
       },
       "original": {
         "type": "tarball",
@@ -600,11 +664,19 @@
         ]
       },
       "locked": {
+<<<<<<< HEAD
         "lastModified": 1793047357,
         "narHash": "sha256-eY8aBTGSgtx+25254i22jyjbj+JQkEIfb+JyQ2Exnuk=",
         "owner": "notashelf",
         "repo": "nvf",
         "rev": "60b4593979c39e9a1227c9913bd835bb1a59054b",
+=======
+        "lastModified": 1793550142,
+        "narHash": "sha256-N5ulCQwTIcd3Il7uE491pbkRTWL2BtZKf/B5jfavmCo=",
+        "owner": "notashelf",
+        "repo": "nvf",
+        "rev": "ab3159aea7707333e689289a74545b26c1c9d37c",
+>>>>>>> 035de62 (loads of changes)
         "type": "github"
       },
       "original": {
@@ -681,11 +753,19 @@
         "systems": "systems_5"
       },
       "locked": {
+<<<<<<< HEAD
         "lastModified": 1792919014,
         "narHash": "sha256-gJ8uPmQFhJ98X+VWPpD+o0tnQ0nJjbG+Z3QDHcSJKw0=",
         "owner": "Gerg-L",
         "repo": "spicetify-nix",
         "rev": "f6eb8135c060130150c8fbcc6b7cf5e22e5179d8",
+=======
+        "lastModified": 1793531264,
+        "narHash": "sha256-rbmfLn4/UWs1mrMJgMEJXMfdhN7o7i++c5jPtUdlP+8=",
+        "owner": "Gerg-L",
+        "repo": "spicetify-nix",
+        "rev": "d818ab64010272bc0072d0c325838a63038796e9",
+>>>>>>> 035de62 (loads of changes)
         "type": "github"
       },
       "original": {
@@ -795,11 +875,19 @@
         ]
       },
       "locked": {
+<<<<<<< HEAD
         "lastModified": 1793063583,
         "narHash": "sha256-avFKNlbqAAdwJtmB5gbB5W/1fQz0ftIH4ET6FQcpXu0=",
         "owner": "0xc000022070",
         "repo": "zen-browser-flake",
         "rev": "cfb35e5835c4ca6faa811ba38a94f755ecfcb393",
+=======
+        "lastModified": 1793615807,
+        "narHash": "sha256-2sHhKvrX5D2s8mFlC1hlffsKZQHZv73ObxReKQ6ESXk=",
+        "owner": "0xc000022070",
+        "repo": "zen-browser-flake",
+        "rev": "1add15a3a5188e584db1f543bb8b313cc6e1de99",
+>>>>>>> 035de62 (loads of changes)
         "type": "github"
       },
       "original": {

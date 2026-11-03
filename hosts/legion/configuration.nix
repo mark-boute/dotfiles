@@ -57,7 +57,13 @@ in {
     enable = true;
     cowork.users = [ main-user ];
     # shell wrapper so upstream's ''${VAR:+...} flags expand; keyring isn't autodetected on Hyprland
-    package = (pkgs.callPackage "${inputs.claude-desktop}/package.nix" { }).overrideAttrs (old: {
+    package = (pkgs.callPackage "${inputs.claude-desktop}/package.nix" { }).overrideAttrs (old: rec {
+      # upstream flake lags the apt repo; the bundled Claude Code version is pinned per app release
+      version = "4.4212.0";
+      src = pkgs.fetchurl {
+        url = "https://downloads.claude.ai/claude-desktop/apt/stable/pool/main/c/claude-desktop/claude-desktop_${version}_amd64.deb";
+        sha256 = "4fcf658e0fc895390ab82593287281dfbce261b0ec3ea90060e82d8bfbfd7a84";
+      };
       postFixup = builtins.replaceStrings
         [ "makeWrapper $out/lib/claude-desktop/claude-desktop $out/bin/claude-desktop" ]
         [ "makeShellWrapper $out/lib/claude-desktop/claude-desktop $out/bin/claude-desktop --add-flags --password-store=gnome-libsecret" ]
@@ -70,6 +76,8 @@ in {
     hyprland = {
       enable = true;
       xwayland.enable = true;
+      # match the package's default so the hyprland build comes from cache.nixos.org
+      withUWSM = true;
     };
     firefox.enable = true;
   };
@@ -79,7 +87,6 @@ in {
     wlr.enable = false;
     extraPortals = [
       pkgs.xdg-desktop-portal-gtk
-      pkgs.xdg-desktop-portal-hyprland
     ];
 
     config = {
@@ -110,6 +117,7 @@ in {
   };
 
   modules = {
+    system.selfUpdate.enable = true;
     system.gpu.optimus-prime = {
       enable = true;
       mode = "offload";
@@ -120,21 +128,10 @@ in {
       dedicatedGraphicsId = "PCI:1:0:0";
       powerManagement = true;
       finegrained = true;
-      # nvidiaPackage = config.boot.kernelPackages.nvidiaPackages.latest;
-
-      # nvidiaPackage = config.boot.kernelPackages.nvidiaPackages.mkDriver {
-      #   version = "580.65.06";
-      #   sha256_64bit = "sha256-BLEIZ69YXnZc+/3POe1fS9ESN1vrqwFy6qGHxqpQJP8=";
-      #   sha256_aarch64 = "sha256-4CrNwNINSlQapQJr/dsbm0/GvGSuOwT/nLnIknAM+cQ=";
-      #   openSha256 = "sha256-BKe6LQ1ZSrHUOSoV6UCksUE0+TIa0WcCHZv4lagfIgA=";
-      #   settingsSha256 = "sha256-9PWmj9qG/Ms8Ol5vLQD3Dlhuw4iaFtVHNC0hSyMCU24=";
-      #   persistencedSha256 = "sha256-ETRfj2/kPbKYX1NzE0dGr/ulMuzbICIpceXdCRDkAxA=";
-
-      #   ibtSupport = true;
-      # };
     };
     steam = {
       enable = true;
+      addmangohud = true;
       addprotonup = true;
       controllerpad = true;
     };
@@ -146,7 +143,10 @@ in {
   };
 
   services.fwupd.enable = true; # BIOS/firmware updates via LVFS (fwupdmgr)
-
+  services.ollama = {
+    enable = true;
+    acceleration = "cuda";
+  };
   services.udev.extraRules = ''
     # NVIDIA dGPU (PCI 0000:01:00.0)
     KERNEL=="card*", KERNELS=="0000:01:00.0", SUBSYSTEM=="drm", SUBSYSTEMS=="pci", SYMLINK+="dri/nvidia-dgpu"
@@ -199,10 +199,6 @@ in {
       # nvtopPackages.full
 
       nixfmt
-
-      # windown emulation
-      # winboat
-      # freerdp
 
       uv
       dotnetCorePackages.sdk_9_0
@@ -276,6 +272,8 @@ in {
       packages = [
         { appId = "org.vinegarhq.Sober"; origin = "flathub"; }
       ];
+      # flatpaks don't inherit sessionVariables; see modules/steam controllerpad
+      overrides.settings."org.vinegarhq.Sober".Environment.SDL_JOYSTICK_HIDAPI_STEAM = "0";
     };
     pipewire = {
       enable = true;

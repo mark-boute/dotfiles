@@ -34,3 +34,6 @@ local monitors = {
 for _, monitor in ipairs(monitors) do
     hl.monitor(monitor)
 end
+
+-- the panels run 8-bit, so a fullscreen app requesting HDR would switch to wide gamut without 10-bit
+hl.config({ render = { cm_auto_hdr = 0 } })
