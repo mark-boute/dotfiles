@@ -7,7 +7,7 @@ package.path = package.path
 
 hl.config({
 	debug = {
-		disable_logs = true,
+		disable_logs = false,
 	},
 })
 
