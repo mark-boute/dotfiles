@@ -28,7 +28,6 @@ hl.env("QT_STYLE_OVERRIDE", os.getenv("QT_STYLE_OVERRIDE") or "adwaita-dark")
 
 hl.env("GTK_THEME", "catppuccin-macchiato-rosewater-standard")
 
-hl.env("ELECTRON_OZONE_PLATFORM_HINT", "wayland")
 hl.config({ xwayland = { force_zero_scaling = true } })
 
 -- Per-user or host overrides added to .config/hypr.

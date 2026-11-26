@@ -1,5 +1,9 @@
 # pkgs/uni-printers.nix
-{ stdenv, perl, lib }:
+{
+  stdenv,
+  perl,
+  lib,
+}:
 
 stdenv.mkDerivation {
   pname = "km-printer";

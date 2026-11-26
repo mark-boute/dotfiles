@@ -1,0 +1,29 @@
+name: dendritic
+
+on:
+  push:
+    paths: [ "dendritic/**", ".github/workflows/dendritic.yml" ]
+  pull_request:
+    paths: [ "dendritic/**", ".github/workflows/dendritic.yml" ]
+  workflow_dispatch:
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: dendritic
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: cachix/install-nix-action@v31
+        with:
+          extra_nix_config: |
+            accept-flake-config = false
+
+      # evaluates every host (nixosConfigurations) without building them
+      - name: Evaluate hosts
+        run: nix flake check --no-build
+
+      - name: Check formatting
+        run: nix fmt -- --ci

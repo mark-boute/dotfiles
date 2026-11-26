@@ -1,9 +1,12 @@
 { config, ... }:
+let
+  inherit (config.flake.modules) homeManager;
+in
 {
   # Arctis 7: the auto-off timer lives in the headset. 0 (never) while in use,
   # 1 min at shutdown/suspend and 5 min after the screen lock.
   flake.modules.nixos.arctis = { pkgs, ... }: {
-    home-manager.sharedModules = [ config.flake.modules.homeManager.arctis ];
+    home-manager.sharedModules = [ homeManager.arctis ];
 
     environment.systemPackages = [ pkgs.headsetcontrol ];
     services.udev.packages = [ pkgs.headsetcontrol ];
@@ -59,23 +62,24 @@
 
   # Rival 600 / Apex 3 RGB. Not services.hardware.openrgb: that loads i2c-dev and
   # probes every i2c bus as root, including the dGPU's, which wakes it.
-  flake.modules.nixos.openrgb = { pkgs, ... }:
-  let
-    profile = "default"; # saved from the GUI in ~/.config/OpenRGB
-  in
-  {
-    environment.systemPackages = [ pkgs.openrgb ];
-    services.udev.packages = [ pkgs.openrgb ];
+  flake.modules.nixos.openrgb =
+    { pkgs, ... }:
+    let
+      profile = "default"; # saved from the GUI in ~/.config/OpenRGB
+    in
+    {
+      environment.systemPackages = [ pkgs.openrgb ];
+      services.udev.packages = [ pkgs.openrgb ];
 
-    systemd.user.services.openrgb-profile = {
-      description = "Apply OpenRGB profile";
-      wantedBy = [ "graphical-session.target" ];
-      after = [ "graphical-session.target" ];
-      unitConfig.ConditionPathExists = "%h/.config/OpenRGB/${profile}.orp";
-      serviceConfig = {
-        Type = "oneshot";
-        ExecStart = "${pkgs.openrgb}/bin/openrgb --noautoconnect --profile ${profile}";
+      systemd.user.services.openrgb-profile = {
+        description = "Apply OpenRGB profile";
+        wantedBy = [ "graphical-session.target" ];
+        after = [ "graphical-session.target" ];
+        unitConfig.ConditionPathExists = "%h/.config/OpenRGB/${profile}.orp";
+        serviceConfig = {
+          Type = "oneshot";
+          ExecStart = "${pkgs.openrgb}/bin/openrgb --noautoconnect --profile ${profile}";
+        };
       };
     };
-  };
 }

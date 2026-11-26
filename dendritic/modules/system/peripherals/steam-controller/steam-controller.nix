@@ -7,12 +7,18 @@
       description = "Steam Controller (2026) to Xbox 360 pad bridge";
       wantedBy = [ "multi-user.target" ];
       serviceConfig = {
-        ExecStart = "${pkgs.python3.withPackages (ps: [ ps.evdev ])}/bin/python3 -u ${./steam-controller-pad.py}";
+        ExecStart = "${
+          pkgs.python3.withPackages (ps: [ ps.evdev ])
+        }/bin/python3 -u ${./steam-controller-pad.py}";
         Restart = "always";
         RestartSec = 2;
         # root without capabilities: Steam's uaccess ACL on /dev/uinput blanks group access
         CapabilityBoundingSet = "";
-        DeviceAllow = [ "char-input rw" "/dev/uinput rw" "char-usb rw" ];
+        DeviceAllow = [
+          "char-input rw"
+          "/dev/uinput rw"
+          "char-usb rw"
+        ];
         DevicePolicy = "closed";
         ProtectSystem = "strict";
         ProtectHome = true;
@@ -34,6 +40,7 @@
     # a Steam client and stops the evdev events the bridge reads.
     environment.sessionVariables.SDL_JOYSTICK_HIDAPI_STEAM = "0";
     # flatpaks don't inherit sessionVariables
-    services.flatpak.overrides.settings."org.vinegarhq.Sober".Environment.SDL_JOYSTICK_HIDAPI_STEAM = "0";
+    services.flatpak.overrides.settings."org.vinegarhq.Sober".Environment.SDL_JOYSTICK_HIDAPI_STEAM =
+      "0";
   };
 }

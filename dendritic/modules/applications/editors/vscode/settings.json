@@ -29,12 +29,23 @@
   "nix.formatterPath": "nixfmt",
   "nix.serverPath": "nixd",
   "nix.serverSettings": {
-    "nixd.formatting.command": [
-      "nixfmt"
-    ],
-    "options": {
-      "home-manager.expr": "(builtins.getFlake \"/home/mark/dotfiles/dendritic\").homeConfigurations.mark.options",
-      "nixos.expr": "(builtins.getFlake \"/home/mark/dotfiles/dendritic\").nixosConfigurations.legion.options"
+    "nixd": {
+      "formatting": {
+        "command": [
+          "nixfmt"
+        ]
+      },
+      "options": {
+        "nixos": {
+          "expr": "(builtins.getFlake \"/home/mark/dotfiles/dendritic\").nixosConfigurations.legion.options"
+        },
+        "home-manager": {
+          "expr": "(builtins.getFlake \"/home/mark/dotfiles/dendritic\").nixosConfigurations.legion.options.home-manager.users.type.getSubOptions []"
+        },
+        "flake-parts": {
+          "expr": "(builtins.getFlake \"/home/mark/dotfiles/dendritic\").debug.options"
+        }
+      }
     }
   },
   "qt-qml.qmlls.useQmlImportPathEnvVar": true,

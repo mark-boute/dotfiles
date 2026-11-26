@@ -1,7 +1,10 @@
 { config, ... }:
+let
+  inherit (config.flake.modules) homeManager;
+in
 {
   flake.modules.nixos.git = {
-    home-manager.sharedModules = [ config.flake.modules.homeManager.git ];
+    home-manager.sharedModules = [ homeManager.git ];
   };
 
   flake.modules.homeManager.git = { osConfig, ... }: {
@@ -25,8 +28,12 @@
           a = "add";
         };
 
-        push = { autoSetupRemote = true; };
-        init = { defaultBranch = "main"; };
+        push = {
+          autoSetupRemote = true;
+        };
+        init = {
+          defaultBranch = "main";
+        };
       };
     };
 

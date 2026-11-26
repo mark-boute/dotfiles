@@ -1,7 +1,10 @@
 { config, ... }:
+let
+  inherit (config.flake.modules) homeManager;
+in
 {
   flake.modules.nixos.networking = { pkgs, ... }: {
-    home-manager.sharedModules = [ config.flake.modules.homeManager.networking ];
+    home-manager.sharedModules = [ homeManager.networking ];
 
     networking.networkmanager = {
       enable = true;

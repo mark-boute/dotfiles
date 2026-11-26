@@ -57,14 +57,14 @@ in
     system.stateVersion = "24.05"; # Did you read the comment?
     services.printing.enable = true;
     programs.tmux.enable = true;
-    security.pam.services.greetd.enableGnomeKeyring = true;
 
     programs.nix-index-database.comma.enable = true;
     programs.nix-ld.enable = true;
     programs.nix-ld.libraries = with pkgs; [
       ruff
       uv
-      libsecret glib # proton-drive CLI session store (gnome-keyring)
+      libsecret
+      glib # proton-drive CLI session store (gnome-keyring)
     ];
   };
 }

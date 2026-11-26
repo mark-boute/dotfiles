@@ -7,7 +7,7 @@ in
     modules = [ nixos.marijn-laptop ];
   };
 
-  flake.modules.nixos.marijn-laptop = { config, pkgs, ... }: {
+  flake.modules.nixos.marijn-laptop = { pkgs, ... }: {
     imports = with nixos; [
       # system
       base
@@ -19,6 +19,7 @@ in
       gnome
 
       # applications
+      git
       latex
       obsidian
       steam
@@ -39,6 +40,16 @@ in
       cores = 8;
       max-jobs = 2;
     };
+
+    # inherited from the old shared base
+    programs.gnupg.agent = {
+      enable = true;
+      enableSSHSupport = true;
+    };
+    warnings = [
+      "marijn-laptop: users.groups.libvirtd.members lists \"marijn-laptop\" (the hostname), not the user \"scarletto\", so virt-manager can't manage VMs without root; fix it in hosts/marijn-laptop/default.nix"
+      "marijn-laptop: gpg-agent (with SSH support) is on because the old base had it; if you don't use GPG, remove programs.gnupg.agent and this warning from hosts/marijn-laptop/default.nix"
+    ];
 
     services.envfs.enable = true;
     programs.direnv.enable = true;
@@ -70,7 +81,21 @@ in
     programs.nix-ld.enable = true;
     programs.nix-ld.libraries = with pkgs; [
       # Image stuff
-      xorg.libSM xorg.libICE xorg.libX11 xorg.libxcb libxkbcommon fontconfig freetype libGL glib zlib xorg.xcbutilwm xorg.xcbutilimage xorg.xcbutilkeysyms xorg.xcbutilrenderutil libxcb-cursor
+      libsm
+      libice
+      libx11
+      libxcb
+      libxkbcommon
+      fontconfig
+      freetype
+      libGL
+      glib
+      zlib
+      libxcb-wm
+      libxcb-image
+      libxcb-keysyms
+      libxcb-render-util
+      libxcb-cursor
     ];
 
     networking.extraHosts = ''

@@ -11,13 +11,15 @@
 
     programs.firefox.enable = true;
 
-    my.gnome = let
-      coffee = "file://${../../../desktop/theme/assets/coffee_pixel_art_2560x1600.png}";
-    in {
-      wallpaper = coffee;
-      wallpaperDark = coffee;
-      shellBlur = true;
-    };
+    my.gnome =
+      let
+        coffee = "file://${../../../desktop/theme/assets/coffee_pixel_art_2560x1600.png}";
+      in
+      {
+        wallpaper = coffee;
+        wallpaperDark = coffee;
+        shellBlur = true;
+      };
 
     # plain IDs come from flathub; use { appId; origin; } for other remotes
     services.flatpak.packages = [

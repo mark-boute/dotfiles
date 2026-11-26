@@ -9,7 +9,7 @@ in
     environment.systemPackages = with pkgs; [
       nixfmt
       uv
-      dotnetCorePackages.sdk_9_0
+      dotnetCorePackages.sdk_10_0
     ];
 
     virtualisation.docker.enable = true;

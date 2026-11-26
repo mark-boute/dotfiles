@@ -1,7 +1,10 @@
 { config, ... }:
+let
+  inherit (config.flake.modules) nixos;
+in
 {
   flake.modules.nixos.base = { pkgs, lib, ... }: {
-    imports = [ config.flake.modules.nixos.user ];
+    imports = [ nixos.user ];
 
     boot = {
       kernelPackages = lib.mkDefault pkgs.linuxPackages_latest;
@@ -20,7 +23,7 @@
       };
     };
 
-    environment.defaultPackages = [];
+    environment.defaultPackages = [ ];
     services.xserver.desktopManager.xterm.enable = false;
 
     environment.systemPackages = with pkgs; [
@@ -46,11 +49,6 @@
       LC_PAPER = "en_US.UTF-8";
       LC_TELEPHONE = "en_US.UTF-8";
       LC_TIME = "en_US.UTF-8";
-    };
-
-    programs.gnupg.agent = {
-      enable = true;
-      enableSSHSupport = true;
     };
 
     services.openssh.enable = true;

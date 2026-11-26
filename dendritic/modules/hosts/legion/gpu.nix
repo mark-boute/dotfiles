@@ -1,14 +1,14 @@
 {
   # AMD iGPU (PCI 6:0:0) renders and drives the panel; NVIDIA dGPU (PCI 1:0:0)
   # is PRIME-offloaded and sleeps in D3cold when idle. The "Hyprland (dGPU)"
-  # GDM session renders everything on the dGPU instead (see hypr/nvidia.lua).
-  flake.modules.nixos.legion-gpu = { config, pkgs, lib, ... }: {
+  # GDM session (hyprland.nix) renders everything on the dGPU instead.
+  flake.modules.nixos.legion-gpu = { config, pkgs, ... }: {
     hardware.graphics = {
       enable = true;
       enable32Bit = true;
     };
 
-    services.xserver.videoDrivers = [ "nvidia" "amdgpu" ];
+    services.xserver.videoDrivers = [ "nvidia" ];
 
     hardware.nvidia = {
       modesetting.enable = true;
@@ -30,22 +30,6 @@
         nvidiaBusId = "PCI:1:0:0";
       };
     };
-
-    hardware.nvidia-container-toolkit.enable = true;
-
-    services.displayManager.sessionPackages = [
-      ((pkgs.writeTextDir "share/wayland-sessions/hyprland-dgpu.desktop" ''
-        [Desktop Entry]
-        Name=Hyprland (dGPU)
-        Comment=Hyprland and all apps rendered on the NVIDIA GPU
-        Exec=${lib.getExe pkgs.uwsm} start -e -D Hyprland -N "Hyprland (dGPU)" -- ${pkgs.writeShellScript "hyprland-dgpu" ''
-          export HYPR_DGPU=1
-          exec ${config.programs.hyprland.package}/bin/start-hyprland "$@"
-        ''}
-        DesktopNames=Hyprland
-        Type=Application
-      '').overrideAttrs { passthru.providedSessions = [ "hyprland-dgpu" ]; })
-    ];
 
     # Load amdgpu in the initrd so the iGPU always gets the first render node
     # (renderD128); in stage 2 nvidia-drm can win the race, and apps that open
@@ -78,9 +62,13 @@
       ACTION=="add|bind", SUBSYSTEM=="pci", KERNEL=="0000:01:00.0", RUN+="${pkgs.coreutils}/bin/chgrp gpucontrol /sys%p/power/control", RUN+="${pkgs.coreutils}/bin/chmod 0664 /sys%p/power/control"
     '';
 
-    # The dGPU's HDMI/DP audio (0000:01:00.1) is useless without an external
-    # display, and WirePlumber holding its control device kept the codec at D0,
+    # Disables the dGPU's HDMI/DP audio (0000:01:00.1), which is the only audio
+    # path to a monitor on the HDMI port (wired to the dGPU). Trade-off: with it
+    # enabled, WirePlumber holding its control device kept the codec at D0,
     # which in turn kept the dGPU pinned out of D3cold.
+    warnings = [
+      "legion: HDMI monitor audio is disabled because WirePlumber kept the dGPU awake (gpu.nix); re-test with a newer driver/WirePlumber and remove this warning once decided"
+    ];
     services.pipewire.wireplumber.extraConfig."51-disable-nvidia-hdmi-audio" = {
       "monitor.alsa.rules" = [
         {
