@@ -1,0 +1,3102 @@
+*PPD-Adobe: "4.3"
+*% Adobe Systems Printer Description File
+*% For "KONICA MINOLTA 5020i PS" version 3010.106
+*% Copyright(C) 2019 KONICA MINOLTA, INC.
+*% Created:     12/07/18
+*% Modified:    03/01/19
+*% Platform:    Linux
+
+*FormatVersion:         "4.3"
+*LanguageVersion:	English
+*LanguageEncoding:	ISOLatin1
+*FileVersion:	"1.0"
+
+*Manufacturer:          "KONICA MINOLTA"
+*ModelName:             "KONICA MINOLTA 5020i"
+*NickName:	"KONICA MINOLTA 5020i PS BEU v1.0"
+*ShortNickName:         "KONICA MINOLTA 5020i"
+*PCFileName:	"KMbeu5020iUX.ppd"
+*Product:               "(KONICA MINOLTA 5020i)"
+*Product:               "(KONICA MINOLTA bizhub 5020i)"
+*Product:               "(KONICA MINOLTA 5000i)"
+*Product:               "(KONICA MINOLTA bizhub 5000i)"
+*Product:               "(KONICA MINOLTA 4020i)"
+*Product:               "(KONICA MINOLTA bizhub 4020i)"
+*Product:               "(KONICA MINOLTA 4000i)"
+*Product:               "(KONICA MINOLTA bizhub 4000i)"
+*PSVersion:             "(3010.106) 3"
+
+*% file has been modified by PPD tools for use in KM BEU driver package
+*% Modification date: 20.08.2019
+
+*cupsFilter:    "application/vnd.cups-postscript 0 KMbeuEmpPS.pl"
+*cupsLanguages: " fr it de es pt nl da se no fi gr tr cz hu pl ru sk ca hr ro sl eu zh_CN"
+*fr.Translation InstallableOptions/Options disponibles: ""
+*fr.Translation Model/Mod<C3A8>le: ""
+*fr.Translation PaperSourceUnit/Sources papier: ""
+*fr.PaperSourceUnit None/Aucun: ""
+*fr.PaperSourceUnit Unit2/Unit<C3A9> 2: ""
+*fr.InputSlot Tray1/Magasin 1: ""
+*fr.InputSlot Tray2/Magasin 2: ""
+*fr.InputSlot Tray3/Magasin 3: ""
+*fr.InputSlot Tray4/Magasin 4: ""
+*fr.Translation PageSize/Format papier: ""
+*fr.PageSize B5/B5 (JIS): ""
+*fr.PageRegion B5/B5 (JIS): ""
+*fr.Translation Duplex/Options recto-verso: ""
+*fr.Duplex DuplexTumble/Bord court: ""
+*fr.Duplex DuplexNoTumble/Bord long: ""
+*fr.Duplex None/Recto seul: ""
+*fr.Translation Resolution/R<C3A9>solution: ""
+*fr.Translation OutputMethod/Type de sortie: ""
+*fr.Translation KMOutputMethod/Type de sortie: ""
+*fr.KMOutputMethod None/Impression: ""
+*fr.KMOutputMethod Secure/Impression s<C3A9>curis<C3A9>e: ""
+*fr.KMOutputMethod ProofMode/Impression <C3A9>preuve: ""
+*fr.KMOutputMethod Box/Enreg. ds Bo<C3AE>te Util.: ""
+*fr.KMOutputMethod BoxPrint/Enr. dns bo<C3AE>te utilis, imprim.: ""
+*fr.KMOutputMethod IDPrint/ID & Imprimer: ""
+*fr.Translation KMSecID/ID impress s<C3A9>curis<C3A9>e: ""
+*fr.KMSecID None/Aucun: ""
+*fr.ParamCustomKMSecID Username/Nom d'utilisateur: ""
+*fr.Translation KMSecPass/Mot de passe: ""
+*fr.KMSecPass None/Aucun: ""
+*fr.ParamCustomKMSecPass Password/Mot de passe: ""
+*fr.Translation KMBoxNumber/bo<C3AE>te utilis.: ""
+*fr.KMBoxNumber None/Aucun: ""
+*fr.ParamCustomKMBoxNumber Number/bo<C3AE>te utilis.: ""
+*fr.Translation KMBoxFileName/Nom de fichier: ""
+*fr.KMBoxFileName None/Aucun: ""
+*fr.ParamCustomKMBoxFileName Name/Nom de fichier: ""
+*fr.Translation KMSafeQUser/Utilisateur SafeQ: ""
+*fr.ParamCustomKMSafeQUser User/Nom d'utilisateur: ""
+*fr.Translation AccountTrack/Suivi de Volume (E.K.C): ""
+*fr.Translation KMSectionManagement/Suivi de Volume (E.K.C): ""
+*fr.KMSectionManagement False/Non: ""
+*fr.KMSectionManagement True/Oui: ""
+*fr.Translation KMDepCode/Nom du service: ""
+*fr.KMDepCode None/Aucun: ""
+*fr.ParamCustomKMDepCode Name/Nom du service: ""
+*fr.Translation KMAccPass/Mot de passe: ""
+*fr.KMAccPass None/Aucun: ""
+*fr.ParamCustomKMAccPass Key/Mot de passe: ""
+*fr.Translation UserAuth/Authentification: ""
+*fr.Translation KMAuthentication/Authentification: ""
+*fr.KMAuthentication False/Non: ""
+*fr.KMAuthentication Server/Serveur externe: ""
+*fr.KMAuthentication Server/MFP + Serveur Externe: ""
+*fr.Translation KMAuthServer/Serv. Authent.: ""
+*fr.Translation KMAuthUser/Nom d'utilisateur: ""
+*fr.KMAuthUser None/Aucun: ""
+*fr.ParamCustomKMAuthUser Name/Nom d'utilisateur: ""
+*fr.Translation KMAuthPass/Mot de passe: ""
+*fr.KMAuthPass None/Aucun: ""
+*fr.ParamCustomKMAuthPass Key/Mot de passe: ""
+*fr.Translation KMDTStamp/Tampon Date/Heure: ""
+*fr.Translation KMStampDateTime/Date/Heure: ""
+*fr.KMStampDateTime None/Aucun: ""
+*fr.KMStampDateTime DateTime/Date/Heure: ""
+*fr.Translation KMStampDateFormat/Format de la date: ""
+*fr.Translation KMStampTimeFormat/Format de l<E28099>heure: ""
+*fr.Translation KMStampPrintPosition/Position d'impression: ""
+*fr.KMStampPrintPosition LEFTTOP/En haut <C3A0> gauche: ""
+*fr.KMStampPrintPosition CENTERTOP/En haut: ""
+*fr.KMStampPrintPosition RIGHTTOP/En haut <C3A0> droite: ""
+*fr.KMStampPrintPosition LEFTCENTER/Gauche: ""
+*fr.KMStampPrintPosition CENTER/Au centre: ""
+*fr.KMStampPrintPosition RIGHTCENTER/Droite: ""
+*fr.KMStampPrintPosition LEFTBOTTOM/En bas <C3A0> gauche: ""
+*fr.KMStampPrintPosition CENTERBOTTOM/En bas: ""
+*fr.KMStampPrintPosition RIGHTBOTTOM/En bas <C3A0> droite: ""
+*fr.Translation KMPNStamp/Tampon Num<C3A9>ro de page: ""
+*fr.Translation KMStampPageNumberEnable/Num<C3A9>ro de page: ""
+*fr.KMStampPageNumberEnable False/Non: ""
+*fr.KMStampPageNumberEnable True/Oui: ""
+*fr.Translation KMStampPNStartingPage/Page de d<C3A9>but: ""
+*fr.ParamCustomKMStampPNStartingPage Number/Page de d<C3A9>but: ""
+*fr.Translation KMStampPNStartingNumber/Num<C3A9>ro de d<C3A9>part: ""
+*fr.ParamCustomKMStampPNStartingNumber Number/Num<C3A9>ro de d<C3A9>part: ""
+*fr.Translation KMStampPNPrintPosition/Position d'impression: ""
+*fr.KMStampPNPrintPosition LEFTTOP/En haut <C3A0> gauche: ""
+*fr.KMStampPNPrintPosition CENTERTOP/En haut: ""
+*fr.KMStampPNPrintPosition RIGHTTOP/En haut <C3A0> droite: ""
+*fr.KMStampPNPrintPosition LEFTCENTER/Gauche: ""
+*fr.KMStampPNPrintPosition CENTER/Au centre: ""
+*fr.KMStampPNPrintPosition RIGHTCENTER/Droite: ""
+*fr.KMStampPNPrintPosition LEFTBOTTOM/En bas <C3A0> gauche: ""
+*fr.KMStampPNPrintPosition CENTERBOTTOM/En bas: ""
+*fr.KMStampPNPrintPosition RIGHTBOTTOM/En bas <C3A0> droite: ""
+*it.Translation InstallableOptions/Opzioni installabili: ""
+*it.Translation Model/Modello: ""
+*it.Translation PaperSourceUnit/Alimentazioni carta: ""
+*it.PaperSourceUnit None/Nessuna: ""
+*it.PaperSourceUnit Unit2/Unit<C3A0> 2: ""
+*it.InputSlot Tray1/Vassoio 1: ""
+*it.InputSlot Tray2/Vassoio 2: ""
+*it.InputSlot Tray3/Vassoio 3: ""
+*it.InputSlot Tray4/Vassoio 4: ""
+*it.Translation PageSize/Formato carta: ""
+*it.PageSize B5/B5 (JIS): ""
+*it.PageRegion B5/B5 (JIS): ""
+*it.Translation Duplex/Opzioni duplex: ""
+*it.Duplex DuplexTumble/Lato corto: ""
+*it.Duplex DuplexNoTumble/Lato lungo: ""
+*it.Translation Resolution/Risoluzione: ""
+*it.Translation OutputMethod/Metodo di uscita: ""
+*it.Translation KMOutputMethod/Metodo di uscita: ""
+*it.KMOutputMethod None/Stampa: ""
+*it.KMOutputMethod Secure/Stampa protetta: ""
+*it.KMOutputMethod ProofMode/Prova stampa: ""
+*it.KMOutputMethod Box/Salva in casella utente: ""
+*it.KMOutputMethod BoxPrint/Salva in casella utente/stampa: ""
+*it.KMOutputMethod IDPrint/ID & Stampa: ""
+*it.Translation KMSecID/ID stampa protetta: ""
+*it.KMSecID None/Nessuna: ""
+*it.ParamCustomKMSecID Username/Nome utente: ""
+*it.Translation KMSecPass/Password: ""
+*it.KMSecPass None/Nessuna: ""
+*it.Translation KMBoxNumber/casella utente: ""
+*it.KMBoxNumber None/Nessuna: ""
+*it.ParamCustomKMBoxNumber Number/casella utente: ""
+*it.Translation KMBoxFileName/Nome file: ""
+*it.KMBoxFileName None/Nessuna: ""
+*it.ParamCustomKMBoxFileName Name/Nome file: ""
+*it.Translation KMSafeQUser/Utente SafeQ: ""
+*it.ParamCustomKMSafeQUser User/Nome utente: ""
+*it.Translation AccountTrack/Traccia volume (E.K.C): ""
+*it.Translation KMSectionManagement/Traccia volume (E.K.C): ""
+*it.KMSectionManagement False/No: ""
+*it.KMSectionManagement True/S<C3AC>: ""
+*it.Translation KMDepCode/Nome reparto: ""
+*it.KMDepCode None/Nessuna: ""
+*it.ParamCustomKMDepCode Name/Nome reparto: ""
+*it.KMAccPass None/Nessuna: ""
+*it.Translation UserAuth/Autenticazione: ""
+*it.Translation KMAuthentication/Autenticazione: ""
+*it.KMAuthentication False/No: ""
+*it.KMAuthentication Server/Server esterno: ""
+*it.KMAuthentication Server/MFP + Server esterno: ""
+*it.Translation KMAuthServer/Server autenticazione: ""
+*it.Translation KMAuthUser/Nome utente: ""
+*it.KMAuthUser None/Nessuna: ""
+*it.ParamCustomKMAuthUser Name/Nome utente: ""
+*it.KMAuthPass None/Nessuna: ""
+*it.Translation KMDTStamp/Timbro: ""
+*it.Translation KMStampDateTime/Data/Ora: ""
+*it.KMStampDateTime None/Nessuna: ""
+*it.KMStampDateTime Date/Data: ""
+*it.KMStampDateTime DateTime/Data/Ora: ""
+*it.Translation KMStampDateFormat/Formato Data: ""
+*it.Translation KMStampTimeFormat/Formato Ora: ""
+*it.Translation KMStampPrintPosition/Posizione di stampa: ""
+*it.KMStampPrintPosition LEFTTOP/In alto a sinistra: ""
+*it.KMStampPrintPosition CENTERTOP/Alto: ""
+*it.KMStampPrintPosition RIGHTTOP/In alto a destra: ""
+*it.KMStampPrintPosition LEFTCENTER/Sinistra centrale: ""
+*it.KMStampPrintPosition CENTER/Centro: ""
+*it.KMStampPrintPosition RIGHTCENTER/Destra: ""
+*it.KMStampPrintPosition LEFTBOTTOM/In basso a sinistra: ""
+*it.KMStampPrintPosition CENTERBOTTOM/Basso: ""
+*it.KMStampPrintPosition RIGHTBOTTOM/In basso a destra: ""
+*it.Translation KMPNStamp/Timbro: ""
+*it.Translation KMStampPageNumberEnable/Numero pagina: ""
+*it.KMStampPageNumberEnable False/No: ""
+*it.KMStampPageNumberEnable True/S<C3AC>: ""
+*it.Translation KMStampPNStartingPage/Pagina di partenza: ""
+*it.ParamCustomKMStampPNStartingPage Number/Pagina di partenza: ""
+*it.Translation KMStampPNStartingNumber/Numero di partenza: ""
+*it.ParamCustomKMStampPNStartingNumber Number/Numero di partenza: ""
+*it.Translation KMStampPNPrintPosition/Posizione di stampa: ""
+*it.KMStampPNPrintPosition LEFTTOP/In alto a sinistra: ""
+*it.KMStampPNPrintPosition CENTERTOP/Alto: ""
+*it.KMStampPNPrintPosition RIGHTTOP/In alto a destra: ""
+*it.KMStampPNPrintPosition LEFTCENTER/Sinis.: ""
+*it.KMStampPNPrintPosition CENTER/Centro: ""
+*it.KMStampPNPrintPosition RIGHTCENTER/Destra: ""
+*it.KMStampPNPrintPosition LEFTBOTTOM/In basso a sinist.: ""
+*it.KMStampPNPrintPosition CENTERBOTTOM/Basso: ""
+*it.KMStampPNPrintPosition RIGHTBOTTOM/In basso a destra: ""
+*de.Translation InstallableOptions/Installierbare Optionen: ""
+*de.Translation PaperSourceUnit/Papiermagazine: ""
+*de.PaperSourceUnit None/Ohne: ""
+*de.PaperSourceUnit Unit2/Einheit 2: ""
+*de.InputSlot Tray1/Magazin 1: ""
+*de.InputSlot Tray2/Magazin 2: ""
+*de.InputSlot Tray3/Magazin 3: ""
+*de.InputSlot Tray4/Magazin 4: ""
+*de.Translation PageSize/Papierformat: ""
+*de.PageSize B5/B5 (JIS): ""
+*de.PageRegion B5/B5 (JIS): ""
+*de.Translation Duplex/Duplexoptionen: ""
+*de.Duplex DuplexTumble/Kurze Seite: ""
+*de.Duplex DuplexNoTumble/Lange Seite: ""
+*de.Translation Resolution/Aufl<C3B6>sung: ""
+*de.Translation OutputMethod/Ausgabe-Modus: ""
+*de.Translation KMOutputMethod/Ausgabe-Modus: ""
+*de.KMOutputMethod None/Drucken: ""
+*de.KMOutputMethod Secure/Sicheres Drucken: ""
+*de.KMOutputMethod ProofMode/Testdruck: ""
+*de.KMOutputMethod Box/In Mailbox speichern: ""
+*de.KMOutputMethod BoxPrint/In Mailb. speichern u. drucken: ""
+*de.KMOutputMethod IDPrint/ID & Drucken: ""
+*de.Translation KMSecID/ID f. sich. Drucken: ""
+*de.KMSecID None/Ohne: ""
+*de.ParamCustomKMSecID Username/Benutzername: ""
+*de.Translation KMSecPass/Kennwort: ""
+*de.KMSecPass None/Ohne: ""
+*de.ParamCustomKMSecPass Password/Kennwort: ""
+*de.Translation KMBoxNumber/Boxnummer: ""
+*de.KMBoxNumber None/Ohne: ""
+*de.ParamCustomKMBoxNumber Number/Boxnummer: ""
+*de.Translation KMBoxFileName/Dateiname: ""
+*de.KMBoxFileName None/Ohne: ""
+*de.ParamCustomKMBoxFileName Name/Dateiname: ""
+*de.Translation KMSafeQUser/SafeQ Benutzer: ""
+*de.ParamCustomKMSafeQUser User/Benutzername: ""
+*de.Translation AccountTrack/Volumenverfolgung (E.K.C): ""
+*de.Translation KMSectionManagement/Volumenverfolgung (E.K.C): ""
+*de.KMSectionManagement False/Aus: ""
+*de.KMSectionManagement True/Ein: ""
+*de.Translation KMDepCode/Abteilungsname: ""
+*de.KMDepCode None/Ohne: ""
+*de.ParamCustomKMDepCode Name/Abteilungsname: ""
+*de.Translation KMAccPass/Kennwort: ""
+*de.KMAccPass None/Ohne: ""
+*de.ParamCustomKMAccPass Key/Kennwort: ""
+*de.Translation UserAuth/Authentifizierung: ""
+*de.Translation KMAuthentication/Authentifizierung: ""
+*de.KMAuthentication False/Aus: ""
+*de.KMAuthentication Server/Externer Server: ""
+*de.KMAuthentication Server/MFP + Externer Server: ""
+*de.Translation KMAuthServer/Authent.-Server: ""
+*de.Translation KMAuthUser/Benutzername: ""
+*de.KMAuthUser None/Ohne: ""
+*de.ParamCustomKMAuthUser Name/Benutzername: ""
+*de.Translation KMAuthPass/Kennwort: ""
+*de.KMAuthPass None/Ohne: ""
+*de.ParamCustomKMAuthPass Key/Kennwort: ""
+*de.Translation KMDTStamp/Datums-Stempel: ""
+*de.Translation KMStampDateTime/Datum/Zeit: ""
+*de.KMStampDateTime None/Ohne: ""
+*de.KMStampDateTime Date/Datum: ""
+*de.KMStampDateTime DateTime/Datum/Zeit: ""
+*de.Translation KMStampDateFormat/Datumsformat: ""
+*de.Translation KMStampTimeFormat/Uhrzeitformat: ""
+*de.Translation KMStampPrintPosition/Druckposition: ""
+*de.KMStampPrintPosition LEFTTOP/Oben links: ""
+*de.KMStampPrintPosition CENTERTOP/Oben: ""
+*de.KMStampPrintPosition RIGHTTOP/Oben rechts: ""
+*de.KMStampPrintPosition LEFTCENTER/Links: ""
+*de.KMStampPrintPosition CENTER/Zentriert: ""
+*de.KMStampPrintPosition RIGHTCENTER/Rechts: ""
+*de.KMStampPrintPosition LEFTBOTTOM/Unten links: ""
+*de.KMStampPrintPosition CENTERBOTTOM/Unten: ""
+*de.KMStampPrintPosition RIGHTBOTTOM/Unten rechts: ""
+*de.Translation KMPNStamp/Seitenzahl-Stempel: ""
+*de.Translation KMStampPageNumberEnable/Seitenzahl: ""
+*de.KMStampPageNumberEnable False/Aus: ""
+*de.KMStampPageNumberEnable True/Ein: ""
+*de.Translation KMStampPNStartingPage/Startseite: ""
+*de.ParamCustomKMStampPNStartingPage Number/Startseite: ""
+*de.Translation KMStampPNStartingNumber/Startzahl: ""
+*de.ParamCustomKMStampPNStartingNumber Number/Startzahl: ""
+*de.Translation KMStampPNPrintPosition/Druckposition: ""
+*de.KMStampPNPrintPosition LEFTTOP/Oben links: ""
+*de.KMStampPNPrintPosition CENTERTOP/Oben: ""
+*de.KMStampPNPrintPosition RIGHTTOP/Oben rechts: ""
+*de.KMStampPNPrintPosition LEFTCENTER/Links: ""
+*de.KMStampPNPrintPosition CENTER/Zentriert: ""
+*de.KMStampPNPrintPosition RIGHTCENTER/Rechts: ""
+*de.KMStampPNPrintPosition LEFTBOTTOM/Unten links: ""
+*de.KMStampPNPrintPosition CENTERBOTTOM/Unten: ""
+*de.KMStampPNPrintPosition RIGHTBOTTOM/Unten rechts: ""
+*es.Translation InstallableOptions/Opciones de Instalaci<C3B3>n: ""
+*es.Translation Model/Modelo: ""
+*es.Translation PaperSourceUnit/Origen del papel: ""
+*es.PaperSourceUnit None/Ninguna: ""
+*es.PaperSourceUnit Unit2/Unidad 2: ""
+*es.InputSlot Tray1/Bandeja 1: ""
+*es.InputSlot Tray2/Bandeja 2: ""
+*es.InputSlot Tray3/Bandeja 3: ""
+*es.InputSlot Tray4/Bandeja 4: ""
+*es.Translation PageSize/Tama<C3B1>o papel: ""
+*es.PageSize B5/B5 (JIS): ""
+*es.PageRegion B5/B5 (JIS): ""
+*es.Translation Duplex/Opciones de D<C3BA>plex: ""
+*es.Duplex DuplexTumble/Borde corto: ""
+*es.Duplex DuplexNoTumble/Borde largo: ""
+*es.Duplex None/Transmisi<C3B3>n simple: ""
+*es.Translation Resolution/Resoluci<C3B3>n: ""
+*es.Translation OutputMethod/M<C3A9>todo de salida: ""
+*es.Translation KMOutputMethod/M<C3A9>todo de salida: ""
+*es.KMOutputMethod None/Impresi<C3B3>n: ""
+*es.KMOutputMethod Secure/Impresi<C3B3>n segura: ""
+*es.KMOutputMethod ProofMode/Impresi<C3B3>n de prueba: ""
+*es.KMOutputMethod Box/Guard. en carpeta usuario: ""
+*es.KMOutputMethod BoxPrint/Guardar en Carpeta e imprimir: ""
+*es.KMOutputMethod IDPrint/ID e imprimir: ""
+*es.Translation KMSecID/Id. impresi<C3B3>n segura: ""
+*es.KMSecID None/Ninguna: ""
+*es.ParamCustomKMSecID Username/Nombre de usuario: ""
+*es.Translation KMSecPass/Contrase<C3B1>a: ""
+*es.KMSecPass None/Ninguna: ""
+*es.ParamCustomKMSecPass Password/Contrase<C3B1>a: ""
+*es.Translation KMBoxNumber/N<C3BA>mero Carpeta: ""
+*es.KMBoxNumber None/Ninguna: ""
+*es.ParamCustomKMBoxNumber Number/N<C3BA>mero Carpeta: ""
+*es.Translation KMBoxFileName/Nombre de archivo: ""
+*es.KMBoxFileName None/Ninguna: ""
+*es.ParamCustomKMBoxFileName Name/Nombre de archivo: ""
+*es.ParamCustomKMSafeQUser User/Nombre de usuario: ""
+*es.Translation AccountTrack/Seguim. volumen (E.K.C.): ""
+*es.Translation KMSectionManagement/Seguim. volumen (E.K.C.): ""
+*es.KMSectionManagement False/Desact.: ""
+*es.KMSectionManagement True/Activ.: ""
+*es.Translation KMDepCode/Nombre del Departamento: ""
+*es.KMDepCode None/Ninguna: ""
+*es.ParamCustomKMDepCode Name/Nombre del Departamento: ""
+*es.Translation KMAccPass/Contrase<C3B1>a: ""
+*es.KMAccPass None/Ninguna: ""
+*es.ParamCustomKMAccPass Key/Contrase<C3B1>a: ""
+*es.Translation UserAuth/Autenticaci<C3B3>n: ""
+*es.Translation KMAuthentication/Autenticaci<C3B3>n: ""
+*es.KMAuthentication False/Desact.: ""
+*es.KMAuthentication Server/Servidor externo: ""
+*es.KMAuthentication Server/MFP+Servidor Externo: ""
+*es.Translation KMAuthServer/Servidor autent.: ""
+*es.Translation KMAuthUser/Nombre de usuario: ""
+*es.KMAuthUser None/Ninguna: ""
+*es.ParamCustomKMAuthUser Name/Nombre de usuario: ""
+*es.Translation KMAuthPass/Contrase<C3B1>a: ""
+*es.KMAuthPass None/Ninguna: ""
+*es.ParamCustomKMAuthPass Key/Contrase<C3B1>a: ""
+*es.Translation KMDTStamp/Sello Fecha y Hora: ""
+*es.Translation KMStampDateTime/Fecha/Hora: ""
+*es.KMStampDateTime None/Ninguna: ""
+*es.KMStampDateTime Date/Fecha: ""
+*es.KMStampDateTime DateTime/Fecha/Hora: ""
+*es.Translation KMStampDateFormat/Formato de fecha: ""
+*es.Translation KMStampTimeFormat/Formato de hora: ""
+*es.Translation KMStampPrintPosition/Posici<C3B3>n de impresi<C3B3>n: ""
+*es.KMStampPrintPosition LEFTTOP/Superior izquierdo: ""
+*es.KMStampPrintPosition CENTERTOP/Superior: ""
+*es.KMStampPrintPosition RIGHTTOP/Superior derecho: ""
+*es.KMStampPrintPosition LEFTCENTER/Izq.: ""
+*es.KMStampPrintPosition CENTER/Centro: ""
+*es.KMStampPrintPosition RIGHTCENTER/Derecha: ""
+*es.KMStampPrintPosition LEFTBOTTOM/Inferior izquierdo: ""
+*es.KMStampPrintPosition CENTERBOTTOM/Inferior: ""
+*es.KMStampPrintPosition RIGHTBOTTOM/Inferior derecho: ""
+*es.Translation KMPNStamp/Sello N<C2BA> P<C3A1>gina: ""
+*es.Translation KMStampPageNumberEnable/N<C3BA>mero de p<C3A1>gina: ""
+*es.KMStampPageNumberEnable False/Desact.: ""
+*es.KMStampPageNumberEnable True/Activ.: ""
+*es.Translation KMStampPNStartingPage/P<C3A1>gina inicial: ""
+*es.ParamCustomKMStampPNStartingPage Number/P<C3A1>gina inicial: ""
+*es.Translation KMStampPNStartingNumber/N<C3BA>mero inicial: ""
+*es.ParamCustomKMStampPNStartingNumber Number/N<C3BA>mero inicial: ""
+*es.Translation KMStampPNPrintPosition/Posici<C3B3>n de impresi<C3B3>n: ""
+*es.KMStampPNPrintPosition LEFTTOP/Superior izquierdo: ""
+*es.KMStampPNPrintPosition CENTERTOP/Superior: ""
+*es.KMStampPNPrintPosition RIGHTTOP/Superior derecho: ""
+*es.KMStampPNPrintPosition LEFTCENTER/Izq.: ""
+*es.KMStampPNPrintPosition CENTER/Centro: ""
+*es.KMStampPNPrintPosition RIGHTCENTER/Derecha: ""
+*es.KMStampPNPrintPosition LEFTBOTTOM/Inferior izquierdo: ""
+*es.KMStampPNPrintPosition CENTERBOTTOM/Inferior: ""
+*es.KMStampPNPrintPosition RIGHTBOTTOM/Inferior derecho: ""
+*pt.Translation InstallableOptions/Op<C3A7C3B5>es instal<C3A1>veis: ""
+*pt.Translation Model/Modelo: ""
+*pt.Translation PaperSourceUnit/Unidade de Fonte de Papel: ""
+*pt.PaperSourceUnit None/Nenhum: ""
+*pt.PaperSourceUnit Unit2/Unidade 2: ""
+*pt.InputSlot Tray1/Tab.1: ""
+*pt.InputSlot Tray2/Tab.2: ""
+*pt.InputSlot Tray3/Tab.3: ""
+*pt.InputSlot Tray4/Tab.4: ""
+*pt.Translation PageSize/Tam. do papel: ""
+*pt.PageSize B5/B5 (JIS): ""
+*pt.PageRegion B5/B5 (JIS): ""
+*pt.Translation Duplex/Op<C3A7C3B5>es Duplex: ""
+*pt.Duplex DuplexTumble/Extrem. Curta: ""
+*pt.Duplex DuplexNoTumble/Extremidade Longa: ""
+*pt.Translation Resolution/Resolu<C3A7C3A3>o: ""
+*pt.Translation OutputMethod/M<C3A9>todo de Sa<C3AD>da: ""
+*pt.Translation KMOutputMethod/M<C3A9>todo de Sa<C3AD>da: ""
+*pt.KMOutputMethod None/Imprimir: ""
+*pt.KMOutputMethod Secure/Impress<C3A3>o Segura: ""
+*pt.KMOutputMethod ProofMode/Imprimir Teste: ""
+*pt.KMOutputMethod Box/Guardar na Cx. do Utiliz: ""
+*pt.KMOutputMethod BoxPrint/Guard. na Cx. Util. e Impr.: ""
+*pt.KMOutputMethod IDPrint/ID & Imprimir: ""
+*pt.Translation KMSecID/ID de Impress<C3A3>o Segura: ""
+*pt.KMSecID None/Nenhum: ""
+*pt.ParamCustomKMSecID Username/Nome Utilizador: ""
+*pt.Translation KMSecPass/Impress<C3A3>o Segura c/ P-Passe: ""
+*pt.KMSecPass None/Nenhum: ""
+*pt.ParamCustomKMSecPass Password/P-passe: ""
+*pt.Translation KMBoxNumber/N<C2BA> Caixa Utilizador: ""
+*pt.KMBoxNumber None/Nenhum: ""
+*pt.ParamCustomKMBoxNumber Number/N<C2BA> Caixa Utilizador: ""
+*pt.Translation KMBoxFileName/Nome do Fich.: ""
+*pt.KMBoxFileName None/Nenhum: ""
+*pt.ParamCustomKMBoxFileName Name/Nome do Fich.: ""
+*pt.ParamCustomKMSafeQUser User/Nome Utilizador: ""
+*pt.Translation AccountTrack/Acompanhamento da Conta: ""
+*pt.Translation KMSectionManagement/Acompanhamento da Conta: ""
+*pt.Translation KMDepCode/Nome do Departamento: ""
+*pt.KMDepCode None/Nenhum: ""
+*pt.ParamCustomKMDepCode Name/Nome do Departamento: ""
+*pt.Translation KMAccPass/P-passe: ""
+*pt.KMAccPass None/Nenhum: ""
+*pt.ParamCustomKMAccPass Key/P-passe: ""
+*pt.Translation UserAuth/Autentifica<C3A7C3A3>o do Utilizador: ""
+*pt.Translation KMAuthentication/Autentifica<C3A7C3A3>o do Utilizador: ""
+*pt.KMAuthentication Server/Servidor Externo: ""
+*pt.Translation KMAuthServer/Servidor de autentica<C3A7C3A3>o: ""
+*pt.Translation KMAuthUser/Nome Utilizador: ""
+*pt.KMAuthUser None/Nenhum: ""
+*pt.ParamCustomKMAuthUser Name/Nome Utilizador: ""
+*pt.Translation KMAuthPass/P-passe: ""
+*pt.KMAuthPass None/Nenhum: ""
+*pt.ParamCustomKMAuthPass Key/P-passe: ""
+*pt.Translation KMDTStamp/Carimbo c/ Data e Hora: ""
+*pt.Translation KMStampDateTime/Data/Hora: ""
+*pt.KMStampDateTime None/Nenhum: ""
+*pt.KMStampDateTime Date/Data: ""
+*pt.KMStampDateTime DateTime/Data/Hora: ""
+*pt.Translation KMStampDateFormat/Formato Data: ""
+*pt.Translation KMStampTimeFormat/Formato Hora: ""
+*pt.Translation KMStampPrintPosition/Posi<C3A7C3A3>o de Impress<C3A3>o: ""
+*pt.KMStampPrintPosition LEFTTOP/Canto Sup. Esq.: ""
+*pt.KMStampPrintPosition CENTERTOP/Cima: ""
+*pt.KMStampPrintPosition RIGHTTOP/Canto Sup. Dir.: ""
+*pt.KMStampPrintPosition LEFTCENTER/Esq.: ""
+*pt.KMStampPrintPosition CENTER/Centro: ""
+*pt.KMStampPrintPosition RIGHTCENTER/Direita: ""
+*pt.KMStampPrintPosition LEFTBOTTOM/Canto inferior esq.: ""
+*pt.KMStampPrintPosition CENTERBOTTOM/Em Baixo: ""
+*pt.KMStampPrintPosition RIGHTBOTTOM/Canto inferior dir.: ""
+*pt.Translation KMPNStamp/Carimbo c/ N<C3BA>mero da P<C3A1>gina: ""
+*pt.Translation KMStampPageNumberEnable/N<C3BA>mero da P<C3A1>gina: ""
+*pt.Translation KMStampPNStartingPage/P<C3A1>gina Inicial: ""
+*pt.ParamCustomKMStampPNStartingPage Number/P<C3A1>gina Inicial: ""
+*pt.Translation KMStampPNStartingNumber/N<C3BA>mero da p<C3A1>gina inicial: ""
+*pt.ParamCustomKMStampPNStartingNumber Number/N<C3BA>mero da p<C3A1>gina inicial: ""
+*pt.Translation KMStampPNPrintPosition/Posi<C3A7C3A3>o de Impress<C3A3>o: ""
+*pt.KMStampPNPrintPosition LEFTTOP/Canto Sup. Esq.: ""
+*pt.KMStampPNPrintPosition CENTERTOP/Cima: ""
+*pt.KMStampPNPrintPosition RIGHTTOP/Canto Sup. Dir.: ""
+*pt.KMStampPNPrintPosition LEFTCENTER/Esq.: ""
+*pt.KMStampPNPrintPosition CENTER/Centro: ""
+*pt.KMStampPNPrintPosition RIGHTCENTER/Direita: ""
+*pt.KMStampPNPrintPosition LEFTBOTTOM/Canto inferior esq.: ""
+*pt.KMStampPNPrintPosition CENTERBOTTOM/Em Baixo: ""
+*pt.KMStampPNPrintPosition RIGHTBOTTOM/Canto inferior dir.: ""
+*nl.Translation InstallableOptions/Installeerbare  Optie's: ""
+*nl.Translation PaperSourceUnit/Eenheid papierbron: ""
+*nl.PaperSourceUnit None/Geen: ""
+*nl.PaperSourceUnit Unit2/eenheid 2: ""
+*nl.InputSlot Tray1/Lade1: ""
+*nl.InputSlot Tray2/Lade2: ""
+*nl.InputSlot Tray3/Lade3: ""
+*nl.InputSlot Tray4/Lade4: ""
+*nl.Translation PageSize/Papierformaat: ""
+*nl.PageSize B5/B5 (JIS): ""
+*nl.PageRegion B5/B5 (JIS): ""
+*nl.Translation Duplex/Duplex Optie's: ""
+*nl.Duplex DuplexTumble/Korte zijde: ""
+*nl.Duplex DuplexNoTumble/Lange zijde: ""
+*nl.Translation Resolution/Resolutie: ""
+*nl.Translation OutputMethod/Uitvoermethode: ""
+*nl.Translation KMOutputMethod/Uitvoermethode: ""
+*nl.KMOutputMethod None/Afdrukken: ""
+*nl.KMOutputMethod Secure/Beveiligd afdrukken: ""
+*nl.KMOutputMethod ProofMode/Proefafdruk: ""
+*nl.KMOutputMethod Box/Opslaan in gebruikersbox: ""
+*nl.KMOutputMethod BoxPrint/Opslaan in gebruikersbox en afdrukken: ""
+*nl.KMOutputMethod IDPrint/ID & afdrukken: ""
+*nl.Translation KMSecID/ID beveiligd afdrukken: ""
+*nl.KMSecID None/Geen: ""
+*nl.ParamCustomKMSecID Username/Gebruikersnaam: ""
+*nl.Translation KMSecPass/Wachtwoord: ""
+*nl.KMSecPass None/Geen: ""
+*nl.ParamCustomKMSecPass Password/Wachtwoord: ""
+*nl.Translation KMBoxNumber/Gebruikersboxnummer: ""
+*nl.KMBoxNumber None/Geen: ""
+*nl.ParamCustomKMBoxNumber Number/Gebruikersboxnummer: ""
+*nl.Translation KMBoxFileName/Bestandsnaam: ""
+*nl.KMBoxFileName None/Geen: ""
+*nl.ParamCustomKMBoxFileName Name/Bestandsnaam: ""
+*nl.Translation KMSafeQUser/SafeQ gebruiker: ""
+*nl.ParamCustomKMSafeQUser User/Gebruikersnaam: ""
+*nl.Translation AccountTrack/Afdelingsregistratie: ""
+*nl.Translation KMSectionManagement/Afdelingsregistratie: ""
+*nl.KMSectionManagement False/Uit: ""
+*nl.KMSectionManagement True/Aan: ""
+*nl.Translation KMDepCode/Afdelingsnaam: ""
+*nl.KMDepCode None/Geen: ""
+*nl.ParamCustomKMDepCode Name/Afdelingsnaam: ""
+*nl.Translation KMAccPass/Wachtwoord: ""
+*nl.KMAccPass None/Geen: ""
+*nl.ParamCustomKMAccPass Key/Wachtwoord: ""
+*nl.Translation UserAuth/Gebruikersauthenticatie: ""
+*nl.Translation KMAuthentication/Gebruikersauthenticatie: ""
+*nl.KMAuthentication False/Uit: ""
+*nl.KMAuthentication Server/Externe server: ""
+*nl.KMAuthentication Server/MFP + Externe server: ""
+*nl.Translation KMAuthServer/Authenticatieserver: ""
+*nl.Translation KMAuthUser/Gebruikersnaam: ""
+*nl.KMAuthUser None/Geen: ""
+*nl.ParamCustomKMAuthUser Name/Gebruikersnaam: ""
+*nl.Translation KMAuthPass/Wachtwoord: ""
+*nl.KMAuthPass None/Geen: ""
+*nl.ParamCustomKMAuthPass Key/Wachtwoord: ""
+*nl.Translation KMDTStamp/Datum Stempel: ""
+*nl.Translation KMStampDateTime/Datum/tijd: ""
+*nl.KMStampDateTime None/Geen: ""
+*nl.KMStampDateTime Date/Datum: ""
+*nl.KMStampDateTime DateTime/Datum/tijd: ""
+*nl.Translation KMStampDateFormat/Datumnotatie: ""
+*nl.KMStampDateFormat DATE1/23.08.2012: ""
+*nl.KMStampDateFormat DATE4/23 augustus 2012: ""
+*nl.KMStampDateFormat DATE2/23 augustus 2012: ""
+*nl.KMStampDateFormat DATE5/23.08.2012: ""
+*nl.KMStampDateFormat DATE3/23.08.2012: ""
+*nl.Translation KMStampTimeFormat/Tijdnotatie: ""
+*nl.KMStampTimeFormat TIME1/13:23: ""
+*nl.KMStampTimeFormat TIME2/13:23: ""
+*nl.Translation KMStampPrintPosition/Afdrukpositie: ""
+*nl.KMStampPrintPosition LEFTTOP/Bovenaan links: ""
+*nl.KMStampPrintPosition CENTERTOP/Boven: ""
+*nl.KMStampPrintPosition RIGHTTOP/Bovenaan rechts: ""
+*nl.KMStampPrintPosition LEFTCENTER/Links: ""
+*nl.KMStampPrintPosition CENTER/Midden: ""
+*nl.KMStampPrintPosition RIGHTCENTER/Rechts: ""
+*nl.KMStampPrintPosition LEFTBOTTOM/Onderaan links: ""
+*nl.KMStampPrintPosition CENTERBOTTOM/Onder: ""
+*nl.KMStampPrintPosition RIGHTBOTTOM/Onderaan rechts: ""
+*nl.Translation KMPNStamp/Paginanummer Stempel: ""
+*nl.Translation KMStampPageNumberEnable/Paginanummer: ""
+*nl.KMStampPageNumberEnable False/Uit: ""
+*nl.KMStampPageNumberEnable True/Aan: ""
+*nl.Translation KMStampPNStartingPage/Startpagina: ""
+*nl.ParamCustomKMStampPNStartingPage Number/Startpagina: ""
+*nl.Translation KMStampPNStartingNumber/Startpaginanummer: ""
+*nl.ParamCustomKMStampPNStartingNumber Number/Startpaginanummer: ""
+*nl.Translation KMStampPNPrintPosition/Afdrukpositie: ""
+*nl.KMStampPNPrintPosition LEFTTOP/Bovenaan links: ""
+*nl.KMStampPNPrintPosition CENTERTOP/Boven: ""
+*nl.KMStampPNPrintPosition RIGHTTOP/Bovenaan rechts: ""
+*nl.KMStampPNPrintPosition LEFTCENTER/Links: ""
+*nl.KMStampPNPrintPosition CENTER/Midden: ""
+*nl.KMStampPNPrintPosition RIGHTCENTER/Rechts: ""
+*nl.KMStampPNPrintPosition LEFTBOTTOM/Onderaan links: ""
+*nl.KMStampPNPrintPosition CENTERBOTTOM/Onder: ""
+*nl.KMStampPNPrintPosition RIGHTBOTTOM/Onderaan rechts: ""
+*da.Translation InstallableOptions/Installerbare indstillinger: ""
+*da.Translation PaperSourceUnit/Papirkildeenhed: ""
+*da.PaperSourceUnit None/Ingen: ""
+*da.PaperSourceUnit Unit2/Enhed 2: ""
+*da.InputSlot Tray1/Bakke1: ""
+*da.InputSlot Tray2/Bakke2: ""
+*da.InputSlot Tray3/Bakke3: ""
+*da.InputSlot Tray4/Bakke4: ""
+*da.Translation PageSize/Papirformat: ""
+*da.PageSize B5/B5 (JIS): ""
+*da.PageRegion B5/B5 (JIS): ""
+*da.Translation Duplex/Duplex-indstillinger: ""
+*da.Duplex DuplexTumble/Kort kant: ""
+*da.Duplex DuplexNoTumble/Lang kant: ""
+*da.Translation Resolution/Opl<C3B8>sning: ""
+*da.Translation OutputMethod/Output-metode: ""
+*da.Translation KMOutputMethod/Output-metode: ""
+*da.KMOutputMethod None/Udskriv: ""
+*da.KMOutputMethod Secure/Sikker udskrift: ""
+*da.KMOutputMethod ProofMode/Korrekturprint: ""
+*da.KMOutputMethod Box/Gem i brugerboks: ""
+*da.KMOutputMethod BoxPrint/Gem i brugerboks og udskriv: ""
+*da.Translation KMSecID/ID til sikker udskrift: ""
+*da.KMSecID None/Ingen: ""
+*da.ParamCustomKMSecID Username/Brugernavn: ""
+*da.Translation KMSecPass/Adgangskode: ""
+*da.KMSecPass None/Ingen: ""
+*da.ParamCustomKMSecPass Password/Adgangskode: ""
+*da.Translation KMBoxNumber/Brugerbakkenummer: ""
+*da.KMBoxNumber None/Ingen: ""
+*da.ParamCustomKMBoxNumber Number/Brugerbakkenummer: ""
+*da.Translation KMBoxFileName/Filnavn: ""
+*da.KMBoxFileName None/Ingen: ""
+*da.ParamCustomKMBoxFileName Name/Filnavn: ""
+*da.ParamCustomKMSafeQUser User/Brugernavn: ""
+*da.Translation AccountTrack/Kontosporing: ""
+*da.Translation KMSectionManagement/Kontosporing: ""
+*da.KMSectionManagement False/Fra: ""
+*da.KMSectionManagement True/Til: ""
+*da.Translation KMDepCode/Afdelingsnavn: ""
+*da.KMDepCode None/Ingen: ""
+*da.ParamCustomKMDepCode Name/Afdelingsnavn: ""
+*da.Translation KMAccPass/Adgangskode: ""
+*da.KMAccPass None/Ingen: ""
+*da.ParamCustomKMAccPass Key/Adgangskode: ""
+*da.Translation UserAuth/Brugergodkendelse: ""
+*da.Translation KMAuthentication/Brugergodkendelse: ""
+*da.KMAuthentication False/Fra: ""
+*da.KMAuthentication Server/Ekstern server: ""
+*da.Translation KMAuthServer/Identifikationsserver: ""
+*da.Translation KMAuthUser/Brugernavn: ""
+*da.KMAuthUser None/Ingen: ""
+*da.ParamCustomKMAuthUser Name/Brugernavn: ""
+*da.Translation KMAuthPass/Adgangskode: ""
+*da.KMAuthPass None/Ingen: ""
+*da.ParamCustomKMAuthPass Key/Adgangskode: ""
+*da.Translation KMDTStamp/Stempel: ""
+*da.Translation KMStampDateTime/Dato/tidspunkt: ""
+*da.KMStampDateTime None/Ingen: ""
+*da.KMStampDateTime Date/Dato: ""
+*da.KMStampDateTime DateTime/Dato/tidspunkt: ""
+*da.Translation KMStampDateFormat/Datoformat: ""
+*da.Translation KMStampTimeFormat/Tidsformat: ""
+*da.Translation KMStampPrintPosition/Printposition: ""
+*da.KMStampPrintPosition LEFTTOP/Top til venstre: ""
+*da.KMStampPrintPosition RIGHTTOP/Top til h<C3B8>jre: ""
+*da.KMStampPrintPosition LEFTCENTER/Venstre: ""
+*da.KMStampPrintPosition CENTER/Midte: ""
+*da.KMStampPrintPosition RIGHTCENTER/H<C3B8>jre: ""
+*da.KMStampPrintPosition LEFTBOTTOM/Bund til venstre: ""
+*da.KMStampPrintPosition CENTERBOTTOM/Bund: ""
+*da.KMStampPrintPosition RIGHTBOTTOM/Bund til h<C3B8>jre: ""
+*da.Translation KMPNStamp/Stempel: ""
+*da.Translation KMStampPageNumberEnable/Sidetal: ""
+*da.KMStampPageNumberEnable False/Fra: ""
+*da.KMStampPageNumberEnable True/Til: ""
+*da.Translation KMStampPNStartingPage/Startside: ""
+*da.ParamCustomKMStampPNStartingPage Number/Startside: ""
+*da.Translation KMStampPNStartingNumber/Startsidetal: ""
+*da.ParamCustomKMStampPNStartingNumber Number/Startsidetal: ""
+*da.Translation KMStampPNPrintPosition/Printposition: ""
+*da.KMStampPNPrintPosition LEFTTOP/Top til venstre: ""
+*da.KMStampPNPrintPosition RIGHTTOP/Top til h<C3B8>jre: ""
+*da.KMStampPNPrintPosition LEFTCENTER/Venstre: ""
+*da.KMStampPNPrintPosition CENTER/Midte: ""
+*da.KMStampPNPrintPosition RIGHTCENTER/H<C3B8>jre: ""
+*da.KMStampPNPrintPosition LEFTBOTTOM/Bund til venstre: ""
+*da.KMStampPNPrintPosition CENTERBOTTOM/Bund: ""
+*da.KMStampPNPrintPosition RIGHTBOTTOM/Bund til h<C3B8>jre: ""
+*se.Translation InstallableOptions/Installerbara tillval: ""
+*se.Translation Model/Modell: ""
+*se.Translation PaperSourceUnit/Pappersk<C3A4>lla enhet: ""
+*se.PaperSourceUnit None/Ingen: ""
+*se.PaperSourceUnit Unit2/Enhet 2: ""
+*se.InputSlot Tray1/Kassett1: ""
+*se.InputSlot Tray2/Kassett2: ""
+*se.InputSlot Tray3/Kassett3: ""
+*se.InputSlot Tray4/Kassett4: ""
+*se.Translation PageSize/Pappersformat: ""
+*se.PageSize B5/B5 (JIS): ""
+*se.PageRegion B5/B5 (JIS): ""
+*se.Translation Duplex/Alternativ f<C3B6>r dubbelsidig utskrift: ""
+*se.Duplex DuplexTumble/Kortsida: ""
+*se.Duplex DuplexNoTumble/L<C3A5>ngsida: ""
+*se.Duplex None/Enkelsidigt: ""
+*se.Translation Resolution/Uppl<C3B6>sning: ""
+*se.Translation OutputMethod/Utmatningsmetod: ""
+*se.Translation KMOutputMethod/Utmatningsmetod: ""
+*se.KMOutputMethod None/Skriv ut: ""
+*se.KMOutputMethod Secure/Skriva ut s<C3A4>kert: ""
+*se.KMOutputMethod ProofMode/Provtryck: ""
+*se.KMOutputMethod Box/Spara i anv<C3A4>ndarboxen: ""
+*se.KMOutputMethod BoxPrint/Spara i anv.box & skriv ut: ""
+*se.KMOutputMethod IDPrint/ID & utskrift: ""
+*se.Translation KMSecID/ID f<C3B6>r s<C3A4>ker utskrift: ""
+*se.KMSecID None/Ingen: ""
+*se.ParamCustomKMSecID Username/Anv<C3A4>ndarnamn: ""
+*se.Translation KMSecPass/L<C3B6>senord f<C3B6>r s<C3A4>ker utskrift: ""
+*se.KMSecPass None/Ingen: ""
+*se.ParamCustomKMSecPass Password/L<C3B6>senord: ""
+*se.Translation KMBoxNumber/Anv<C3A4>ndarboxnr: ""
+*se.KMBoxNumber None/Ingen: ""
+*se.ParamCustomKMBoxNumber Number/Anv<C3A4>ndarboxnr: ""
+*se.Translation KMBoxFileName/Filnamn: ""
+*se.KMBoxFileName None/Ingen: ""
+*se.ParamCustomKMBoxFileName Name/Filnamn: ""
+*se.ParamCustomKMSafeQUser User/Anv<C3A4>ndarnamn: ""
+*se.Translation AccountTrack/Kontouppf<C3B6>ljning: ""
+*se.Translation KMSectionManagement/Kontouppf<C3B6>ljning: ""
+*se.KMSectionManagement False/Av: ""
+*se.KMSectionManagement True/P<C3A5>: ""
+*se.Translation KMDepCode/Avdelning: ""
+*se.KMDepCode None/Ingen: ""
+*se.ParamCustomKMDepCode Name/Avdelning: ""
+*se.Translation KMAccPass/L<C3B6>senord: ""
+*se.KMAccPass None/Ingen: ""
+*se.ParamCustomKMAccPass Key/L<C3B6>senord: ""
+*se.Translation UserAuth/Anv<C3A4>ndarverifiering: ""
+*se.Translation KMAuthentication/Anv<C3A4>ndarverifiering: ""
+*se.KMAuthentication False/Av: ""
+*se.KMAuthentication Server/Extern server: ""
+*se.Translation KMAuthServer/Verifieringsserver: ""
+*se.Translation KMAuthUser/Anv<C3A4>ndarnamn: ""
+*se.KMAuthUser None/Ingen: ""
+*se.ParamCustomKMAuthUser Name/Anv<C3A4>ndarnamn: ""
+*se.Translation KMAuthPass/L<C3B6>senord: ""
+*se.KMAuthPass None/Ingen: ""
+*se.ParamCustomKMAuthPass Key/L<C3B6>senord: ""
+*se.Translation KMDTStamp/St<C3A4>mpel Tid och Datum: ""
+*se.Translation KMStampDateTime/Datum/tid: ""
+*se.KMStampDateTime None/Ingen: ""
+*se.KMStampDateTime Date/Datum: ""
+*se.KMStampDateTime DateTime/Datum/tid: ""
+*se.Translation KMStampDateFormat/Datumformat: ""
+*se.Translation KMStampTimeFormat/Tidsformat: ""
+*se.Translation KMStampPrintPosition/Utskriftsposition: ""
+*se.KMStampPrintPosition LEFTTOP/Uppe t.v.: ""
+*se.KMStampPrintPosition CENTERTOP/Uppe: ""
+*se.KMStampPrintPosition RIGHTTOP/Uppe t.h.: ""
+*se.KMStampPrintPosition LEFTCENTER/V<C3A4>nster: ""
+*se.KMStampPrintPosition CENTER/I mitten: ""
+*se.KMStampPrintPosition RIGHTCENTER/H<C3B6>ger: ""
+*se.KMStampPrintPosition LEFTBOTTOM/Nere t.v.: ""
+*se.KMStampPrintPosition CENTERBOTTOM/Nere: ""
+*se.KMStampPrintPosition RIGHTBOTTOM/Nere t.h.: ""
+*se.Translation KMPNStamp/Sidst<C3A4>mpel: ""
+*se.Translation KMStampPageNumberEnable/Sidnummer: ""
+*se.KMStampPageNumberEnable False/Av: ""
+*se.KMStampPageNumberEnable True/P<C3A5>: ""
+*se.Translation KMStampPNStartingPage/Startsida: ""
+*se.ParamCustomKMStampPNStartingPage Number/Startsida: ""
+*se.Translation KMStampPNStartingNumber/Nummer p<C3A5> startsida: ""
+*se.ParamCustomKMStampPNStartingNumber Number/Nummer p<C3A5> startsida: ""
+*se.Translation KMStampPNPrintPosition/Utskriftsposition: ""
+*se.KMStampPNPrintPosition LEFTTOP/Uppe t.v.: ""
+*se.KMStampPNPrintPosition CENTERTOP/Uppe: ""
+*se.KMStampPNPrintPosition RIGHTTOP/Uppe t.h.: ""
+*se.KMStampPNPrintPosition LEFTCENTER/V<C3A4>nster: ""
+*se.KMStampPNPrintPosition CENTER/I mitten: ""
+*se.KMStampPNPrintPosition RIGHTCENTER/H<C3B6>ger: ""
+*se.KMStampPNPrintPosition LEFTBOTTOM/Nere t.v.: ""
+*se.KMStampPNPrintPosition CENTERBOTTOM/Nere: ""
+*se.KMStampPNPrintPosition RIGHTBOTTOM/Nere t.h.: ""
+*no.Translation InstallableOptions/Installerbare alternativer: ""
+*no.Translation Model/Modell: ""
+*no.Translation PaperSourceUnit/Papirkildeenhet: ""
+*no.PaperSourceUnit None/Ingen: ""
+*no.PaperSourceUnit Unit2/Enhet 2: ""
+*no.InputSlot Tray1/Skuff1: ""
+*no.InputSlot Tray2/Skuff2: ""
+*no.InputSlot Tray3/Skuff3: ""
+*no.InputSlot Tray4/Skuff4: ""
+*no.Translation PageSize/Papirformat: ""
+*no.PageSize B5/B5 (JIS): ""
+*no.PageRegion B5/B5 (JIS): ""
+*no.Translation Duplex/Dupleksalternativer: ""
+*no.Duplex DuplexTumble/Kort kant: ""
+*no.Duplex DuplexNoTumble/Lang kant: ""
+*no.Duplex None/Simpleks: ""
+*no.Translation Resolution/Oppl<C3B8>sning: ""
+*no.Translation OutputMethod/Utskriftsmetode: ""
+*no.Translation KMOutputMethod/Utskriftsmetode: ""
+*no.KMOutputMethod None/Utskrift: ""
+*no.KMOutputMethod Secure/Sikker utskrift: ""
+*no.KMOutputMethod ProofMode/Testutskrift: ""
+*no.KMOutputMethod Box/Lagre i brukerboksen: ""
+*no.KMOutputMethod BoxPrint/Lagre i br.boks og skriv ut: ""
+*no.KMOutputMethod IDPrint/Tilgang og utskrift: ""
+*no.Translation KMSecID/Tilgang for sikker utskrift: ""
+*no.KMSecID None/Ingen: ""
+*no.ParamCustomKMSecID Username/Brukernavn: ""
+*no.Translation KMSecPass/Passord: ""
+*no.KMSecPass None/Ingen: ""
+*no.ParamCustomKMSecPass Password/Passord: ""
+*no.Translation KMBoxNumber/Brukerboksnummer: ""
+*no.KMBoxNumber None/Ingen: ""
+*no.ParamCustomKMBoxNumber Number/Brukerboksnummer: ""
+*no.Translation KMBoxFileName/Filnavn: ""
+*no.KMBoxFileName None/Ingen: ""
+*no.ParamCustomKMBoxFileName Name/Filnavn: ""
+*no.ParamCustomKMSafeQUser User/Brukernavn: ""
+*no.Translation AccountTrack/Kontosporing: ""
+*no.Translation KMSectionManagement/Kontosporing: ""
+*no.KMSectionManagement False/Av: ""
+*no.KMSectionManagement True/P<C385>: ""
+*no.Translation KMDepCode/Avdelingsnavn: ""
+*no.KMDepCode None/Ingen: ""
+*no.ParamCustomKMDepCode Name/Avdelingsnavn: ""
+*no.Translation KMAccPass/Passord: ""
+*no.KMAccPass None/Ingen: ""
+*no.ParamCustomKMAccPass Key/Passord: ""
+*no.Translation UserAuth/Brukeridentifisering: ""
+*no.Translation KMAuthentication/Brukeridentifisering: ""
+*no.KMAuthentication False/Av: ""
+*no.KMAuthentication Server/Ekstern server: ""
+*no.Translation KMAuthServer/Autentiseringsserver: ""
+*no.Translation KMAuthUser/Brukernavn: ""
+*no.KMAuthUser None/Ingen: ""
+*no.ParamCustomKMAuthUser Name/Brukernavn: ""
+*no.Translation KMAuthPass/Passord: ""
+*no.KMAuthPass None/Ingen: ""
+*no.ParamCustomKMAuthPass Key/Passord: ""
+*no.Translation KMDTStamp/Stempel: ""
+*no.Translation KMStampDateTime/Dato/tid: ""
+*no.KMStampDateTime None/Ingen: ""
+*no.KMStampDateTime Date/Dato: ""
+*no.KMStampDateTime DateTime/Dato/tid: ""
+*no.Translation KMStampDateFormat/Datoformat: ""
+*no.Translation KMStampTimeFormat/Klokkeslettformat: ""
+*no.Translation KMStampPrintPosition/Utskriftsposisjon: ""
+*no.KMStampPrintPosition LEFTTOP/Topp venstre: ""
+*no.KMStampPrintPosition CENTERTOP/Topp: ""
+*no.KMStampPrintPosition RIGHTTOP/Topp h<C3B8>yre: ""
+*no.KMStampPrintPosition LEFTCENTER/Venst.: ""
+*no.KMStampPrintPosition CENTER/Senter: ""
+*no.KMStampPrintPosition RIGHTCENTER/H<C3B8>yre: ""
+*no.KMStampPrintPosition LEFTBOTTOM/Bunn venstre: ""
+*no.KMStampPrintPosition CENTERBOTTOM/Bunn: ""
+*no.KMStampPrintPosition RIGHTBOTTOM/Bunn h<C3B8>yre: ""
+*no.Translation KMPNStamp/Stempel: ""
+*no.Translation KMStampPageNumberEnable/Sidetall: ""
+*no.KMStampPageNumberEnable False/Av: ""
+*no.KMStampPageNumberEnable True/P<C385>: ""
+*no.Translation KMStampPNStartingPage/Startside: ""
+*no.ParamCustomKMStampPNStartingPage Number/Startside: ""
+*no.Translation KMStampPNStartingNumber/Startsidenummer: ""
+*no.ParamCustomKMStampPNStartingNumber Number/Startsidenummer: ""
+*no.Translation KMStampPNPrintPosition/Utskriftsposisjon: ""
+*no.KMStampPNPrintPosition LEFTTOP/Topp venstre: ""
+*no.KMStampPNPrintPosition CENTERTOP/Topp: ""
+*no.KMStampPNPrintPosition RIGHTTOP/Topp h<C3B8>yre: ""
+*no.KMStampPNPrintPosition LEFTCENTER/Venst.: ""
+*no.KMStampPNPrintPosition CENTER/Senter: ""
+*no.KMStampPNPrintPosition RIGHTCENTER/H<C3B8>yre: ""
+*no.KMStampPNPrintPosition LEFTBOTTOM/Bunn venstre: ""
+*no.KMStampPNPrintPosition CENTERBOTTOM/Bunn: ""
+*no.KMStampPNPrintPosition RIGHTBOTTOM/Bunn h<C3B8>yre: ""
+*fi.Translation InstallableOptions/Asennettavat lis<C3A4>laitteet: ""
+*fi.Translation Model/Malli: ""
+*fi.Translation PaperSourceUnit/Paperil<C3A4>hdeyksikk<C3B6>: ""
+*fi.PaperSourceUnit None/Ei mit: ""
+*fi.PaperSourceUnit Unit2/Lokero 2: ""
+*fi.InputSlot Tray1/Kasetti1: ""
+*fi.InputSlot Tray2/Kasetti2: ""
+*fi.InputSlot Tray3/Kasetti3: ""
+*fi.InputSlot Tray4/Kasetti4: ""
+*fi.Translation PageSize/Paperikoko: ""
+*fi.PageSize B5/B5 (JIS): ""
+*fi.PageRegion B5/B5 (JIS): ""
+*fi.Translation Duplex/Kaksipuolisvaihtoehdot: ""
+*fi.Duplex DuplexTumble/Lyhyt reuna: ""
+*fi.Duplex DuplexNoTumble/Pitk<C3A4> reuna: ""
+*fi.Duplex None/Yksipuolinen: ""
+*fi.Translation Resolution/Erottelukyky: ""
+*fi.Translation OutputMethod/Viimeistelytapa: ""
+*fi.Translation KMOutputMethod/Viimeistelytapa: ""
+*fi.KMOutputMethod None/Tulostus: ""
+*fi.KMOutputMethod Secure/Suojattu tulostus: ""
+*fi.KMOutputMethod ProofMode/Koetuloste: ""
+*fi.KMOutputMethod Box/Tallenna k<C3A4>yt.laatikkoon: ""
+*fi.KMOutputMethod BoxPrint/Tall. k<C3A4>ytt.laatik. ja tul.: ""
+*fi.KMOutputMethod IDPrint/Tunnus ja tulostus: ""
+*fi.Translation KMSecID/Suojattu tulostus tunnus: ""
+*fi.KMSecID None/Ei mit: ""
+*fi.ParamCustomKMSecID Username/K<C3A4>ytt<C3A4>j<C3A4>nimi: ""
+*fi.Translation KMSecPass/Salasana: ""
+*fi.KMSecPass None/Ei mit: ""
+*fi.ParamCustomKMSecPass Password/Salasana: ""
+*fi.Translation KMBoxNumber/K<C3A4>ytt<C3A4>j<C3A4>laat.nro: ""
+*fi.KMBoxNumber None/Ei mit: ""
+*fi.ParamCustomKMBoxNumber Number/K<C3A4>ytt<C3A4>j<C3A4>laat.nro: ""
+*fi.Translation KMBoxFileName/Tiedostonimi: ""
+*fi.KMBoxFileName None/Ei mit: ""
+*fi.ParamCustomKMBoxFileName Name/Tiedostonimi: ""
+*fi.ParamCustomKMSafeQUser User/K<C3A4>ytt<C3A4>j<C3A4>nimi: ""
+*fi.Translation AccountTrack/Tilien seuranta: ""
+*fi.Translation KMSectionManagement/Tilien seuranta: ""
+*fi.KMSectionManagement False/Pois: ""
+*fi.KMSectionManagement True/P<C3A4C3A4>ll<C3A4>: ""
+*fi.Translation KMDepCode/Osaston nimi: ""
+*fi.KMDepCode None/Ei mit: ""
+*fi.ParamCustomKMDepCode Name/Osaston nimi: ""
+*fi.Translation KMAccPass/Salasana: ""
+*fi.KMAccPass None/Ei mit: ""
+*fi.ParamCustomKMAccPass Key/Salasana: ""
+*fi.Translation UserAuth/K<C3A4>ytt<C3A4>j<C3A4>n todennus: ""
+*fi.Translation KMAuthentication/K<C3A4>ytt<C3A4>j<C3A4>n todennus: ""
+*fi.KMAuthentication False/Pois: ""
+*fi.KMAuthentication Server/Ulkoinen palvelin: ""
+*fi.Translation KMAuthServer/Todennuspalvelin: ""
+*fi.Translation KMAuthUser/K<C3A4>ytt<C3A4>j<C3A4>nimi: ""
+*fi.KMAuthUser None/Ei mit: ""
+*fi.ParamCustomKMAuthUser Name/K<C3A4>ytt<C3A4>j<C3A4>nimi: ""
+*fi.Translation KMAuthPass/Salasana: ""
+*fi.KMAuthPass None/Ei mit: ""
+*fi.ParamCustomKMAuthPass Key/Salasana: ""
+*fi.Translation KMDTStamp/Leima: ""
+*fi.Translation KMStampDateTime/P<C3A4>iv<C3A4>ys/aika: ""
+*fi.KMStampDateTime None/Ei mit: ""
+*fi.KMStampDateTime Date/Pvm.: ""
+*fi.KMStampDateTime DateTime/P<C3A4>iv<C3A4>ys/aika: ""
+*fi.Translation KMStampDateFormat/P<C3A4>iv<C3A4>ystyyppi: ""
+*fi.Translation KMStampTimeFormat/Aikatyyppi: ""
+*fi.Translation KMStampPrintPosition/Tulostuspaikka: ""
+*fi.KMStampPrintPosition LEFTTOP/Yl<C3A4>vasen: ""
+*fi.KMStampPrintPosition CENTERTOP/Yl<C3A4>: ""
+*fi.KMStampPrintPosition RIGHTTOP/Yl<C3A4> oikea: ""
+*fi.KMStampPrintPosition LEFTCENTER/Vasen: ""
+*fi.KMStampPrintPosition CENTER/Keski: ""
+*fi.KMStampPrintPosition RIGHTCENTER/Oikea: ""
+*fi.KMStampPrintPosition LEFTBOTTOM/Alavasen: ""
+*fi.KMStampPrintPosition CENTERBOTTOM/Ala: ""
+*fi.KMStampPrintPosition RIGHTBOTTOM/Alaoikea: ""
+*fi.Translation KMPNStamp/Leima: ""
+*fi.Translation KMStampPageNumberEnable/Sivunumero: ""
+*fi.KMStampPageNumberEnable False/Pois: ""
+*fi.KMStampPageNumberEnable True/P<C3A4C3A4>ll<C3A4>: ""
+*fi.Translation KMStampPNStartingPage/Aloitussivu: ""
+*fi.ParamCustomKMStampPNStartingPage Number/Aloitussivu: ""
+*fi.Translation KMStampPNStartingNumber/Aloitussivun numero: ""
+*fi.ParamCustomKMStampPNStartingNumber Number/Aloitussivun numero: ""
+*fi.Translation KMStampPNPrintPosition/Tulostuspaikka: ""
+*fi.KMStampPNPrintPosition LEFTTOP/Yl<C3A4>vasen: ""
+*fi.KMStampPNPrintPosition CENTERTOP/Yl<C3A4>: ""
+*fi.KMStampPNPrintPosition RIGHTTOP/Yl<C3A4> oikea: ""
+*fi.KMStampPNPrintPosition LEFTCENTER/Vasen: ""
+*fi.KMStampPNPrintPosition CENTER/Keski: ""
+*fi.KMStampPNPrintPosition RIGHTCENTER/Oikea: ""
+*fi.KMStampPNPrintPosition LEFTBOTTOM/Alavasen: ""
+*fi.KMStampPNPrintPosition CENTERBOTTOM/Ala: ""
+*fi.KMStampPNPrintPosition RIGHTBOTTOM/Alaoikea: ""
+*gr.Translation InstallableOptions/<CE95CF80CEB9CEBBCEBFCEB3CEADCF8220CF80CEBFCF8520CEB4CF8DCEBDCEB1CEBDCF84CEB1CEB920CEBDCEB120CEB5CEB3CEBACEB1CF84CEB1CF83CF84CEB1CEB8CEBFCF8DCEBD>: ""
+*gr.Translation Model/<CE9CCEBFCEBDCF84CEADCEBBCEBF>: ""
+*gr.Translation PaperSourceUnit/<CE9CCEBFCEBDCEACCEB4CEB120CF84CF81CEBFCF86CEBFCEB42ECF87CEB1CF81CF84CEB9CEBFCF8D>: ""
+*gr.PaperSourceUnit None/<CE8CCF87CEB9>: ""
+*gr.PaperSourceUnit Unit2/<CE9CCEBFCEBDCEACCEB4CEB120>2: ""
+*gr.InputSlot Tray1/<CEA3CF85CF81CF84CEACCF81CEB931>: ""
+*gr.InputSlot Tray2/<CEA3CF85CF81CF84CEACCF81CEB932>: ""
+*gr.InputSlot Tray3/<CEA3CF85CF81CF84CEACCF81CEB933>: ""
+*gr.InputSlot Tray4/<CEA3CF85CF81CF84CEACCF81CEB934>: ""
+*gr.Translation PageSize/<CE9CCEADCEB3CEB5CEB8CEBFCF8220CF87CEB1CF81CF84CEB9CEBFCF8D>: ""
+*gr.PageSize B5/B5 (JIS): ""
+*gr.PageRegion B5/B5 (JIS): ""
+*gr.Translation Duplex/<CE95CF80CEB9CEBBCEBFCEB3CEADCF8220>Duplex: ""
+*gr.Duplex DuplexTumble/<CE9ACEBFCEBDCF84CEAE20CF80CEBBCEB5CF85CF81CEAC>: ""
+*gr.Duplex DuplexNoTumble/<CE9CCEB1CEBACF81CEB9CEAC20CF80CEBBCEB5CF85CF81CEAC>: ""
+*gr.Duplex None/Simplex (<CE9CCEBFCEBDCEAECF8220CF8CCF88CEB7CF8229>: ""
+*gr.Translation Resolution/<CE91CEBDCEACCEBBCF85CF83CEB7>: ""
+*gr.Translation OutputMethod/<CE9CCEADCEB8CEBFCEB4CEBFCF8220CEB5CEBECEB1CEB3CF89CEB3CEAECF82>: ""
+*gr.Translation KMOutputMethod/<CE9CCEADCEB8CEBFCEB4CEBFCF8220CEB5CEBECEB1CEB3CF89CEB3CEAECF82>: ""
+*gr.KMOutputMethod None/<CE95CEBACF84CF8DCF80CF89CF83CEB7>: ""
+*gr.KMOutputMethod Secure/<CE91CF83CF86CEB1CEBBCEAECF8220CEB5CEBACF84CF8DCF80CF89CF83CEB7>: ""
+*gr.KMOutputMethod ProofMode/<CE95CEBACF84CF8DCF80CF89CF83CEB720CEB4CEBFCEBACEB9CEBCCEAFCEBFCF85>: ""
+*gr.KMOutputMethod Box/<CE91CF80CEBFCEB82E> <CF83CF84CEB720CEB8CF85CF81CEAFCEB4CEB120CF87CF81CEAECF83CF84CEB7>: ""
+*gr.KMOutputMethod BoxPrint/<CE91CF80CEBFCEB82E> <CEB8CF85CF812E> <CF87CF81CEAECF83CF84CEB72C> <CEBACEB1CEB920CEB5CEBACF84CF8DCF80>.: ""
+*gr.KMOutputMethod IDPrint/<CE95CEBACF84CF8DCF80CF89CF83CEB720>& ID: ""
+*gr.Translation KMSecID/ID <CEB1CF83CF86CEB1CEBBCEBFCF8DCF8220CEB5CEBACF84CF8DCF80CF89CF83CEB7CF82>: ""
+*gr.KMSecID None/<CE8CCF87CEB9>: ""
+*gr.ParamCustomKMSecID Username/<CE8CCEBDCEBFCEBCCEB120CF87CF81CEAECF83CF84CEB7>: ""
+*gr.Translation KMSecPass/<CE9ACF89CEB4CEB9CEBACF8CCF8220CEB1CF83CF86CEB1CEBBCEBFCF8DCF8220CEB5CEBACF84CF8DCF80CF89CF83CEB7CF82>: ""
+*gr.KMSecPass None/<CE8CCF87CEB9>: ""
+*gr.ParamCustomKMSecPass Password/<CE9ACF89CEB4CEB9CEBACF8CCF82>: ""
+*gr.Translation KMBoxNumber/<CE91CF81CEB9CEB8CEBCCF8CCF8220CEB8CF85CF81CEAFCEB4CEB1CF8220CF87CF81CEAECF83CF84CEB7>: ""
+*gr.KMBoxNumber None/<CE8CCF87CEB9>: ""
+*gr.ParamCustomKMBoxNumber Number/<CE91CF81CEB9CEB8CEBCCF8CCF8220CEB8CF85CF81CEAFCEB4CEB1CF8220CF87CF81CEAECF83CF84CEB7>: ""
+*gr.Translation KMBoxFileName/<CE8CCEBDCEBFCEBCCEB120CEB1CF81CF87CEB5CEAFCEBFCF85>: ""
+*gr.KMBoxFileName None/<CE8CCF87CEB9>: ""
+*gr.ParamCustomKMBoxFileName Name/<CE8CCEBDCEBFCEBCCEB120CEB1CF81CF87CEB5CEAFCEBFCF85>: ""
+*gr.Translation KMSafeQUser/X<CF81CEAECF83CF84CEB7CF8220>SafeQ: ""
+*gr.ParamCustomKMSafeQUser User/<CE8CCEBDCEBFCEBCCEB120CF87CF81CEAECF83CF84CEB7>: ""
+*gr.Translation AccountTrack/<CE9BCEBFCEB32E> <CEBACEBFCF83CF84CEBFCEBB2E>: ""
+*gr.Translation KMSectionManagement/<CE9BCEBFCEB32E> <CEBACEBFCF83CF84CEBFCEBB2E>: ""
+*gr.Translation KMDepCode/<CE8CCEBDCEBFCEBCCEB120CF84CEBCCEAECEBCCEB1CF84CEBFCF82>: ""
+*gr.KMDepCode None/<CE8CCF87CEB9>: ""
+*gr.ParamCustomKMDepCode Name/<CE8CCEBDCEBFCEBCCEB120CF84CEBCCEAECEBCCEB1CF84CEBFCF82>: ""
+*gr.Translation KMAccPass/<CE9ACF89CEB4CEB9CEBACF8CCF82>: ""
+*gr.KMAccPass None/<CE8CCF87CEB9>: ""
+*gr.ParamCustomKMAccPass Key/<CE9ACF89CEB4CEB9CEBACF8CCF82>: ""
+*gr.Translation UserAuth/<CE95CF80CEB1CEBBCEAECEB82E> <CF87CF81CEAECF83CF84CEB7>: ""
+*gr.Translation KMAuthentication/<CE95CF80CEB1CEBBCEAECEB82E> <CF87CF81CEAECF83CF84CEB7>: ""
+*gr.KMAuthentication Server/E<CEBECF89CF84CEB5CF81CEB9CEBACF8CCF8220CEB4CEB9CEB1CEBACEBFCEBCCEB9CF83CF84CEAECF82>: ""
+*gr.Translation KMAuthServer/<CE94CEB9CEB1CEBACEBFCEBCCEB9CF83CF84CEAECF8220CEB5CF80CEB1CEBBCEAECEB82E>: ""
+*gr.Translation KMAuthUser/<CE8CCEBDCEBFCEBCCEB120CF87CF81CEAECF83CF84CEB7>: ""
+*gr.KMAuthUser None/<CE8CCF87CEB9>: ""
+*gr.ParamCustomKMAuthUser Name/<CE8CCEBDCEBFCEBCCEB120CF87CF81CEAECF83CF84CEB7>: ""
+*gr.Translation KMAuthPass/<CE9ACF89CEB4CEB9CEBACF8CCF82>: ""
+*gr.KMAuthPass None/<CE8CCF87CEB9>: ""
+*gr.ParamCustomKMAuthPass Key/<CE9ACF89CEB4CEB9CEBACF8CCF82>: ""
+*gr.Translation KMDTStamp/<CE91CF80CEBFCF84CF8DCF80CF89CF83CEB720CE97CEBCCEB5CF81CEBFCEBC2E>/<CE8FCF81CEB1>: ""
+*gr.Translation KMStampDateTime/<CE97CEBCCEB5CF81CEBFCEBC2E>/<CE8FCF81CEB1>: ""
+*gr.KMStampDateTime None/<CE8CCF87CEB9>: ""
+*gr.KMStampDateTime Date/<CE97CEBCCEB5CF81CEBFCEBC2E>: ""
+*gr.KMStampDateTime DateTime/<CE97CEBCCEB5CF81CEBFCEBC2E>/<CE8FCF81CEB1>: ""
+*gr.Translation KMStampDateFormat/<CEA4CF8DCF80CEBFCF8220CEB7CEBCCEB5CF81CEBFCEBCCEB7CEBDCEAFCEB1CF82>: ""
+*gr.Translation KMStampTimeFormat/<CE9CCEBFCF81CF86CEAE20CF8ECF81CEB1CF82>: ""
+*gr.Translation KMStampPrintPosition/<CE98CEADCF83CEB720CEB5CEBACF84CF8DCF80CF89CF83CEB7CF82>: ""
+*gr.KMStampPrintPosition LEFTTOP/<CE95CF80CEACCEBDCF8920CEB1CF81CEB9CF83CF84CEB5CF81CEAC>: ""
+*gr.KMStampPrintPosition CENTERTOP/<CE95CF80CEACCEBDCF89>: ""
+*gr.KMStampPrintPosition RIGHTTOP/<CE95CF80CEACCEBDCF8920CEB4CEB5CEBECEB9CEAC>: ""
+*gr.KMStampPrintPosition LEFTCENTER/<CE91CF81CEB9CF83CF84CEB5CF81CEAC>: ""
+*gr.KMStampPrintPosition CENTER/<CE9ACEADCEBDCF84CF81CEBF>: ""
+*gr.KMStampPrintPosition RIGHTCENTER/<CE94CEB5CEBECEB9CEAC>: ""
+*gr.KMStampPrintPosition LEFTBOTTOM/<CE9ACEACCF84CF8920CEB1CF81CEB9CF83CF84CEB5CF81CEAC>: ""
+*gr.KMStampPrintPosition CENTERBOTTOM/<CE9ACEACCF84CF89>: ""
+*gr.KMStampPrintPosition RIGHTBOTTOM/<CE9ACEACCF84CF8920CEB4CEB5CEBECEB9CEAC>: ""
+*gr.Translation KMPNStamp/<CE91CF80CEBFCF84CF8DCF80CF89CF83CEB720> <CE91CF81CEB9CEB8CEBCCEBFCF8D20CF83CEB5CEBBCEAFCEB4CEB1CF82>: ""
+*gr.Translation KMStampPageNumberEnable/<CE91CF81CEB9CEB8CEBCCF8CCF8220CF83CEB5CEBBCEAFCEB4CEB1CF82>: ""
+*gr.Translation KMStampPNStartingPage/<CEA3CEB5CEBBCEAFCEB4CEB120CEB5CEBACEBACEAFCEBDCEB7CF83CEB7CF82>: ""
+*gr.ParamCustomKMStampPNStartingPage Number/<CEA3CEB5CEBBCEAFCEB4CEB120CEB5CEBACEBACEAFCEBDCEB7CF83CEB7CF82>: ""
+*gr.Translation KMStampPNStartingNumber/<CE91CF81CEB9CEB8CEBCCF8CCF8220CEB5CEBACEBACEAFCEBDCEB7CF83CEB7CF8220CF83CEB5CEBBCEAFCEB4CEB1CF82>: ""
+*gr.ParamCustomKMStampPNStartingNumber Number/<CE91CF81CEB9CEB8CEBCCF8CCF8220CEB5CEBACEBACEAFCEBDCEB7CF83CEB7CF8220CF83CEB5CEBBCEAFCEB4CEB1CF82>: ""
+*gr.Translation KMStampPNPrintPosition/<CE98CEADCF83CEB720CEB5CEBACF84CF8DCF80CF89CF83CEB7CF82>: ""
+*gr.KMStampPNPrintPosition LEFTTOP/<CE95CF80CEACCEBDCF8920CEB1CF81CEB9CF83CF84CEB5CF81CEAC>: ""
+*gr.KMStampPNPrintPosition CENTERTOP/<CE95CF80CEACCEBDCF89>: ""
+*gr.KMStampPNPrintPosition RIGHTTOP/<CE95CF80CEACCEBDCF8920CEB4CEB5CEBECEB9CEAC>: ""
+*gr.KMStampPNPrintPosition LEFTCENTER/<CE91CF81CEB9CF83CF84CEB5CF81CEAC>: ""
+*gr.KMStampPNPrintPosition CENTER/<CE9ACEADCEBDCF84CF81CEBF>: ""
+*gr.KMStampPNPrintPosition RIGHTCENTER/<CE94CEB5CEBECEB9CEAC>: ""
+*gr.KMStampPNPrintPosition LEFTBOTTOM/<CE9ACEACCF84CF8920CEB1CF81CEB9CF83CF84CEB5CF81CEAC>: ""
+*gr.KMStampPNPrintPosition CENTERBOTTOM/<CE9ACEACCF84CF89>: ""
+*gr.KMStampPNPrintPosition RIGHTBOTTOM/<CE9ACEACCF84CF8920CEB4CEB5CEBECEB9CEAC>: ""
+*tr.Translation InstallableOptions/Y<C3BC>klenebilir Se<C3A7>enekler: ""
+*tr.Translation PaperSourceUnit/Ka<C49FC4B1>t Kayna<C49FC4B1> <C39C>nitesi: ""
+*tr.PaperSourceUnit None/Hi<C3A7>biri: ""
+*tr.PaperSourceUnit Unit2/<C39C>nite 2: ""
+*tr.InputSlot Tray1/Tepsi1: ""
+*tr.InputSlot Tray2/Tepsi2: ""
+*tr.InputSlot Tray3/Tepsi3: ""
+*tr.InputSlot Tray4/Tepsi4: ""
+*tr.Translation PageSize/Ka<C49FC4B1>t Ebad<C4B1>: ""
+*tr.PageSize B5/B5 (JIS): ""
+*tr.PageRegion B5/B5 (JIS): ""
+*tr.Translation Duplex/Dubleks Opsiyonlar<C4B1>: ""
+*tr.Duplex DuplexTumble/K<C4B1>sa Kenar: ""
+*tr.Duplex DuplexNoTumble/Uzun Kenar: ""
+*tr.Duplex None/Tek Y<C3B6>n: ""
+*tr.Translation Resolution/<C387C3B6>z<C3BC>n<C3BC>rl<C3BC>k: ""
+*tr.Translation OutputMethod/<C387C4B1>kt<C4B1> Metodu: ""
+*tr.Translation KMOutputMethod/<C387C4B1>kt<C4B1> Metodu: ""
+*tr.KMOutputMethod None/Yazd<C4B1>r: ""
+*tr.KMOutputMethod Secure/G<C3BC>venli Yazd<C4B1>rma: ""
+*tr.KMOutputMethod ProofMode/Prova Bask<C4B1>: ""
+*tr.KMOutputMethod Box/Kullan<C4B1>c<C4B1> Kutusuna Kaydet: ""
+*tr.KMOutputMethod BoxPrint/Kullan<C4B1>c<C4B1> Kutusuna Kaydet ve Yazd<C4B1>r: ""
+*tr.KMOutputMethod IDPrint/ID & Yazd<C4B1>r: ""
+*tr.Translation KMSecID/G<C3BC>venli Yazd<C4B1>rma ID: ""
+*tr.KMSecID None/Hi<C3A7>biri: ""
+*tr.ParamCustomKMSecID Username/Kullan<C4B1>c<C4B1> Ad<C4B1>: ""
+*tr.Translation KMSecPass/<C59E>ifre: ""
+*tr.KMSecPass None/Hi<C3A7>biri: ""
+*tr.ParamCustomKMSecPass Password/<C59E>ifre: ""
+*tr.Translation KMBoxNumber/Kullan<C4B1>c<C4B1> Kutusu Numaras<C4B1>: ""
+*tr.KMBoxNumber None/Hi<C3A7>biri: ""
+*tr.ParamCustomKMBoxNumber Number/Kullan<C4B1>c<C4B1> Kutusu Numaras<C4B1>: ""
+*tr.Translation KMBoxFileName/Dosya Ad<C4B1>: ""
+*tr.KMBoxFileName None/Hi<C3A7>biri: ""
+*tr.ParamCustomKMBoxFileName Name/Dosya Ad<C4B1>: ""
+*tr.ParamCustomKMSafeQUser User/Kullan<C4B1>c<C4B1> Ad<C4B1>: ""
+*tr.Translation AccountTrack/Hesap <C4B0>zleme: ""
+*tr.Translation KMSectionManagement/Hesap <C4B0>zleme: ""
+*tr.KMSectionManagement False/Kap.: ""
+*tr.KMSectionManagement True/A<C3A7C4B1>k: ""
+*tr.Translation KMDepCode/Departman Ad<C4B1>: ""
+*tr.KMDepCode None/Hi<C3A7>biri: ""
+*tr.ParamCustomKMDepCode Name/Departman Ad<C4B1>: ""
+*tr.Translation KMAccPass/<C59E>ifre: ""
+*tr.KMAccPass None/Hi<C3A7>biri: ""
+*tr.ParamCustomKMAccPass Key/<C59E>ifre: ""
+*tr.Translation UserAuth/Kullan<C4B1>c<C4B1> Do<C49F>rulama: ""
+*tr.Translation KMAuthentication/Kullan<C4B1>c<C4B1> Do<C49F>rulama: ""
+*tr.KMAuthentication False/Kap.: ""
+*tr.KMAuthentication Server/Harici Sunucu: ""
+*tr.Translation KMAuthServer/Do<C49F>rulama Sunucusu: ""
+*tr.Translation KMAuthUser/Kullan<C4B1>c<C4B1> Ad<C4B1>: ""
+*tr.KMAuthUser None/Hi<C3A7>biri: ""
+*tr.ParamCustomKMAuthUser Name/Kullan<C4B1>c<C4B1> Ad<C4B1>: ""
+*tr.Translation KMAuthPass/<C59E>ifre: ""
+*tr.KMAuthPass None/Hi<C3A7>biri: ""
+*tr.ParamCustomKMAuthPass Key/<C59E>ifre: ""
+*tr.Translation KMDTStamp/Damga: ""
+*tr.Translation KMStampDateTime/Tarih/Saat: ""
+*tr.KMStampDateTime None/Hi<C3A7>biri: ""
+*tr.KMStampDateTime Date/Tarih: ""
+*tr.KMStampDateTime DateTime/Tarih/Saat: ""
+*tr.Translation KMStampDateFormat/Tarih Format<C4B1>: ""
+*tr.Translation KMStampTimeFormat/Saat Format<C4B1>: ""
+*tr.Translation KMStampPrintPosition/Bask<C4B1> Pozisyonu: ""
+*tr.KMStampPrintPosition LEFTTOP/<C39C>st Sol: ""
+*tr.KMStampPrintPosition CENTERTOP/<C39C>st: ""
+*tr.KMStampPrintPosition RIGHTTOP/<C39C>st Sa<C49F>: ""
+*tr.KMStampPrintPosition LEFTCENTER/Sol: ""
+*tr.KMStampPrintPosition CENTER/Orta: ""
+*tr.KMStampPrintPosition RIGHTCENTER/Sa<C49F>: ""
+*tr.KMStampPrintPosition LEFTBOTTOM/Alt Sol: ""
+*tr.KMStampPrintPosition CENTERBOTTOM/Alt: ""
+*tr.KMStampPrintPosition RIGHTBOTTOM/Alt Sa<C49F>: ""
+*tr.Translation KMPNStamp/Damga: ""
+*tr.Translation KMStampPageNumberEnable/Sayfa Numaras<C4B1>: ""
+*tr.KMStampPageNumberEnable False/Kap.: ""
+*tr.KMStampPageNumberEnable True/A<C3A7C4B1>k: ""
+*tr.Translation KMStampPNStartingPage/Ba<C59F>lang<C4B1C3A7> Sayfas<C4B1>: ""
+*tr.ParamCustomKMStampPNStartingPage Number/Ba<C59F>lang<C4B1C3A7> Sayfas<C4B1>: ""
+*tr.Translation KMStampPNStartingNumber/Ba<C59F>lang<C4B1C3A7> Sayfas<C4B1> Numaras<C4B1>: ""
+*tr.ParamCustomKMStampPNStartingNumber Number/Ba<C59F>lang<C4B1C3A7> Sayfas<C4B1> Numaras<C4B1>: ""
+*tr.Translation KMStampPNPrintPosition/Bask<C4B1> Pozisyonu: ""
+*tr.KMStampPNPrintPosition LEFTTOP/<C39C>st Sol: ""
+*tr.KMStampPNPrintPosition CENTERTOP/<C39C>st: ""
+*tr.KMStampPNPrintPosition RIGHTTOP/<C39C>st Sa<C49F>: ""
+*tr.KMStampPNPrintPosition LEFTCENTER/Sol: ""
+*tr.KMStampPNPrintPosition CENTER/Orta: ""
+*tr.KMStampPNPrintPosition RIGHTCENTER/Sa<C49F>: ""
+*tr.KMStampPNPrintPosition LEFTBOTTOM/Alt Sol: ""
+*tr.KMStampPNPrintPosition CENTERBOTTOM/Alt: ""
+*tr.KMStampPNPrintPosition RIGHTBOTTOM/Alt Sa<C49F>: ""
+*cz.Translation InstallableOptions/Instalovateln<C3A9> p<C599C3AD>slu<C5A1>enstv<C3AD>: ""
+*cz.Translation PaperSourceUnit/Jednotka zdroje pap<C3AD>ru: ""
+*cz.PaperSourceUnit None/<C5BDC3A1>dn<C3BD>: ""
+*cz.PaperSourceUnit Unit2/Jednotka 2: ""
+*cz.InputSlot Tray1/1. z<C3A1>s.: ""
+*cz.InputSlot Tray2/2. z<C3A1>s.: ""
+*cz.InputSlot Tray3/3. z<C3A1>s.: ""
+*cz.InputSlot Tray4/4. z<C3A1>s.: ""
+*cz.Translation PageSize/Form<C3A1>t pap<C3AD>ru: ""
+*cz.PageSize B5/B5 (JIS): ""
+*cz.PageRegion B5/B5 (JIS): ""
+*cz.Translation Duplex/Duplexn<C3AD> volby: ""
+*cz.Duplex DuplexTumble/Krat<C5A1C3AD> okraj: ""
+*cz.Duplex DuplexNoTumble/Del<C5A1C3AD> okraj: ""
+*cz.Duplex None/Jednostrann<C3BD> tisk: ""
+*cz.Translation Resolution/Rozli<C5A1>en<C3AD>: ""
+*cz.Translation OutputMethod/Zp<C5AF>sob v<C3BD>stupu: ""
+*cz.Translation KMOutputMethod/Zp<C5AF>sob v<C3BD>stupu: ""
+*cz.KMOutputMethod None/Tisk: ""
+*cz.KMOutputMethod Secure/Zabezpe<C48D>en<C3BD> tisk: ""
+*cz.KMOutputMethod ProofMode/Zku<C5A1>ebn<C3AD> v<C3BD>tisk: ""
+*cz.KMOutputMethod Box/Ulo<C5BE>it ve schr<C3A1>nce u<C5BE>iv.: ""
+*cz.KMOutputMethod BoxPrint/Ulo<C5BE>.ve schr.u<C5BE>iv.a tisk: ""
+*cz.KMOutputMethod IDPrint/ID a<C2A0>tisk: ""
+*cz.Translation KMSecID/ID zabezpe<C48D>en<C3A9>ho tisku: ""
+*cz.KMSecID None/<C5BDC3A1>dn<C3BD>: ""
+*cz.ParamCustomKMSecID Username/Jm<C3A9>no u<C5BE>ivat.: ""
+*cz.Translation KMSecPass/Heslo zabezpe<C48D>en<C3A9>ho tisku: ""
+*cz.KMSecPass None/<C5BDC3A1>dn<C3BD>: ""
+*cz.ParamCustomKMSecPass Password/Heslo: ""
+*cz.Translation KMBoxNumber/<C48CC3AD>slo schr.u<C5BE>iv.: ""
+*cz.KMBoxNumber None/<C5BDC3A1>dn<C3BD>: ""
+*cz.ParamCustomKMBoxNumber Number/<C48CC3AD>slo schr.u<C5BE>iv.: ""
+*cz.Translation KMBoxFileName/N<C3A1>zev souboru: ""
+*cz.KMBoxFileName None/<C5BDC3A1>dn<C3BD>: ""
+*cz.ParamCustomKMBoxFileName Name/N<C3A1>zev souboru: ""
+*cz.ParamCustomKMSafeQUser User/Jm<C3A9>no u<C5BE>ivat.: ""
+*cz.Translation AccountTrack/Sledov<C3A1>n<C3AD> <C3BAC48D>tu: ""
+*cz.Translation KMSectionManagement/Sledov<C3A1>n<C3AD> <C3BAC48D>tu: ""
+*cz.KMSectionManagement False/Vyp: ""
+*cz.KMSectionManagement True/Zap: ""
+*cz.Translation KMDepCode/N<C3A1>zev odd<C49B>len<C3AD>: ""
+*cz.KMDepCode None/<C5BDC3A1>dn<C3BD>: ""
+*cz.ParamCustomKMDepCode Name/N<C3A1>zev odd<C49B>len<C3AD>: ""
+*cz.Translation KMAccPass/Heslo: ""
+*cz.KMAccPass None/<C5BDC3A1>dn<C3BD>: ""
+*cz.ParamCustomKMAccPass Key/Heslo: ""
+*cz.Translation UserAuth/Ov<C49BC599>en<C3AD> u<C5BE>ivatele: ""
+*cz.Translation KMAuthentication/Ov<C49BC599>en<C3AD> u<C5BE>ivatele: ""
+*cz.KMAuthentication False/Vyp: ""
+*cz.KMAuthentication Server/Extern<C3AD> server: ""
+*cz.Translation KMAuthServer/Ov<C49BC599>ovac<C3AD> server: ""
+*cz.Translation KMAuthUser/Jm<C3A9>no u<C5BE>ivat.: ""
+*cz.KMAuthUser None/<C5BDC3A1>dn<C3BD>: ""
+*cz.ParamCustomKMAuthUser Name/Jm<C3A9>no u<C5BE>ivat.: ""
+*cz.Translation KMAuthPass/Heslo: ""
+*cz.KMAuthPass None/<C5BDC3A1>dn<C3BD>: ""
+*cz.ParamCustomKMAuthPass Key/Heslo: ""
+*cz.Translation KMDTStamp/<C48C>asov<C3A9> raz<C3AD>tko: ""
+*cz.Translation KMStampDateTime/Datum/<C48D>as: ""
+*cz.KMStampDateTime None/<C5BDC3A1>dn<C3BD>: ""
+*cz.KMStampDateTime Date/Datum: ""
+*cz.KMStampDateTime DateTime/Datum/<C48D>as: ""
+*cz.Translation KMStampDateFormat/Form<C3A1>t data: ""
+*cz.Translation KMStampTimeFormat/Form<C3A1>t <C48D>asu: ""
+*cz.Translation KMStampPrintPosition/Pozice tisku: ""
+*cz.KMStampPrintPosition LEFTTOP/Vlevo naho<C599>e: ""
+*cz.KMStampPrintPosition CENTERTOP/Naho<C599>e: ""
+*cz.KMStampPrintPosition RIGHTTOP/Vpravo naho<C599>e: ""
+*cz.KMStampPrintPosition LEFTCENTER/Vlevo: ""
+*cz.KMStampPrintPosition CENTER/Uprost<C599>ed: ""
+*cz.KMStampPrintPosition RIGHTCENTER/Vpravo: ""
+*cz.KMStampPrintPosition LEFTBOTTOM/Vlevo dole: ""
+*cz.KMStampPrintPosition CENTERBOTTOM/Dole: ""
+*cz.KMStampPrintPosition RIGHTBOTTOM/Vpravo dole: ""
+*cz.Translation KMPNStamp/Raz<C3AD>tko <C48DC3AD>slo str<C3A1>nky: ""
+*cz.Translation KMStampPageNumberEnable/<C48CC3AD>slo str<C3A1>nky: ""
+*cz.KMStampPageNumberEnable False/Vyp: ""
+*cz.KMStampPageNumberEnable True/Zap: ""
+*cz.Translation KMStampPNStartingPage/Po<C48DC3A1>te<C48D>n<C3AD> str<C3A1>nka: ""
+*cz.ParamCustomKMStampPNStartingPage Number/Po<C48DC3A1>te<C48D>n<C3AD> str<C3A1>nka: ""
+*cz.Translation KMStampPNStartingNumber/Po<C48DC3A1>te<C48D>n<C3AD> <C48DC3AD>slo str<C3A1>nky: ""
+*cz.ParamCustomKMStampPNStartingNumber Number/Po<C48DC3A1>te<C48D>n<C3AD> <C48DC3AD>slo str<C3A1>nky: ""
+*cz.Translation KMStampPNPrintPosition/Pozice tisku: ""
+*cz.KMStampPNPrintPosition LEFTTOP/Vlevo naho<C599>e: ""
+*cz.KMStampPNPrintPosition CENTERTOP/Naho<C599>e: ""
+*cz.KMStampPNPrintPosition RIGHTTOP/Vpravo naho<C599>e: ""
+*cz.KMStampPNPrintPosition LEFTCENTER/Vlevo: ""
+*cz.KMStampPNPrintPosition CENTER/Uprost<C599>ed: ""
+*cz.KMStampPNPrintPosition RIGHTCENTER/Vpravo: ""
+*cz.KMStampPNPrintPosition LEFTBOTTOM/Vlevo dole: ""
+*cz.KMStampPNPrintPosition CENTERBOTTOM/Dole: ""
+*cz.KMStampPNPrintPosition RIGHTBOTTOM/Vpravo dole: ""
+*hu.Translation InstallableOptions/Telep<C3AD>thet<C591> opci<C3B3>k: ""
+*hu.Translation Model/Modell: ""
+*hu.Translation PaperSourceUnit/Pap<C3AD>rt<C3A1>rol<C3B3> egys<C3A9>g: ""
+*hu.PaperSourceUnit None/Nincs: ""
+*hu.PaperSourceUnit Unit2/2. egys<C3A9>g: ""
+*hu.InputSlot Tray1/1. t<C3A1>lca: ""
+*hu.InputSlot Tray2/2. t<C3A1>lca: ""
+*hu.InputSlot Tray3/3. t<C3A1>lca: ""
+*hu.InputSlot Tray4/4. t<C3A1>lca: ""
+*hu.Translation PageSize/Pap<C3AD>rform<C3A1>tum: ""
+*hu.PageSize B5/B5 (JIS): ""
+*hu.PageRegion B5/B5 (JIS): ""
+*hu.Translation Duplex/Duplex opci<C3B3>k: ""
+*hu.Duplex DuplexTumble/R<C3B6>videbb sz<C3A9>l: ""
+*hu.Duplex DuplexNoTumble/Hosszabb sz<C3A9>l: ""
+*hu.Duplex None/Szimplex: ""
+*hu.Translation Resolution/Felbont<C3A1>s: ""
+*hu.Translation OutputMethod/Kimeneti m<C3B3>dszer: ""
+*hu.Translation KMOutputMethod/Kimeneti m<C3B3>dszer: ""
+*hu.KMOutputMethod None/Nyomtat: ""
+*hu.KMOutputMethod Secure/Biztons<C3A1>gos nyomtat<C3A1>s: ""
+*hu.KMOutputMethod ProofMode/Levonat nyomtat<C3A1>sa: ""
+*hu.KMOutputMethod Box/Ment<C3A9>s felhaszn<C3A1>l<C3B3>i fi<C3B3>kba: ""
+*hu.KMOutputMethod BoxPrint/Ment<C3A9>s felhaszn<C3A1>l<C3B3>i fi<C3B3>kba <C3A9>s nyomtat<C3A1>s: ""
+*hu.KMOutputMethod IDPrint/Azonos<C3AD>t <C3A9>s Nyomtat: ""
+*hu.Translation KMSecID/Biztons<C3A1>gos nyomtat<C3A1>s azonos<C3AD>t<C3B3>: ""
+*hu.KMSecID None/Nincs: ""
+*hu.ParamCustomKMSecID Username/Felhaszn<C3A1>l<C3B3>n<C3A9>v: ""
+*hu.Translation KMSecPass/Biztons<C3A1>gos nyomtat<C3A1>s jelsz<C3B3>: ""
+*hu.KMSecPass None/Nincs: ""
+*hu.ParamCustomKMSecPass Password/Jelsz<C3B3>: ""
+*hu.Translation KMBoxNumber/Felh. fi<C3B3>k sz<C3A1>ma: ""
+*hu.KMBoxNumber None/Nincs: ""
+*hu.ParamCustomKMBoxNumber Number/Felh. fi<C3B3>k sz<C3A1>ma: ""
+*hu.Translation KMBoxFileName/F<C3A1>jln<C3A9>v: ""
+*hu.KMBoxFileName None/Nincs: ""
+*hu.ParamCustomKMBoxFileName Name/F<C3A1>jln<C3A9>v: ""
+*hu.ParamCustomKMSafeQUser User/Felhaszn<C3A1>l<C3B3>n<C3A9>v: ""
+*hu.Translation AccountTrack/Sz<C3A1>mlak<C3B6>vet<C3A9>s: ""
+*hu.Translation KMSectionManagement/Sz<C3A1>mlak<C3B6>vet<C3A9>s: ""
+*hu.KMSectionManagement False/Ki: ""
+*hu.KMSectionManagement True/Be: ""
+*hu.Translation KMDepCode/Oszt<C3A1>ly neve: ""
+*hu.KMDepCode None/Nincs: ""
+*hu.ParamCustomKMDepCode Name/Oszt<C3A1>ly neve: ""
+*hu.Translation KMAccPass/Jelsz<C3B3>: ""
+*hu.KMAccPass None/Nincs: ""
+*hu.ParamCustomKMAccPass Key/Jelsz<C3B3>: ""
+*hu.Translation UserAuth/Felhaszn<C3A1>l<C3B3> hiteles<C3AD>t<C3A9>s: ""
+*hu.Translation KMAuthentication/Felhaszn<C3A1>l<C3B3> hiteles<C3AD>t<C3A9>s: ""
+*hu.KMAuthentication False/Ki: ""
+*hu.KMAuthentication Server/K<C3BC>ls<C591> szerver: ""
+*hu.Translation KMAuthServer/Hiteles<C3AD>t<C591> kiszolg<C3A1>l<C3B3>: ""
+*hu.Translation KMAuthUser/Felhaszn<C3A1>l<C3B3>n<C3A9>v: ""
+*hu.KMAuthUser None/Nincs: ""
+*hu.ParamCustomKMAuthUser Name/Felhaszn<C3A1>l<C3B3>n<C3A9>v: ""
+*hu.Translation KMAuthPass/Jelsz<C3B3>: ""
+*hu.KMAuthPass None/Nincs: ""
+*hu.ParamCustomKMAuthPass Key/Jelsz<C3B3>: ""
+*hu.Translation KMDTStamp/B<C3A9>lyegz<C591>: ""
+*hu.Translation KMStampDateTime/D<C3A1>tum/Id<C591>: ""
+*hu.KMStampDateTime None/Nincs: ""
+*hu.KMStampDateTime Date/D<C3A1>tum: ""
+*hu.KMStampDateTime DateTime/D<C3A1>tum/Id<C591>: ""
+*hu.Translation KMStampDateFormat/D<C3A1>tum form<C3A1>tum: ""
+*hu.Translation KMStampTimeFormat/Id<C591> form<C3A1>tum: ""
+*hu.Translation KMStampPrintPosition/Nyomtat<C3A1>s helye: ""
+*hu.KMStampPrintPosition LEFTTOP/Fel<C3BC>l, bal oldalt: ""
+*hu.KMStampPrintPosition CENTERTOP/Fent: ""
+*hu.KMStampPrintPosition RIGHTTOP/Fel<C3BC>l, jobb oldalt: ""
+*hu.KMStampPrintPosition LEFTCENTER/Bal: ""
+*hu.KMStampPrintPosition CENTER/K<C3B6>z<C3A9>pen: ""
+*hu.KMStampPrintPosition RIGHTCENTER/Jobb: ""
+*hu.KMStampPrintPosition LEFTBOTTOM/Balra lent: ""
+*hu.KMStampPrintPosition CENTERBOTTOM/Lent: ""
+*hu.KMStampPrintPosition RIGHTBOTTOM/Jobbra lent: ""
+*hu.Translation KMPNStamp/B<C3A9>lyegz<C591>: ""
+*hu.Translation KMStampPageNumberEnable/Oldalsz<C3A1>m: ""
+*hu.KMStampPageNumberEnable False/Ki: ""
+*hu.KMStampPageNumberEnable True/Be: ""
+*hu.Translation KMStampPNStartingPage/Kezd<C591> oldal: ""
+*hu.ParamCustomKMStampPNStartingPage Number/Kezd<C591> oldal: ""
+*hu.Translation KMStampPNStartingNumber/Kezd<C591> oldalsz<C3A1>m: ""
+*hu.ParamCustomKMStampPNStartingNumber Number/Kezd<C591> oldalsz<C3A1>m: ""
+*hu.Translation KMStampPNPrintPosition/Nyomtat<C3A1>s helye: ""
+*hu.KMStampPNPrintPosition LEFTTOP/Fel<C3BC>l, bal oldalt: ""
+*hu.KMStampPNPrintPosition CENTERTOP/Fent: ""
+*hu.KMStampPNPrintPosition RIGHTTOP/Fel<C3BC>l, jobb oldalt: ""
+*hu.KMStampPNPrintPosition LEFTCENTER/Bal: ""
+*hu.KMStampPNPrintPosition CENTER/K<C3B6>z<C3A9>pen: ""
+*hu.KMStampPNPrintPosition RIGHTCENTER/Jobb: ""
+*hu.KMStampPNPrintPosition LEFTBOTTOM/Balra lent: ""
+*hu.KMStampPNPrintPosition CENTERBOTTOM/Lent: ""
+*hu.KMStampPNPrintPosition RIGHTBOTTOM/Jobbra lent: ""
+*pl.Translation InstallableOptions/Instalowalne opcje: ""
+*pl.Translation PaperSourceUnit/Zesp<C3B3C582> <C5BA>r<C3B3>d<C582>a papieru: ""
+*pl.PaperSourceUnit None/Brak: ""
+*pl.PaperSourceUnit Unit2/Jednostka 2: ""
+*pl.InputSlot Tray1/Podajn.1: ""
+*pl.InputSlot Tray2/Podajn.2: ""
+*pl.InputSlot Tray3/Podajn.3: ""
+*pl.InputSlot Tray4/Podajn.4: ""
+*pl.Translation PageSize/Format papieru: ""
+*pl.PageSize B5/B5 (JIS): ""
+*pl.PageRegion B5/B5 (JIS): ""
+*pl.Translation Duplex/Opcje druku obustronnego: ""
+*pl.Duplex DuplexTumble/Kr<C3B3>tka kraw<C499>d<C5BA>: ""
+*pl.Duplex DuplexNoTumble/D<C582>uga kraw<C499>d<C5BA>: ""
+*pl.Duplex None/Jednostronnie: ""
+*pl.Translation Resolution/Rozdzielczo<C59BC487>: ""
+*pl.Translation OutputMethod/Metoda wydruku: ""
+*pl.Translation KMOutputMethod/Metoda wydruku: ""
+*pl.KMOutputMethod None/Drukuj: ""
+*pl.KMOutputMethod Secure/Bezpieczny wydruk: ""
+*pl.KMOutputMethod ProofMode/Wydruk pr<C3B3>bny: ""
+*pl.KMOutputMethod Box/Zapisz w skrzyn.u<C5BC>ytkow.: ""
+*pl.KMOutputMethod BoxPrint/Zapisz w skrzynce u<C5BC>ytkownika i druk.: ""
+*pl.KMOutputMethod IDPrint/ID i Drukuj: ""
+*pl.Translation KMSecID/ID bezpiecznego wydruku: ""
+*pl.KMSecID None/Brak: ""
+*pl.ParamCustomKMSecID Username/Nazwa u<C5BC>ytkow.: ""
+*pl.Translation KMSecPass/Has<C582>o bezpiecznego wydruku: ""
+*pl.KMSecPass None/Brak: ""
+*pl.ParamCustomKMSecPass Password/Has<C582>o: ""
+*pl.Translation KMBoxNumber/Nr skrzynki: ""
+*pl.KMBoxNumber None/Brak: ""
+*pl.ParamCustomKMBoxNumber Number/Nr skrzynki: ""
+*pl.Translation KMBoxFileName/Nazwa pliku: ""
+*pl.KMBoxFileName None/Brak: ""
+*pl.ParamCustomKMBoxFileName Name/Nazwa pliku: ""
+*pl.ParamCustomKMSafeQUser User/Nazwa u<C5BC>ytkow.: ""
+*pl.Translation AccountTrack/Konto dost<C499>pu: ""
+*pl.Translation KMSectionManagement/Konto dost<C499>pu: ""
+*pl.KMSectionManagement False/WY<C581>: ""
+*pl.KMSectionManagement True/W<C582>: ""
+*pl.Translation KMDepCode/Nazwa oddzia<C582>u: ""
+*pl.KMDepCode None/Brak: ""
+*pl.ParamCustomKMDepCode Name/Nazwa oddzia<C582>u: ""
+*pl.Translation KMAccPass/Has<C582>o: ""
+*pl.KMAccPass None/Brak: ""
+*pl.ParamCustomKMAccPass Key/Has<C582>o: ""
+*pl.Translation UserAuth/Autoryzacja u<C5BC>ytkownika: ""
+*pl.Translation KMAuthentication/Autoryzacja u<C5BC>ytkownika: ""
+*pl.KMAuthentication False/WY<C581>: ""
+*pl.KMAuthentication Server/Serwer zewn<C499>trzny: ""
+*pl.Translation KMAuthServer/Serwer autoryzacji: ""
+*pl.Translation KMAuthUser/Nazwa u<C5BC>ytkow.: ""
+*pl.KMAuthUser None/Brak: ""
+*pl.ParamCustomKMAuthUser Name/Nazwa u<C5BC>ytkow.: ""
+*pl.Translation KMAuthPass/Has<C582>o: ""
+*pl.KMAuthPass None/Brak: ""
+*pl.ParamCustomKMAuthPass Key/Has<C582>o: ""
+*pl.Translation KMDTStamp/Stempel daty i czasu: ""
+*pl.Translation KMStampDateTime/Data/Godzina: ""
+*pl.KMStampDateTime None/Brak: ""
+*pl.KMStampDateTime Date/Data: ""
+*pl.KMStampDateTime DateTime/Data/Godzina: ""
+*pl.Translation KMStampDateFormat/Format daty: ""
+*pl.Translation KMStampTimeFormat/Format godziny: ""
+*pl.Translation KMStampPrintPosition/Po<C582>o<C5BC>en. na wydr.: ""
+*pl.KMStampPrintPosition LEFTTOP/U g<C3B3>ry z lewej: ""
+*pl.KMStampPrintPosition CENTERTOP/U G<C3B3>r: ""
+*pl.KMStampPrintPosition RIGHTTOP/U g<C3B3>ry z prawej: ""
+*pl.KMStampPrintPosition LEFTCENTER/Z lewej: ""
+*pl.KMStampPrintPosition CENTER/<C59A>rodek: ""
+*pl.KMStampPrintPosition RIGHTCENTER/Z prawej: ""
+*pl.KMStampPrintPosition LEFTBOTTOM/U do<C582>u z lewej: ""
+*pl.KMStampPrintPosition CENTERBOTTOM/U do<C582>u: ""
+*pl.KMStampPrintPosition RIGHTBOTTOM/U do<C582>u z prawej: ""
+*pl.Translation KMPNStamp/Stempel numeru strony: ""
+*pl.Translation KMStampPageNumberEnable/Numer strony: ""
+*pl.KMStampPageNumberEnable False/WY<C581>: ""
+*pl.KMStampPageNumberEnable True/W<C582>: ""
+*pl.Translation KMStampPNStartingPage/Strona pocz<C485>tkowa: ""
+*pl.ParamCustomKMStampPNStartingPage Number/Strona pocz<C485>tkowa: ""
+*pl.Translation KMStampPNStartingNumber/Numer strony pocz<C485>tkowej: ""
+*pl.ParamCustomKMStampPNStartingNumber Number/Numer strony pocz<C485>tkowej: ""
+*pl.Translation KMStampPNPrintPosition/Po<C582>o<C5BC>en. na wydr.: ""
+*pl.KMStampPNPrintPosition LEFTTOP/U g<C3B3>ry z lewej: ""
+*pl.KMStampPNPrintPosition CENTERTOP/U G<C3B3>r: ""
+*pl.KMStampPNPrintPosition RIGHTTOP/U g<C3B3>ry z prawej: ""
+*pl.KMStampPNPrintPosition LEFTCENTER/Z lewej: ""
+*pl.KMStampPNPrintPosition CENTER/<C59A>rodek: ""
+*pl.KMStampPNPrintPosition RIGHTCENTER/Z prawej: ""
+*pl.KMStampPNPrintPosition LEFTBOTTOM/U do<C582>u z lewej: ""
+*pl.KMStampPNPrintPosition CENTERBOTTOM/U do<C582>u: ""
+*pl.KMStampPNPrintPosition RIGHTBOTTOM/U do<C582>u z prawej: ""
+*ru.Translation InstallableOptions/<D0A3D181D182D0B0D0BDD0B0D0B2D0BBD0B8D0B2D0B0D0B5D0BCD18BD0B520D0BED0BFD186D0B8D0B8>: ""
+*ru.Translation Model/<D09CD0BED0B4D0B5D0BBD18C>: ""
+*ru.Translation PaperSourceUnit/<D098D181D182D0BED187D0BDD0B8D0BA20D0B1D183D0BCD0B0D0B3D0B8>: ""
+*ru.PaperSourceUnit None/<D09DD0B520D0B2D18BD0B1D180D0B0D0BD>: ""
+*ru.PaperSourceUnit Unit2/<D091D0BBD0BED0BA20>2: ""
+*ru.InputSlot Tray1/<D09BD0BED182D0BED0BA31>: ""
+*ru.InputSlot Tray2/<D09BD0BED182D0BED0BA32>: ""
+*ru.InputSlot Tray3/<D09BD0BED182D0BED0BA33>: ""
+*ru.InputSlot Tray4/<D09BD0BED182D0BED0BA34>: ""
+*ru.Translation PageSize/<D0A4D0BED180D0BCD0B0D18220D0B1D183D0BCD0B0D0B3D0B8>: ""
+*ru.PageSize B5/B5 (JIS): ""
+*ru.PageRegion B5/B5 (JIS): ""
+*ru.Translation Duplex/<D09ED0BFD186D0B8D0B820D0B4D0B2D183D185D181D182D0BED180D0BED0BDD0BDD0B5D0B920D0BFD0B5D187D0B0D182D0B8>: ""
+*ru.Duplex DuplexTumble/<D09AD0BED180D0BED182D0BAD0B8D0B920D0BAD180D0B0D0B9>: ""
+*ru.Duplex DuplexNoTumble/<D094D0BBD0B8D0BDD0BDD18BD0B920D0BAD180D0B0D0B9>: ""
+*ru.Duplex None/<D09ED0B4D0BDD0BED181D182D0BED180D0BED0BDD0BDD18FD18F20D0BFD0B5D187D0B0D182D18C>: ""
+*ru.Translation Resolution/<D0A0D0B0D0B7D180D0B5D188D0B5D0BDD0B8D0B5>: ""
+*ru.Translation OutputMethod/<D09CD0B5D182D0BED0B420D0B2D18BD0B2D0BED0B4D0B0>: ""
+*ru.Translation KMOutputMethod/<D09CD0B5D182D0BED0B420D0B2D18BD0B2D0BED0B4D0B0>: ""
+*ru.KMOutputMethod None/<D09FD0B5D187D0B0D182D18C>: ""
+*ru.KMOutputMethod Secure/<D091D0B5D0B7D0BED0BFD0B0D181D0BDD0B0D18F20D0BFD0B5D187D0B0D182D18C>: ""
+*ru.KMOutputMethod ProofMode/<D09FD180D0BED0B1D0BDD0B0D18F20D0BFD0B5D187D0B0D182D18C>: ""
+*ru.KMOutputMethod Box/<D0A1D0BED185D180D0B0D0BDD0B8D182D18C20D0B220D18FD189D0B8D0BAD0B520D0BFD0BED0BBD18CD0B7D0BED0B2D0B0D182D0B5D0BBD18F>: ""
+*ru.KMOutputMethod BoxPrint/<D0A1D0BED185D180D0B0D0BDD0B8D182D18C20D0B220D18FD189D0B8D0BAD0B520D0BFD0BED0BBD18CD0B7D0BED0B2D0B0D182D0B5D0BBD18F20D0B820D0BDD0B0D0BFD0B5D187D0B0D182D0B0D182D18C>: ""
+*ru.KMOutputMethod IDPrint/ID <D0B820D09FD0B5D187D0B0D182D18C>: ""
+*ru.Translation KMSecID/ID <D091D0B5D0B7D0BED0BFD0B0D181D0BDD0BED0B920D0BFD0B5D187D0B0D182D0B8>: ""
+*ru.KMSecID None/<D09DD0B5D182>: ""
+*ru.ParamCustomKMSecID Username/<D098D0BCD18F20D0BFD0BED0BBD18CD0B7D0BED0B2D0B0D182D0B5D0BBD18F>: ""
+*ru.Translation KMSecPass/<D09FD0B0D180D0BED0BBD18C20D0B1D0B5D0B7D0BED0BFD0B0D181D0BDD0BED0B920D0BFD0B5D187D0B0D182D0B8>: ""
+*ru.KMSecPass None/<D09DD0B5D182>: ""
+*ru.ParamCustomKMSecPass Password/<D09FD0B0D180D0BED0BBD18C>: ""
+*ru.Translation KMBoxNumber/<D09DD0BED0BCD0B5D180> <D18FD189D0B8D0BAD0B020D0BFD0BED0BBD18CD0B7D0BED0B2D0B0D182D0B5D0BBD18F>: ""
+*ru.KMBoxNumber None/<D09DD0B5D182>: ""
+*ru.ParamCustomKMBoxNumber Number/<D09DD0BED0BCD0B5D180> <D18FD189D0B8D0BAD0B020D0BFD0BED0BBD18CD0B7D0BED0B2D0B0D182D0B5D0BBD18F>: ""
+*ru.Translation KMBoxFileName/<D098D0BCD18F20D184D0B0D0B9D0BBD0B0>: ""
+*ru.KMBoxFileName None/<D09DD0B5D182>: ""
+*ru.ParamCustomKMBoxFileName Name/<D098D0BCD18F20D184D0B0D0B9D0BBD0B0>: ""
+*ru.Translation KMSafeQUser/<D09FD0BED0BBD18CD0B7D0BED0B2D0B0D182D0B5D0BBD18C20>SafeQ: ""
+*ru.ParamCustomKMSafeQUser User/<D098D0BCD18F20D0BFD0BED0BBD18CD0B7D0BED0B2D0B0D182D0B5D0BBD18F>: ""
+*ru.Translation AccountTrack/<D09ED182D181D0BBD0B5D0B6D0B8D0B2D0B0D0BDD0B8D0B520D0A3D187D0B5D182D0BD2E> <D097D0B0D0BF2E>: ""
+*ru.Translation KMSectionManagement/<D09ED182D181D0BBD0B5D0B6D0B8D0B2D0B0D0BDD0B8D0B520D0A3D187D0B5D182D0BD2E> <D097D0B0D0BF2E>: ""
+*ru.KMSectionManagement False/<D092D18BD0BAD0BB>: ""
+*ru.KMSectionManagement True/<D092D0BAD0BB>: ""
+*ru.Translation KMDepCode/<D09DD0B0D0B7D0B2D0B0D0BDD0B8D0B520D0BED182D0B4D0B5D0BBD0B0>: ""
+*ru.KMDepCode None/<D09DD0B5D182>: ""
+*ru.ParamCustomKMDepCode Name/<D09DD0B0D0B7D0B2D0B0D0BDD0B8D0B520D0BED182D0B4D0B5D0BBD0B0>: ""
+*ru.Translation KMAccPass/<D09FD0B0D180D0BED0BBD18C>: ""
+*ru.KMAccPass None/<D09DD0B5D182>: ""
+*ru.ParamCustomKMAccPass Key/<D09FD0B0D180D0BED0BBD18C>: ""
+*ru.Translation UserAuth/<D098D0B4D0B5D0BDD182D0B8D184D0B8D0BAD0B0D186D0B8D18F20D09FD0BED0BBD18CD0B7D0BED0B2D0B0D182D0B5D0BBD18F>: ""
+*ru.Translation KMAuthentication/<D098D0B4D0B5D0BDD182D0B8D184D0B8D0BAD0B0D186D0B8D18F20D09FD0BED0BBD18CD0B7D0BED0B2D0B0D182D0B5D0BBD18F>: ""
+*ru.KMAuthentication False/<D092D18BD0BAD0BB>: ""
+*ru.KMAuthentication Private/<D09CD0A4D0A3>: ""
+*ru.KMAuthentication Server/<D092D0BDD0B5D188D0BDD0B8D0B920D181D0B5D180D0B2D0B5D180>: ""
+*ru.KMAuthentication Server/<D09CD0A4D0A320D0B820D092D0BDD0B5D188D0BDD0B8D0B920D181D0B5D180D0B2D0B5D180>: ""
+*ru.Translation KMAuthServer/<D0A1D0B5D180D0B2D0B5D180> <D0B8D0B4D0B5D0BDD182D0B8D184D0B8D0BAD0B0D186D0B8D0B8>: ""
+*ru.Translation KMAuthUser/<D098D0BCD18F20D0BFD0BED0BBD18CD0B7D0BED0B2D0B0D182D0B5D0BBD18F>: ""
+*ru.KMAuthUser None/<D09DD0B5D182>: ""
+*ru.ParamCustomKMAuthUser Name/<D098D0BCD18F20D0BFD0BED0BBD18CD0B7D0BED0B2D0B0D182D0B5D0BBD18F>: ""
+*ru.Translation KMAuthPass/<D09FD0B0D180D0BED0BBD18C>: ""
+*ru.KMAuthPass None/<D09DD0B5D182>: ""
+*ru.ParamCustomKMAuthPass Key/<D09FD0B0D180D0BED0BBD18C>: ""
+*ru.Translation KMDTStamp/<D09ED182D0BCD0B5D182D0BAD0B020D094D0B0D182D18B2FD092D180D0B5D0BCD0B5D0BDD0B8>: ""
+*ru.Translation KMStampDateTime/<D094D0B0D182D0B02FD0B2D180D0B5D0BCD18F>: ""
+*ru.KMStampDateTime None/<D09DD0B5D182>: ""
+*ru.KMStampDateTime Date/<D094D0B0D182D0B0>: ""
+*ru.KMStampDateTime DateTime/<D094D0B0D182D0B02FD0B2D180D0B5D0BCD18F>: ""
+*ru.Translation KMStampDateFormat/<D0A4D0BED180D0BCD0B0D18220D0B4D0B0D182D18B>: ""
+*ru.KMStampDateFormat DATE4/23 <D090D0B2D0B3D183D181D182D0B02C> 2012: ""
+*ru.KMStampDateFormat DATE2/<D090D0B2D0B3D183D181D18220>23, 2012: ""
+*ru.KMStampDateFormat DATE5/' 23/8/''12': ""
+*ru.KMStampDateFormat DATE3/' 8/23/''12': ""
+*ru.Translation KMStampTimeFormat/<D0A4D0BED180D0BCD0B0D18220D0B2D180D0B5D0BCD0B5D0BDD0B8>: ""
+*ru.KMStampTimeFormat TIME1/1 23 PM: ""
+*ru.Translation KMStampPrintPosition/<D09FD0BED0B7D0B8D186D0B8D18F20D0BFD0B5D187D0B0D182D0B8>: ""
+*ru.KMStampPrintPosition LEFTTOP/<D0A1D0B2D0B5D180D185D18320D181D0BBD0B5D0B2D0B0>: ""
+*ru.KMStampPrintPosition CENTERTOP/<D0A1D0B2D0B5D180D185D183>: ""
+*ru.KMStampPrintPosition RIGHTTOP/<D0A1D0B2D0B5D180D185D18320D181D0BFD180D0B0D0B2D0B0>: ""
+*ru.KMStampPrintPosition LEFTCENTER/<D0A1D0BBD0B5D0B2D0B0>: ""
+*ru.KMStampPrintPosition CENTER/<D0A6D0B5D0BDD182D180>: ""
+*ru.KMStampPrintPosition RIGHTCENTER/<D0A1D0BFD180D0B0D0B2D0B0>: ""
+*ru.KMStampPrintPosition LEFTBOTTOM/<D0A1D0BDD0B8D0B7D18320D181D0BBD0B5D0B2D0B0>: ""
+*ru.KMStampPrintPosition CENTERBOTTOM/<D0A1D0BDD0B8D0B7D183>: ""
+*ru.KMStampPrintPosition RIGHTBOTTOM/<D0A1D0BDD0B8D0B7D18320D181D0BFD180D0B0D0B2D0B0>: ""
+*ru.Translation KMPNStamp/<D09DD183D0BCD0B5D180D0BED0B2D0B0D182D18C20D181D182D180D0B0D0BDD0B8D186D18B>: ""
+*ru.Translation KMStampPageNumberEnable/<D09DD0BED0BCD0B5D180> <D181D182D180D0B0D0BDD0B8D186D18B>: ""
+*ru.KMStampPageNumberEnable False/<D092D18BD0BAD0BB>: ""
+*ru.KMStampPageNumberEnable True/<D092D0BAD0BB>: ""
+*ru.Translation KMStampPNStartingPage/<D09DD0B0D187D0B0D0BBD18CD0BDD0B0D18F20D181D182D180D0B0D0BDD0B8D186D0B0>: ""
+*ru.ParamCustomKMStampPNStartingPage Number/<D09DD0B0D187D0B0D0BBD18CD0BDD0B0D18F20D181D182D180D0B0D0BDD0B8D186D0B0>: ""
+*ru.Translation KMStampPNStartingNumber/<D09DD0BED0BCD0B5D180> <D0BDD0B0D187D0B0D0BBD18CD0BDD0BED0B920D181D182D180D0B0D0BDD0B8D186D18B>: ""
+*ru.ParamCustomKMStampPNStartingNumber Number/<D09DD0BED0BCD0B5D180> <D0BDD0B0D187D0B0D0BBD18CD0BDD0BED0B920D181D182D180D0B0D0BDD0B8D186D18B>: ""
+*ru.Translation KMStampPNPrintPosition/<D09FD0BED0B7D0B8D186D0B8D18F20D0BFD0B5D187D0B0D182D0B8>: ""
+*ru.KMStampPNPrintPosition LEFTTOP/<D0A1D0B2D0B5D180D185D18320D181D0BBD0B5D0B2D0B0>: ""
+*ru.KMStampPNPrintPosition CENTERTOP/<D0A1D0B2D0B5D180D185D183>: ""
+*ru.KMStampPNPrintPosition RIGHTTOP/<D0A1D0B2D0B5D180D185D18320D181D0BFD180D0B0D0B2D0B0>: ""
+*ru.KMStampPNPrintPosition LEFTCENTER/<D0A1D0BBD0B5D0B2D0B0>: ""
+*ru.KMStampPNPrintPosition CENTER/<D0A6D0B5D0BDD182D180>: ""
+*ru.KMStampPNPrintPosition RIGHTCENTER/<D0A1D0BFD180D0B0D0B2D0B0>: ""
+*ru.KMStampPNPrintPosition LEFTBOTTOM/<D0A1D0BDD0B8D0B7D18320D181D0BBD0B5D0B2D0B0>: ""
+*ru.KMStampPNPrintPosition CENTERBOTTOM/<D0A1D0BDD0B8D0B7D183>: ""
+*ru.KMStampPNPrintPosition RIGHTBOTTOM/<D0A1D0BDD0B8D0B7D18320D181D0BFD180D0B0D0B2D0B0>: ""
+*sk.Translation InstallableOptions/In<C5A1>talovan<C3A9> pr<C3AD>slu<C5A1>enstvo: ""
+*sk.Translation PaperSourceUnit/Jednotka zdroja papiera: ""
+*sk.PaperSourceUnit None/<C5BD>iadna: ""
+*sk.PaperSourceUnit Unit2/Jednotka 2: ""
+*sk.InputSlot Tray1/1. z<C3A1>sobn<C3AD>k: ""
+*sk.InputSlot Tray2/2. z<C3A1>sobn<C3AD>k: ""
+*sk.InputSlot Tray3/3. z<C3A1>sobn<C3AD>k: ""
+*sk.InputSlot Tray4/4. z<C3A1>sobn<C3AD>k: ""
+*sk.Translation PageSize/Form<C3A1>t papiera: ""
+*sk.PageSize B5/B5 (JIS): ""
+*sk.PageRegion B5/B5 (JIS): ""
+*sk.Translation Duplex/Duplexn<C3A9> volby: ""
+*sk.Duplex DuplexTumble/Kr<C3A1>tky okraj: ""
+*sk.Duplex DuplexNoTumble/Dlh<C3BD> okraj: ""
+*sk.Duplex None/Jednostrann<C3A1> tla<C48D>: ""
+*sk.Translation Resolution/Rozl<C3ADC5A1>enie: ""
+*sk.Translation OutputMethod/Sp<C3B4>sob v<C3BD>stupu: ""
+*sk.Translation KMOutputMethod/Sp<C3B4>sob v<C3BD>stupu: ""
+*sk.KMOutputMethod None/Tla<C48D>: ""
+*sk.KMOutputMethod Secure/Zabezpe<C48D>en<C3A1> tla<C48D>: ""
+*sk.KMOutputMethod ProofMode/Sk<C3BAC5A1>obn<C3A1> tla<C48D>: ""
+*sk.KMOutputMethod Box/Ulo<C5BE>i<C5A5> do u<C5BEC3AD>v. schr<C3A1>nky: ""
+*sk.KMOutputMethod BoxPrint/Ulo<C5BE>i<C5A5> do u<C5BEC3AD>v. schr<C3A1>nky a tla<C48D>: ""
+*sk.KMOutputMethod IDPrint/ID a<C2A0>tla<C48D>: ""
+*sk.Translation KMSecID/ID zabezpe<C48D>enej tla<C48D>e: ""
+*sk.KMSecID None/<C5BD>iadny: ""
+*sk.ParamCustomKMSecID Username/Meno u<C5BEC3AD>vate<C4BE>a: ""
+*sk.Translation KMSecPass/Heslo: ""
+*sk.KMSecPass None/<C5BD>iadny: ""
+*sk.ParamCustomKMSecPass Password/Heslo: ""
+*sk.Translation KMBoxNumber/<C48CC3AD>slo schr<C3A1>nky: ""
+*sk.KMBoxNumber None/<C5BD>iadny: ""
+*sk.ParamCustomKMBoxNumber Number/<C48CC3AD>slo schr<C3A1>nky: ""
+*sk.Translation KMBoxFileName/N<C3A1>zov s<C3BA>boru: ""
+*sk.KMBoxFileName None/<C5BD>iadny: ""
+*sk.ParamCustomKMBoxFileName Name/N<C3A1>zov s<C3BA>boru: ""
+*sk.Translation KMSafeQUser/SafeQ u<C5BE>ivate<C4BE>: ""
+*sk.ParamCustomKMSafeQUser User/Meno u<C5BEC3AD>vate<C4BE>a: ""
+*sk.Translation AccountTrack/<C39AC48D>tovanie: ""
+*sk.Translation KMSectionManagement/<C39AC48D>tovanie: ""
+*sk.KMSectionManagement False/Vypn<C3BAC5A5>: ""
+*sk.KMSectionManagement True/Zapn<C3BAC5A5>: ""
+*sk.Translation KMDepCode/N<C3A1>zov oddelenia: ""
+*sk.KMDepCode None/<C5BD>iadny: ""
+*sk.ParamCustomKMDepCode Name/N<C3A1>zov oddelenia: ""
+*sk.Translation KMAccPass/Heslo: ""
+*sk.KMAccPass None/<C5BD>iadny: ""
+*sk.ParamCustomKMAccPass Key/Heslo: ""
+*sk.Translation UserAuth/Overenie u<C5BEC3AD>vate<C4BE>a: ""
+*sk.Translation KMAuthentication/Overenie u<C5BEC3AD>vate<C4BE>a: ""
+*sk.KMAuthentication False/Vypn<C3BAC5A5>: ""
+*sk.KMAuthentication Server/Extern<C3BD> server: ""
+*sk.KMAuthentication Server/MFP + Extern<C3BD> server: ""
+*sk.Translation KMAuthServer/Overenie servera: ""
+*sk.Translation KMAuthUser/Meno u<C5BEC3AD>vate<C4BE>a: ""
+*sk.KMAuthUser None/<C5BD>iadny: ""
+*sk.ParamCustomKMAuthUser Name/Meno u<C5BEC3AD>vate<C4BE>a: ""
+*sk.Translation KMAuthPass/Heslo: ""
+*sk.KMAuthPass None/<C5BD>iadny: ""
+*sk.ParamCustomKMAuthPass Key/Heslo: ""
+*sk.Translation KMDTStamp/Pe<C48D>iatka: ""
+*sk.Translation KMStampDateTime/D<C3A1>tum a<C2A0C48D>as: ""
+*sk.KMStampDateTime None/<C5BD>iadny: ""
+*sk.KMStampDateTime Date/D<C3A1>tum: ""
+*sk.KMStampDateTime DateTime/D<C3A1>tum a<C2A0C48D>as: ""
+*sk.Translation KMStampDateFormat/Form<C3A1>t d<C3A1>tumu: ""
+*sk.Translation KMStampTimeFormat/Form<C3A1>t <C48D>asu: ""
+*sk.Translation KMStampPrintPosition/Poz<C3AD>cia na tla<C48D>: ""
+*sk.KMStampPrintPosition LEFTTOP/Hore v<C4BE>avo: ""
+*sk.KMStampPrintPosition CENTERTOP/Hore: ""
+*sk.KMStampPrintPosition RIGHTTOP/Hore vpravo: ""
+*sk.KMStampPrintPosition LEFTCENTER/V<C4BE>avo: ""
+*sk.KMStampPrintPosition CENTER/Stred: ""
+*sk.KMStampPrintPosition RIGHTCENTER/Vpravo: ""
+*sk.KMStampPrintPosition LEFTBOTTOM/Dole v<C4BE>avo: ""
+*sk.KMStampPrintPosition CENTERBOTTOM/Dole: ""
+*sk.KMStampPrintPosition RIGHTBOTTOM/Dole vpravo: ""
+*sk.Translation KMPNStamp/Pe<C48D>iatka: ""
+*sk.Translation KMStampPageNumberEnable/<C48CC3AD>slo strany: ""
+*sk.KMStampPageNumberEnable False/Vypn<C3BAC5A5>: ""
+*sk.KMStampPageNumberEnable True/Zapn<C3BAC5A5>: ""
+*sk.Translation KMStampPNStartingPage/Po<C48D>iato<C48D>n<C3A1> strana: ""
+*sk.ParamCustomKMStampPNStartingPage Number/Po<C48D>iato<C48D>n<C3A1> strana: ""
+*sk.Translation KMStampPNStartingNumber/Za<C48D>iato<C48D>n<C3A9> <C48DC3AD>slo strany: ""
+*sk.ParamCustomKMStampPNStartingNumber Number/Za<C48D>iato<C48D>n<C3A9> <C48DC3AD>slo strany: ""
+*sk.Translation KMStampPNPrintPosition/Poz<C3AD>cia na tla<C48D>: ""
+*sk.KMStampPNPrintPosition LEFTTOP/Hore v<C4BE>avo: ""
+*sk.KMStampPNPrintPosition CENTERTOP/Hore: ""
+*sk.KMStampPNPrintPosition RIGHTTOP/Hore vpravo: ""
+*sk.KMStampPNPrintPosition LEFTCENTER/V<C4BE>avo: ""
+*sk.KMStampPNPrintPosition CENTER/Stred: ""
+*sk.KMStampPNPrintPosition RIGHTCENTER/Vpravo: ""
+*sk.KMStampPNPrintPosition LEFTBOTTOM/Dole v<C4BE>avo: ""
+*sk.KMStampPNPrintPosition CENTERBOTTOM/Dole: ""
+*sk.KMStampPNPrintPosition RIGHTBOTTOM/Dole vpravo: ""
+*ca.Translation InstallableOptions/Opcions instal<C2B7>lables: ""
+*ca.Translation PaperSourceUnit/Origen del paper: ""
+*ca.PaperSourceUnit None/Cap: ""
+*ca.PaperSourceUnit Unit2/Unitat 2: ""
+*ca.InputSlot Tray1/Safata 1: ""
+*ca.InputSlot Tray2/Safata 2: ""
+*ca.InputSlot Tray3/Safata 3: ""
+*ca.InputSlot Tray4/Safata 4: ""
+*ca.Translation PageSize/Mida paper: ""
+*ca.PageSize B5/B5 (JIS): ""
+*ca.PageRegion B5/B5 (JIS): ""
+*ca.Translation Duplex/Opcions D<C3BA>plex: ""
+*ca.Duplex DuplexTumble/Marge curt: ""
+*ca.Duplex DuplexNoTumble/Marge llarg: ""
+*ca.Translation Resolution/Resoluci<C3B3>: ""
+*ca.Translation OutputMethod/M<C3A8>tode de sortida: ""
+*ca.Translation KMOutputMethod/M<C3A8>tode de sortida: ""
+*ca.KMOutputMethod None/Impressi<C3B3>: ""
+*ca.KMOutputMethod Secure/Impressi<C3B3> segura: ""
+*ca.KMOutputMethod ProofMode/Impressi<C3B3> de prova: ""
+*ca.KMOutputMethod Box/Guardar en quadre usuari: ""
+*ca.KMOutputMethod BoxPrint/Desa en quadre e imprimir: ""
+*ca.KMOutputMethod IDPrint/ID & Imprimir: ""
+*ca.Translation KMSecID/Id. impressi<C3B3> segura: ""
+*ca.KMSecID None/Cap: ""
+*ca.ParamCustomKMSecID Username/Nom d'usuari: ""
+*ca.Translation KMSecPass/Contrasenya: ""
+*ca.KMSecPass None/Cap: ""
+*ca.ParamCustomKMSecPass Password/Contrasenya: ""
+*ca.Translation KMBoxNumber/N<C3BA>m. quadre usuari: ""
+*ca.KMBoxNumber None/Cap: ""
+*ca.ParamCustomKMBoxNumber Number/N<C3BA>m. quadre usuari: ""
+*ca.Translation KMBoxFileName/Nom d'arxiu: ""
+*ca.KMBoxFileName None/Cap: ""
+*ca.ParamCustomKMBoxFileName Name/Nom d'arxiu: ""
+*ca.ParamCustomKMSafeQUser User/Nom d'usuari: ""
+*ca.Translation AccountTrack/Seguiment de volum (E.K.C.): ""
+*ca.Translation KMSectionManagement/Seguiment de volum (E.K.C.): ""
+*ca.KMSectionManagement False/Desact.: ""
+*ca.KMSectionManagement True/Activ.: ""
+*ca.Translation KMDepCode/Nom del departament: ""
+*ca.KMDepCode None/Cap: ""
+*ca.ParamCustomKMDepCode Name/Nom del departament: ""
+*ca.Translation KMAccPass/Contrasenya: ""
+*ca.KMAccPass None/Cap: ""
+*ca.ParamCustomKMAccPass Key/Contrasenya: ""
+*ca.Translation UserAuth/Autenticaci<C3B3>: ""
+*ca.Translation KMAuthentication/Autenticaci<C3B3>: ""
+*ca.KMAuthentication False/Desact.: ""
+*ca.KMAuthentication Server/Serv. extern: ""
+*ca.Translation KMAuthServer/Serv. autent.: ""
+*ca.Translation KMAuthUser/Nom d'usuari: ""
+*ca.KMAuthUser None/Cap: ""
+*ca.ParamCustomKMAuthUser Name/Nom d'usuari: ""
+*ca.Translation KMAuthPass/Contrasenya: ""
+*ca.KMAuthPass None/Cap: ""
+*ca.ParamCustomKMAuthPass Key/Contrasenya: ""
+*ca.Translation KMDTStamp/Segell data i hora: ""
+*ca.Translation KMStampDateTime/Data/Hora: ""
+*ca.KMStampDateTime None/Cap: ""
+*ca.KMStampDateTime Date/Data: ""
+*ca.KMStampDateTime DateTime/Data/Hora: ""
+*ca.Translation KMStampDateFormat/Format de data: ""
+*ca.Translation KMStampTimeFormat/Format d'hora: ""
+*ca.Translation KMStampPrintPosition/Posici<C3B3> d'impressi<C3B3>: ""
+*ca.KMStampPrintPosition LEFTTOP/Superior esquerre: ""
+*ca.KMStampPrintPosition CENTERTOP/Superior: ""
+*ca.KMStampPrintPosition RIGHTTOP/Superior dret: ""
+*ca.KMStampPrintPosition LEFTCENTER/Esq.: ""
+*ca.KMStampPrintPosition CENTER/Centre: ""
+*ca.KMStampPrintPosition RIGHTCENTER/Dreta: ""
+*ca.KMStampPrintPosition LEFTBOTTOM/Inferior esquerre: ""
+*ca.KMStampPrintPosition CENTERBOTTOM/Inferior: ""
+*ca.KMStampPrintPosition RIGHTBOTTOM/Inferior dret: ""
+*ca.Translation KMPNStamp/Segell N<C2BA> de p<C3A1>gina: ""
+*ca.Translation KMStampPageNumberEnable/N<C3BA>mero de p<C3A0>gina: ""
+*ca.KMStampPageNumberEnable False/Desact.: ""
+*ca.KMStampPageNumberEnable True/Activ.: ""
+*ca.Translation KMStampPNStartingPage/P<C3A0>gina inicial: ""
+*ca.ParamCustomKMStampPNStartingPage Number/P<C3A0>gina inicial: ""
+*ca.Translation KMStampPNStartingNumber/N<C3BA>mero inicial: ""
+*ca.ParamCustomKMStampPNStartingNumber Number/N<C3BA>mero inicial: ""
+*ca.Translation KMStampPNPrintPosition/Posici<C3B3> d'impressi<C3B3>: ""
+*ca.KMStampPNPrintPosition LEFTTOP/Superior esquerre: ""
+*ca.KMStampPNPrintPosition CENTERTOP/Superior: ""
+*ca.KMStampPNPrintPosition RIGHTTOP/Superior dret: ""
+*ca.KMStampPNPrintPosition LEFTCENTER/Esq.: ""
+*ca.KMStampPNPrintPosition CENTER/Centre: ""
+*ca.KMStampPNPrintPosition RIGHTCENTER/Dreta: ""
+*ca.KMStampPNPrintPosition LEFTBOTTOM/Inferior esquerre: ""
+*ca.KMStampPNPrintPosition CENTERBOTTOM/Inferior: ""
+*ca.KMStampPNPrintPosition RIGHTBOTTOM/Inferior dret: ""
+*hr.Translation PaperSourceUnit/Ulazna jedinica za papir: ""
+*hr.PaperSourceUnit None/Niti jedno: ""
+*hr.PaperSourceUnit Unit2/Jjedinica za papir 2: ""
+*hr.InputSlot Tray1/Ladica 1: ""
+*hr.InputSlot Tray2/Ladica 2: ""
+*hr.InputSlot Tray3/Ladica 3: ""
+*hr.InputSlot Tray4/Ladica 4: ""
+*hr.Translation PageSize/Veli<C48D>ina Papira: ""
+*hr.PageSize B5/B5 (JIS): ""
+*hr.PageRegion B5/B5 (JIS): ""
+*hr.Translation Duplex/Opcije obostranog ispisa: ""
+*hr.Duplex DuplexTumble/Kratki rub: ""
+*hr.Duplex DuplexNoTumble/Dugi rub: ""
+*hr.Duplex None/Jednostrano: ""
+*hr.Translation Resolution/Rezolucija: ""
+*hr.Translation OutputMethod/Na<C48D>in ispisa: ""
+*hr.Translation KMOutputMethod/Na<C48D>in ispisa: ""
+*hr.KMOutputMethod None/Ispis: ""
+*hr.KMOutputMethod Secure/Siguran Ispis: ""
+*hr.KMOutputMethod ProofMode/Probni ispis: ""
+*hr.KMOutputMethod Box/Spremi u Korisni<C48D>ki pretinac: ""
+*hr.KMOutputMethod BoxPrint/Spremi u Korisni<C48D>ki pretinac i Ispi<C5A1>i: ""
+*hr.KMOutputMethod IDPrint/ID & Ispis: ""
+*hr.Translation KMSecID/ID Sigurnog ispisa: ""
+*hr.KMSecID None/Niti jedno: ""
+*hr.ParamCustomKMSecID Username/Korisni<C48D>ko ime: ""
+*hr.Translation KMSecPass/Lozinka: ""
+*hr.KMSecPass None/Niti jedno: ""
+*hr.ParamCustomKMSecPass Password/Lozinka: ""
+*hr.Translation KMBoxNumber/Broj korisni<C48D>kog pretinca: ""
+*hr.KMBoxNumber None/Niti jedno: ""
+*hr.ParamCustomKMBoxNumber Number/Broj korisni<C48D>kog pretinca: ""
+*hr.Translation KMBoxFileName/Naziv datoteke: ""
+*hr.KMBoxFileName None/Niti jedno: ""
+*hr.ParamCustomKMBoxFileName Name/Naziv datoteke: ""
+*hr.Translation KMSafeQUser/SafeQ korisnik: ""
+*hr.ParamCustomKMSafeQUser User/Korisni<C48D>ko ime: ""
+*hr.Translation AccountTrack/Pra<C487>enje ra<C48D>una: ""
+*hr.Translation KMSectionManagement/Pra<C487>enje ra<C48D>una: ""
+*hr.KMSectionManagement False/Isklju<C48D>eno: ""
+*hr.KMSectionManagement True/Uklju<C48D>eno: ""
+*hr.Translation KMDepCode/Naziv Odjela: ""
+*hr.KMDepCode None/Niti jedno: ""
+*hr.ParamCustomKMDepCode Name/Naziv Odjela: ""
+*hr.Translation KMAccPass/Lozinka: ""
+*hr.KMAccPass None/Niti jedno: ""
+*hr.ParamCustomKMAccPass Key/Lozinka: ""
+*hr.Translation UserAuth/Identifikacija korisnika: ""
+*hr.Translation KMAuthentication/Identifikacija korisnika: ""
+*hr.KMAuthentication False/Isklju<C48D>eno: ""
+*hr.KMAuthentication Server/Vanjski poslu<C5BE>itelj: ""
+*hr.KMAuthentication Server/MFP + Vanjski poslu<C5BE>itelj: ""
+*hr.Translation KMAuthServer/Poslu<C5BE>itelj za identifikaciju: ""
+*hr.Translation KMAuthUser/Korisni<C48D>ko ime: ""
+*hr.KMAuthUser None/Niti jedno: ""
+*hr.ParamCustomKMAuthUser Name/Korisni<C48D>ko ime: ""
+*hr.Translation KMAuthPass/Lozinka: ""
+*hr.KMAuthPass None/Niti jedno: ""
+*hr.ParamCustomKMAuthPass Key/Lozinka: ""
+*hr.Translation KMDTStamp/Vremenska oznaka: ""
+*hr.Translation KMStampDateTime/Datum/Vrijeme: ""
+*hr.KMStampDateTime None/Niti jedno: ""
+*hr.KMStampDateTime Date/Datum: ""
+*hr.KMStampDateTime DateTime/Datum/Vrijeme: ""
+*hr.Translation KMStampDateFormat/Format datuma: ""
+*hr.KMStampDateFormat DATE4/23. Aug 12: ""
+*hr.KMStampDateFormat DATE2/Kol 23, 2012: ""
+*hr.Translation KMStampTimeFormat/Format vremena: ""
+*hr.Translation KMStampPrintPosition/Polo<C5BE>aj ispisa: ""
+*hr.KMStampPrintPosition LEFTTOP/Gore lijevo: ""
+*hr.KMStampPrintPosition CENTERTOP/Vrh: ""
+*hr.KMStampPrintPosition RIGHTTOP/Gore desno: ""
+*hr.KMStampPrintPosition LEFTCENTER/Lijevo: ""
+*hr.KMStampPrintPosition CENTER/Sredina: ""
+*hr.KMStampPrintPosition RIGHTCENTER/Desno: ""
+*hr.KMStampPrintPosition LEFTBOTTOM/Dolje lijevo: ""
+*hr.KMStampPrintPosition CENTERBOTTOM/Dno: ""
+*hr.KMStampPrintPosition RIGHTBOTTOM/Dolje desno: ""
+*hr.Translation KMPNStamp/Oznaka broja stranice: ""
+*hr.Translation KMStampPageNumberEnable/Broj stranice: ""
+*hr.KMStampPageNumberEnable False/Isklju<C48D>eno: ""
+*hr.KMStampPageNumberEnable True/Uklju<C48D>eno: ""
+*hr.Translation KMStampPNStartingPage/Po<C48D>etna stranica: ""
+*hr.ParamCustomKMStampPNStartingPage Number/Po<C48D>etna stranica: ""
+*hr.Translation KMStampPNStartingNumber/Po<C48D>etni broj stranice: ""
+*hr.ParamCustomKMStampPNStartingNumber Number/Po<C48D>etni broj stranice: ""
+*hr.Translation KMStampPNPrintPosition/Ispi<C5A1>i Polo<C5BE>aj: ""
+*hr.KMStampPNPrintPosition LEFTTOP/Gore lijevo: ""
+*hr.KMStampPNPrintPosition CENTERTOP/Vrh: ""
+*hr.KMStampPNPrintPosition RIGHTTOP/Gore desno: ""
+*hr.KMStampPNPrintPosition LEFTCENTER/Lijevo: ""
+*hr.KMStampPNPrintPosition CENTER/Sredina: ""
+*hr.KMStampPNPrintPosition RIGHTCENTER/Desno: ""
+*hr.KMStampPNPrintPosition LEFTBOTTOM/Dolje lijevo: ""
+*hr.KMStampPNPrintPosition CENTERBOTTOM/Dno: ""
+*hr.KMStampPNPrintPosition RIGHTBOTTOM/Dolje desno: ""
+*ro.Translation InstallableOptions/Op<C5A3>iuni instalabile: ""
+*ro.Translation PaperSourceUnit/Unitate surs<C483> h<C3A2>rtie: ""
+*ro.PaperSourceUnit None/F<C483>r<C483>: ""
+*ro.PaperSourceUnit Unit2/Unitate 2: ""
+*ro.InputSlot Tray1/Tav<C483> 1: ""
+*ro.InputSlot Tray2/Tav<C483> 2: ""
+*ro.InputSlot Tray3/Tav<C483> 3: ""
+*ro.InputSlot Tray4/Tav<C483> 4: ""
+*ro.Translation PageSize/Dimensiune H<C3A2>rtie: ""
+*ro.Translation Duplex/Op<C5A3>iuni Duplex: ""
+*ro.Duplex DuplexTumble/Margine scurt<C483>: ""
+*ro.Duplex DuplexNoTumble/Margine lung<C483>: ""
+*ro.Translation Resolution/Rezolu<C5A3>ie: ""
+*ro.Translation OutputMethod/Metod<C483> Ie<C59F>ire: ""
+*ro.Translation KMOutputMethod/Metod<C483> Ie<C59F>ire: ""
+*ro.KMOutputMethod None/Imprimare: ""
+*ro.KMOutputMethod Secure/Imprimare sigur<C483>: ""
+*ro.KMOutputMethod ProofMode/Imprimare prob<C483>: ""
+*ro.KMOutputMethod Box/Salvare <C3AE>n cutie utilizator: ""
+*ro.KMOutputMethod BoxPrint/Salvare <C3AE>n cutie utilizator <C59F>i imprimare: ""
+*ro.KMOutputMethod IDPrint/ID & Imprimare: ""
+*ro.Translation KMSecID/ID imprimare sigur<C483>: ""
+*ro.KMSecID None/F<C483>r<C483>: ""
+*ro.ParamCustomKMSecID Username/Nume utilizator: ""
+*ro.Translation KMSecPass/Parol<C483> Imprimare Sigur<C483>: ""
+*ro.KMSecPass None/F<C483>r<C483>: ""
+*ro.ParamCustomKMSecPass Password/Parol<C483>: ""
+*ro.Translation KMBoxNumber/Num<C483>r cutie utilizator: ""
+*ro.KMBoxNumber None/F<C483>r<C483>: ""
+*ro.ParamCustomKMBoxNumber Number/Num<C483>r cutie utilizator: ""
+*ro.Translation KMBoxFileName/Nume fi<C59F>ier: ""
+*ro.KMBoxFileName None/F<C483>r<C483>: ""
+*ro.ParamCustomKMBoxFileName Name/Nume fi<C59F>ier: ""
+*ro.ParamCustomKMSafeQUser User/Nume utilizator: ""
+*ro.Translation AccountTrack/Urm<C483>rire cont: ""
+*ro.Translation KMSectionManagement/Urm<C483>rire cont: ""
+*ro.KMSectionManagement False/Oprit: ""
+*ro.KMSectionManagement True/Pornit: ""
+*ro.Translation KMDepCode/Nume departament: ""
+*ro.KMDepCode None/F<C483>r<C483>: ""
+*ro.ParamCustomKMDepCode Name/Nume departament: ""
+*ro.Translation KMAccPass/Parol<C483>: ""
+*ro.KMAccPass None/F<C483>r<C483>: ""
+*ro.ParamCustomKMAccPass Key/Parol<C483>: ""
+*ro.Translation UserAuth/Autentificare utilizator: ""
+*ro.Translation KMAuthentication/Autentificare utilizator: ""
+*ro.KMAuthentication False/Oprit: ""
+*ro.KMAuthentication Server/Server extern: ""
+*ro.Translation KMAuthServer/Server de autentificare: ""
+*ro.Translation KMAuthUser/Nume utilizator: ""
+*ro.KMAuthUser None/F<C483>r<C483>: ""
+*ro.ParamCustomKMAuthUser Name/Nume utilizator: ""
+*ro.Translation KMAuthPass/Parol<C483>: ""
+*ro.KMAuthPass None/F<C483>r<C483>: ""
+*ro.ParamCustomKMAuthPass Key/Parol<C483>: ""
+*ro.Translation KMDTStamp/Timbru Dat<C483> Or<C483>: ""
+*ro.Translation KMStampDateTime/Dat<C483>/Or<C483>: ""
+*ro.KMStampDateTime None/F<C483>r<C483>: ""
+*ro.KMStampDateTime Date/Dat<C483>: ""
+*ro.KMStampDateTime DateTime/Dat<C483>/Or<C483>: ""
+*ro.Translation KMStampDateFormat/Format dat<C483>: ""
+*ro.Translation KMStampTimeFormat/Format or<C483>: ""
+*ro.Translation KMStampPrintPosition/Pozi<C5A3>ie Imprimare: ""
+*ro.KMStampPrintPosition LEFTTOP/St<C3A2>nga sus: ""
+*ro.KMStampPrintPosition CENTERTOP/Sus: ""
+*ro.KMStampPrintPosition RIGHTTOP/Dreapta sus: ""
+*ro.KMStampPrintPosition LEFTCENTER/St<C3A2>nga: ""
+*ro.KMStampPrintPosition CENTER/Centru: ""
+*ro.KMStampPrintPosition RIGHTCENTER/Dreapta: ""
+*ro.KMStampPrintPosition LEFTBOTTOM/St<C3A2>nga jos: ""
+*ro.KMStampPrintPosition CENTERBOTTOM/Jos: ""
+*ro.KMStampPrintPosition RIGHTBOTTOM/Dreapta jos: ""
+*ro.Translation KMPNStamp/Timbru Num<C483>r Pagin<C483>: ""
+*ro.Translation KMStampPageNumberEnable/Num<C483>r pagin<C483>: ""
+*ro.KMStampPageNumberEnable False/Oprit: ""
+*ro.KMStampPageNumberEnable True/Pornit: ""
+*ro.Translation KMStampPNStartingPage/Pagin<C483> de pornire: ""
+*ro.ParamCustomKMStampPNStartingPage Number/Pagin<C483> de pornire: ""
+*ro.Translation KMStampPNStartingNumber/Num<C483>r pagin<C483> de pornire: ""
+*ro.ParamCustomKMStampPNStartingNumber Number/Num<C483>r pagin<C483> de pornire: ""
+*ro.Translation KMStampPNPrintPosition/Pozi<C5A3>ie Imprimare: ""
+*ro.KMStampPNPrintPosition LEFTTOP/St<C3A2>nga sus: ""
+*ro.KMStampPNPrintPosition CENTERTOP/Sus: ""
+*ro.KMStampPNPrintPosition RIGHTTOP/Dreapta sus: ""
+*ro.KMStampPNPrintPosition LEFTCENTER/St<C3A2>nga: ""
+*ro.KMStampPNPrintPosition CENTER/Centru: ""
+*ro.KMStampPNPrintPosition RIGHTCENTER/Dreapta: ""
+*ro.KMStampPNPrintPosition LEFTBOTTOM/St<C3A2>nga jos: ""
+*ro.KMStampPNPrintPosition CENTERBOTTOM/Jos: ""
+*ro.KMStampPNPrintPosition RIGHTBOTTOM/Dreapta jos: ""
+*sl.Translation PaperSourceUnit/Enota izvora papirja: ""
+*sl.PaperSourceUnit None/Brez: ""
+*sl.PaperSourceUnit Unit2/Enota izvora papirja 2: ""
+*sl.InputSlot Tray1/Predal1: ""
+*sl.InputSlot Tray2/Predal2: ""
+*sl.InputSlot Tray3/Predal3: ""
+*sl.InputSlot Tray4/Predal4: ""
+*sl.Translation PageSize/Velikost papirja: ""
+*sl.Translation Duplex/Obojestransko funkcije: ""
+*sl.Duplex DuplexTumble/Kratek rob: ""
+*sl.Duplex DuplexNoTumble/Dolg rob: ""
+*sl.Translation Resolution/Lo<C48D>ljivost: ""
+*sl.Translation OutputMethod/Metoda izpisa: ""
+*sl.Translation KMOutputMethod/Metoda izpisa: ""
+*sl.KMOutputMethod None/Tiskanje: ""
+*sl.KMOutputMethod Secure/Varno tiskanje: ""
+*sl.KMOutputMethod ProofMode/Preizkusno tiskanje: ""
+*sl.KMOutputMethod Box/Shrani v uporabni<C5A1>ki predal: ""
+*sl.KMOutputMethod BoxPrint/Shrani v uporabni<C5A1>ki predal in natisni: ""
+*sl.KMOutputMethod IDPrint/ID & Tiskanje: ""
+*sl.Translation KMSecID/ID za varno tiskanje: ""
+*sl.KMSecID None/Brez: ""
+*sl.ParamCustomKMSecID Username/Uporabni<C5A1>ko ime: ""
+*sl.Translation KMSecPass/Geslo: ""
+*sl.KMSecPass None/Brez: ""
+*sl.ParamCustomKMSecPass Password/Geslo: ""
+*sl.Translation KMBoxNumber/<C5A0>tevilka uporabni<C5A1>kega predala: ""
+*sl.KMBoxNumber None/Brez: ""
+*sl.ParamCustomKMBoxNumber Number/<C5A0>tevilka uporabni<C5A1>kega predala: ""
+*sl.Translation KMBoxFileName/Ime datoteke: ""
+*sl.KMBoxFileName None/Brez: ""
+*sl.ParamCustomKMBoxFileName Name/Ime datoteke: ""
+*sl.Translation KMSafeQUser/SafeQ uporabnik: ""
+*sl.ParamCustomKMSafeQUser User/Uporabni<C5A1>ko ime: ""
+*sl.Translation AccountTrack/Sledenje ra<C48D>unu: ""
+*sl.Translation KMSectionManagement/Sledenje ra<C48D>unu: ""
+*sl.KMSectionManagement False/Izklop: ""
+*sl.KMSectionManagement True/Vklop: ""
+*sl.Translation KMDepCode/Ime oddelka: ""
+*sl.KMDepCode None/Brez: ""
+*sl.ParamCustomKMDepCode Name/Ime oddelka: ""
+*sl.Translation KMAccPass/Geslo: ""
+*sl.KMAccPass None/Brez: ""
+*sl.ParamCustomKMAccPass Key/Geslo: ""
+*sl.Translation UserAuth/Preverjanje pristnosti uporabnika: ""
+*sl.Translation KMAuthentication/Preverjanje pristnosti uporabnika: ""
+*sl.KMAuthentication False/Izklop: ""
+*sl.KMAuthentication Server/Zunanji stre<C5BE>nik: ""
+*sl.KMAuthentication Server/MFP+zunanji stre<C5BE>nik: ""
+*sl.Translation KMAuthServer/Stre<C5BE>nik za preverjanje pristnosti: ""
+*sl.Translation KMAuthUser/Uporabni<C5A1>ko ime: ""
+*sl.KMAuthUser None/Brez: ""
+*sl.ParamCustomKMAuthUser Name/Uporabni<C5A1>ko ime: ""
+*sl.Translation KMAuthPass/Geslo: ""
+*sl.KMAuthPass None/Brez: ""
+*sl.ParamCustomKMAuthPass Key/Geslo: ""
+*sl.Translation KMDTStamp/Oznaka: ""
+*sl.Translation KMStampDateTime/Datum/<C48D>as: ""
+*sl.KMStampDateTime None/Brez: ""
+*sl.KMStampDateTime Date/Datum: ""
+*sl.KMStampDateTime DateTime/Datum/<C48D>as: ""
+*sl.Translation KMStampDateFormat/Oblika zapisa datuma: ""
+*sl.Translation KMStampTimeFormat/Oblika zapisa <C48D>asa: ""
+*sl.Translation KMStampPrintPosition/Polo<C5BE>aj tiskanja: ""
+*sl.KMStampPrintPosition LEFTTOP/Zgoraj levo: ""
+*sl.KMStampPrintPosition CENTERTOP/Zgoraj: ""
+*sl.KMStampPrintPosition RIGHTTOP/Zgoraj desno: ""
+*sl.KMStampPrintPosition LEFTCENTER/Levo: ""
+*sl.KMStampPrintPosition CENTER/Sredina: ""
+*sl.KMStampPrintPosition RIGHTCENTER/Desno: ""
+*sl.KMStampPrintPosition LEFTBOTTOM/Spodaj levo: ""
+*sl.KMStampPrintPosition CENTERBOTTOM/Spodaj: ""
+*sl.KMStampPrintPosition RIGHTBOTTOM/Spodaj desno: ""
+*sl.Translation KMPNStamp/Oznaka: ""
+*sl.Translation KMStampPageNumberEnable/<C5A0>tevilo strani: ""
+*sl.KMStampPageNumberEnable False/Izklop: ""
+*sl.KMStampPageNumberEnable True/Vklop: ""
+*sl.Translation KMStampPNStartingPage/Za<C48D>etna stran: ""
+*sl.ParamCustomKMStampPNStartingPage Number/Za<C48D>etna stran: ""
+*sl.Translation KMStampPNStartingNumber/<C5A0>tevilka za<C48D>etne strani: ""
+*sl.ParamCustomKMStampPNStartingNumber Number/<C5A0>tevilka za<C48D>etne strani: ""
+*sl.Translation KMStampPNPrintPosition/Polo<C5BE>aj tiskanja: ""
+*sl.KMStampPNPrintPosition LEFTTOP/Zgoraj levo: ""
+*sl.KMStampPNPrintPosition CENTERTOP/Zgoraj: ""
+*sl.KMStampPNPrintPosition RIGHTTOP/Zgoraj desno: ""
+*sl.KMStampPNPrintPosition LEFTCENTER/Levo: ""
+*sl.KMStampPNPrintPosition CENTER/Sredina: ""
+*sl.KMStampPNPrintPosition RIGHTCENTER/Desno: ""
+*sl.KMStampPNPrintPosition LEFTBOTTOM/Spodaj levo: ""
+*sl.KMStampPNPrintPosition CENTERBOTTOM/Spodaj: ""
+*sl.KMStampPNPrintPosition RIGHTBOTTOM/Spodaj desno: ""
+*eu.Translation Model/Modeloa: ""
+*eu.Translation PaperSourceUnit/Paper-iturriaren unitatea: ""
+*eu.PaperSourceUnit None/Bat ere ez: ""
+*eu.PaperSourceUnit Unit2/Unitatea 2: ""
+*eu.InputSlot Tray1/Erretilua1: ""
+*eu.InputSlot Tray2/Erretilua2: ""
+*eu.InputSlot Tray3/Erretilua3: ""
+*eu.InputSlot Tray4/Erretilua4: ""
+*eu.Translation PageSize/Paperaren tamaina: ""
+*eu.PageSize B5/B5 (JIS): ""
+*eu.PageRegion B5/B5 (JIS): ""
+*eu.Duplex DuplexTumble/Ertz laburra: ""
+*eu.Duplex DuplexNoTumble/Ertz luzea: ""
+*eu.Translation Resolution/Bereizmena: ""
+*eu.Translation OutputMethod/Irteera metodoa: ""
+*eu.Translation KMOutputMethod/Irteera metodoa: ""
+*eu.KMOutputMethod None/Inprimatu: ""
+*eu.KMOutputMethod Secure/Inprimatze segurua: ""
+*eu.KMOutputMethod ProofMode/Probako inprimaketa: ""
+*eu.KMOutputMethod Box/Gorde erabiltzaile karpetan: ""
+*eu.KMOutputMethod BoxPrint/Gorde erabiltzailearen karpetan eta inprimatu: ""
+*eu.KMOutputMethod IDPrint/ID & Inprimatu: ""
+*eu.Translation KMSecID/Inprimatze segurua ID: ""
+*eu.KMSecID None/Bat ere ez: ""
+*eu.ParamCustomKMSecID Username/Erabiltzaile izena: ""
+*eu.Translation KMSecPass/Pasahitza: ""
+*eu.KMSecPass None/Bat ere ez: ""
+*eu.ParamCustomKMSecPass Password/Pasahitza: ""
+*eu.Translation KMBoxNumber/Erabiltzaile karpetaren zenbakia: ""
+*eu.KMBoxNumber None/Bat ere ez: ""
+*eu.ParamCustomKMBoxNumber Number/Erabiltzaile karpetaren zenbakia: ""
+*eu.Translation KMBoxFileName/Fitxategi izena: ""
+*eu.KMBoxFileName None/Bat ere ez: ""
+*eu.ParamCustomKMBoxFileName Name/Fitxategi izena: ""
+*eu.ParamCustomKMSafeQUser User/Erabiltzaile izena: ""
+*eu.Translation AccountTrack/Kontuaren segimendua: ""
+*eu.Translation KMSectionManagement/Kontuaren segimendua: ""
+*eu.KMSectionManagement False/Itzalita: ""
+*eu.KMSectionManagement True/Piztuta: ""
+*eu.Translation KMDepCode/Sail izena: ""
+*eu.KMDepCode None/Bat ere ez: ""
+*eu.ParamCustomKMDepCode Name/Sail izena: ""
+*eu.Translation KMAccPass/Pasahitza: ""
+*eu.KMAccPass None/Bat ere ez: ""
+*eu.ParamCustomKMAccPass Key/Pasahitza: ""
+*eu.Translation UserAuth/Erabiltzailearen autentifikazioa: ""
+*eu.Translation KMAuthentication/Erabiltzailearen autentifikazioa: ""
+*eu.KMAuthentication False/Itzalita: ""
+*eu.KMAuthentication Server/Kanpo zerbitzaria: ""
+*eu.Translation KMAuthServer/Autentifikatze zerbitzaria: ""
+*eu.Translation KMAuthUser/Erabiltzaile izena: ""
+*eu.KMAuthUser None/Bat ere ez: ""
+*eu.ParamCustomKMAuthUser Name/Erabiltzaile izena: ""
+*eu.Translation KMAuthPass/Pasahitza: ""
+*eu.KMAuthPass None/Bat ere ez: ""
+*eu.ParamCustomKMAuthPass Key/Pasahitza: ""
+*eu.Translation KMDTStamp/Zigilatu Data/Ordua: ""
+*eu.Translation KMStampDateTime/Data/Ordua: ""
+*eu.KMStampDateTime None/Bat ere ez: ""
+*eu.KMStampDateTime Date/Data: ""
+*eu.KMStampDateTime DateTime/Data/Ordua: ""
+*eu.Translation KMStampDateFormat/Data-formatua: ""
+*eu.Translation KMStampTimeFormat/Ordu formatua: ""
+*eu.Translation KMStampPrintPosition/Inprimatze posizioa: ""
+*eu.KMStampPrintPosition LEFTTOP/Goi ezkerra: ""
+*eu.KMStampPrintPosition CENTERTOP/Goia: ""
+*eu.KMStampPrintPosition RIGHTTOP/Goi eskuina: ""
+*eu.KMStampPrintPosition LEFTCENTER/Ezkerra: ""
+*eu.KMStampPrintPosition CENTER/Erdialdea: ""
+*eu.KMStampPrintPosition RIGHTCENTER/Eskuina: ""
+*eu.KMStampPrintPosition LEFTBOTTOM/Behealdea ezkerra: ""
+*eu.KMStampPrintPosition CENTERBOTTOM/Behealdea: ""
+*eu.KMStampPrintPosition RIGHTBOTTOM/Behealdea eskuina: ""
+*eu.Translation KMPNStamp/Zigilatu orriaren zenbakia: ""
+*eu.Translation KMStampPageNumberEnable/Orrialdea: ""
+*eu.KMStampPageNumberEnable False/Itzalita: ""
+*eu.KMStampPageNumberEnable True/Piztuta: ""
+*eu.Translation KMStampPNStartingPage/Hasierako orrialdea: ""
+*eu.ParamCustomKMStampPNStartingPage Number/Hasierako orrialdea: ""
+*eu.Translation KMStampPNStartingNumber/Hasierako orrialdearen zenbakia: ""
+*eu.ParamCustomKMStampPNStartingNumber Number/Hasierako orrialdearen zenbakia: ""
+*eu.Translation KMStampPNPrintPosition/Inprimatze posizioa: ""
+*eu.KMStampPNPrintPosition LEFTTOP/Goi ezkerra: ""
+*eu.KMStampPNPrintPosition CENTERTOP/Goia: ""
+*eu.KMStampPNPrintPosition RIGHTTOP/Goi eskuina: ""
+*eu.KMStampPNPrintPosition LEFTCENTER/Ezkerra: ""
+*eu.KMStampPNPrintPosition CENTER/Erdialdea: ""
+*eu.KMStampPNPrintPosition RIGHTCENTER/Eskuina: ""
+*eu.KMStampPNPrintPosition LEFTBOTTOM/Behealdea ezkerra: ""
+*eu.KMStampPNPrintPosition CENTERBOTTOM/Behealdea: ""
+*eu.KMStampPNPrintPosition RIGHTBOTTOM/Behealdea eskuina: ""
+*zh_CN.Translation InstallableOptions/<E58FAFE5AE89E8A385E98089E9A1B9>: ""
+*zh_CN.Translation Model/<E69CBAE7A78D>: ""
+*zh_CN.Translation PaperSourceUnit/<E8BF9BE7BAB8E983A8E4BBB6>: ""
+*zh_CN.PaperSourceUnit None/<E697A0>: ""
+*zh_CN.PaperSourceUnit Unit2/<E983A8E4BBB6> 2: ""
+*zh_CN.InputSlot Tray1/<E7BAB8E79B98>1: ""
+*zh_CN.InputSlot Tray2/<E7BAB8E79B98>2: ""
+*zh_CN.InputSlot Tray3/<E7BAB8E79B98>3: ""
+*zh_CN.InputSlot Tray4/<E7BAB8E79B98>4: ""
+*zh_CN.Translation PageSize/<E7BAB8E5BCA0E5B0BAE5AFB8>: ""
+*zh_CN.PageSize B5/B5 (JIS): ""
+*zh_CN.PageRegion B5/B5 (JIS): ""
+*zh_CN.Translation Duplex/<E58F8CE99DA2E68993E58DB0E98089E9A1B9>: ""
+*zh_CN.Duplex DuplexTumble/<E79FADE8BEB9>: ""
+*zh_CN.Duplex DuplexNoTumble/<E995BFE8BEB9>: ""
+*zh_CN.Duplex None/<E58D95E99DA2E68993E58DB0>: ""
+*zh_CN.Translation Resolution/<E58886E8BEA8E78E87>: ""
+*zh_CN.Translation OutputMethod/<E8BE93E587BAE696B9E5BC8F>: ""
+*zh_CN.Translation KMOutputMethod/<E8BE93E587BAE696B9E5BC8F>: ""
+*zh_CN.KMOutputMethod None/<E699AEE9809AE68993E58DB0>: ""
+*zh_CN.KMOutputMethod Secure/<E69CBAE5AF86E68993E58DB0>: ""
+*zh_CN.KMOutputMethod ProofMode/<E6A0A1E6A0B7E68993E58DB0>: ""
+*zh_CN.KMOutputMethod Box/<E4BF9DE5AD98E588B0E794A8E688B7>BOX: ""
+*zh_CN.KMOutputMethod BoxPrint/<E4BF9DE5AD98E588B0E794A8E688B7>BOX&<E68993E58DB0>: ""
+*zh_CN.KMOutputMethod IDPrint/ID&<E68993E58DB0>: ""
+*zh_CN.KMOutputMethod SafeQ/SAFEQ: ""
+*zh_CN.Translation KMSecID/<E69CBAE5AF86E68993E58DB0>ID: ""
+*zh_CN.KMSecID None/<E697A0>: ""
+*zh_CN.ParamCustomKMSecID Username/<E794A8E688B7E5908D>: ""
+*zh_CN.Translation KMSecPass/<E69CBAE5AF86E68993E58DB0E5AF86E7A081>: ""
+*zh_CN.KMSecPass None/<E697A0>: ""
+*zh_CN.ParamCustomKMSecPass Password/<E5AF86E7A081>: ""
+*zh_CN.Translation KMBoxNumber/BOX<E58FB7>: ""
+*zh_CN.KMBoxNumber None/<E697A0>: ""
+*zh_CN.ParamCustomKMBoxNumber Number/BOX<E58FB7>: ""
+*zh_CN.Translation KMBoxFileName/<E69687E4BBB6E5908D>: ""
+*zh_CN.KMBoxFileName None/<E697A0>: ""
+*zh_CN.ParamCustomKMBoxFileName Name/<E69687E4BBB6E5908D>: ""
+*zh_CN.Translation KMSafeQUser/SAFEQ<E794A8E688B7>: ""
+*zh_CN.ParamCustomKMSafeQUser User/<E794A8E688B7E5908D>: ""
+*zh_CN.Translation AccountTrack/<E8B4A6E688B7E8B79FE8B8AA>: ""
+*zh_CN.Translation KMSectionManagement/<E8B4A6E688B7E8B79FE8B8AA>: ""
+*zh_CN.KMSectionManagement False/<E585B3E997AD>: ""
+*zh_CN.KMSectionManagement True/<E5BC80E590AF>: ""
+*zh_CN.Translation KMDepCode/<E983A8E997A8E7BC96E58FB7>: ""
+*zh_CN.KMDepCode None/<E697A0>: ""
+*zh_CN.ParamCustomKMDepCode Name/<E983A8E997A8E7BC96E58FB7>: ""
+*zh_CN.Translation KMAccPass/<E5AF86E7A081>: ""
+*zh_CN.KMAccPass None/<E697A0>: ""
+*zh_CN.ParamCustomKMAccPass Key/<E5AF86E7A081>: ""
+*zh_CN.Translation UserAuth/<E794A8E688B7E8AEA4E8AF81>: ""
+*zh_CN.Translation KMAuthentication/<E794A8E688B7E8AEA4E8AF81>: ""
+*zh_CN.KMAuthentication False/<E585B3E997AD>: ""
+*zh_CN.KMAuthentication Server/<E5A496E983A8E69C8DE58AA1E599A8>: ""
+*zh_CN.KMAuthentication Server/MFP+<E5A496E983A8E69C8DE58AA1E599A8>: ""
+*zh_CN.Translation KMAuthServer/<E8AEA4E8AF81E69C8DE58AA1E599A8>: ""
+*zh_CN.Translation KMAuthUser/<E794A8E688B7E5908D>: ""
+*zh_CN.KMAuthUser None/<E697A0>: ""
+*zh_CN.ParamCustomKMAuthUser Name/<E794A8E688B7E5908D>: ""
+*zh_CN.Translation KMAuthPass/<E5AF86E7A081>: ""
+*zh_CN.KMAuthPass None/<E697A0>: ""
+*zh_CN.ParamCustomKMAuthPass Key/<E5AF86E7A081>: ""
+*zh_CN.Translation KMDTStamp/<E697A5E69C9FE697B6E997B4>: ""
+*zh_CN.Translation KMStampDateTime/<E697A5E69C9FE5928CE697B6E997B4>: ""
+*zh_CN.KMStampDateTime None/<E697A0>: ""
+*zh_CN.KMStampDateTime Date/<E697A5E69C9F>: ""
+*zh_CN.KMStampDateTime DateTime/<E697A5E69C9FE5928CE697B6E997B4>: ""
+*zh_CN.Translation KMStampDateFormat/<E697A5E69C9FE6A0BCE5BC8F>: ""
+*zh_CN.Translation KMStampTimeFormat/<E697B6E997B4E6A0BCE5BC8F>: ""
+*zh_CN.Translation KMStampPrintPosition/<E68993E58DB0E4BD8DE7BDAE>: ""
+*zh_CN.KMStampPrintPosition LEFTTOP/<E9A1B6E983A8E5B7A6E8BEB9>: ""
+*zh_CN.KMStampPrintPosition CENTERTOP/<E9A1B6E983A8>: ""
+*zh_CN.KMStampPrintPosition RIGHTTOP/<E9A1B6E983A8E58FB3E8BEB9>: ""
+*zh_CN.KMStampPrintPosition LEFTCENTER/<E5B7A6E8BEB9>: ""
+*zh_CN.KMStampPrintPosition CENTER/<E4B8ADE5A4AE>: ""
+*zh_CN.KMStampPrintPosition RIGHTCENTER/<E58FB3E8BEB9>: ""
+*zh_CN.KMStampPrintPosition LEFTBOTTOM/<E5BA95E983A8E5B7A6E8BEB9>: ""
+*zh_CN.KMStampPrintPosition CENTERBOTTOM/<E5BA95E983A8>: ""
+*zh_CN.KMStampPrintPosition RIGHTBOTTOM/<E5BA95E983A8E58FB3E8BEB9>: ""
+*zh_CN.Translation KMPNStamp/<E9A1B5E7A081>: ""
+*zh_CN.Translation KMStampPageNumberEnable/<E9A1B5E7A081>: ""
+*zh_CN.KMStampPageNumberEnable False/<E585B3E997AD>: ""
+*zh_CN.KMStampPageNumberEnable True/<E5BC80E590AF>: ""
+*zh_CN.Translation KMStampPNStartingPage/<E8B5B7E5A78BE9A1B5>: ""
+*zh_CN.ParamCustomKMStampPNStartingPage Number/<E8B5B7E5A78BE9A1B5>: ""
+*zh_CN.Translation KMStampPNStartingNumber/<E8B5B7E5A78BE9A1B5E7A081>: ""
+*zh_CN.ParamCustomKMStampPNStartingNumber Number/<E8B5B7E5A78BE9A1B5E7A081>: ""
+*zh_CN.Translation KMStampPNPrintPosition/<E68993E58DB0E4BD8DE7BDAE>: ""
+*zh_CN.KMStampPNPrintPosition LEFTTOP/<E9A1B6E983A8E5B7A6E8BEB9>: ""
+*zh_CN.KMStampPNPrintPosition CENTERTOP/<E9A1B6E983A8>: ""
+*zh_CN.KMStampPNPrintPosition RIGHTTOP/<E9A1B6E983A8E58FB3E8BEB9>: ""
+*zh_CN.KMStampPNPrintPosition LEFTCENTER/<E5B7A6E8BEB9>: ""
+*zh_CN.KMStampPNPrintPosition CENTER/<E4B8ADE5A4AE>: ""
+*zh_CN.KMStampPNPrintPosition RIGHTCENTER/<E58FB3E8BEB9>: ""
+*zh_CN.KMStampPNPrintPosition LEFTBOTTOM/<E5BA95E983A8E5B7A6E8BEB9>: ""
+*zh_CN.KMStampPNPrintPosition CENTERBOTTOM/<E5BA95E983A8>: ""
+*zh_CN.KMStampPNPrintPosition RIGHTBOTTOM/<E5BA95E983A8E58FB3E8BEB9>: ""
+*% === Device Capabilities =========================
+*LanguageLevel:         "3"
+
+*ColorDevice:           False
+*DefaultColorSpace:     Gray
+
+*Protocols:             TBCP
+
+*ScreenFreq:            "106.0"
+*ScreenAngle:           "45.0"
+*DefaultScreenProc:     Dot
+*ScreenProc Dot:        "{180 mul cos exch 180 mul cos add 2 div}"
+*ScreenProc Line:       "{ pop }"
+*ScreenProc Ellipse:    "{ dup 5 mul 8 div mul exch dup mul exch add sqrt 1 exch sub }"
+
+*Throughput:            "50"
+
+*% === Begin Interpreter Header Common  ============
+*SuggestedJobTimeout:   "0"
+*SuggestedWaitTimeout:  "300"
+*RequiresPageRegion All: True
+*DefaultTransfer:       Null
+*Transfer Null:         "{ }"
+*Transfer Null.Inverse: "{ 1 exch sub }"
+
+*% === Begin Interpreter Header Functions ==========
+*TTRasterizer: Type42
+*?TTRasterizer: "
+  save
+  42 /FontType resourcestatus
+  { pop pop (Type42)} {pop pop (None)} ifelse = flush
+  restore"
+*End
+
+*FileSystem: True
+*?FileSystem: "
+save
+  statusdict /diskonline get exec {(True)}{(False)} ifelse = flush
+restore
+"
+*End
+
+*Password: "0"
+
+*ExitServer: "
+ count 0 eq
+ { false } { true exch startjob } ifelse
+ not {
+     (WARNING : Cannot perform the exitserver command.) =
+     (Password supplied is not valid.) =
+     (Please contact the author of this software.) = flush quit
+     } if
+"
+*End
+
+*Reset: "
+ count 0 eq
+ { false } { true exch startjob } ifelse
+ not {
+    (WARNING: Cannot reset printer.) =
+    (Missing or invalid password.) =
+    (Please contact the author of this software.) = flush quit
+    } if
+ systemdict /quit get exec
+ (WARNING : Printer Reset Failed.) = flush
+"
+*End
+
+*% === Begin Custom Header Function ============
+*FreeVM:                  "7168000"
+
+*DefaultVMOption:         128MB
+*VMOption 128MB/128 MB:   "7168000"
+*VMOption 256MB/256 MB:   "7168000"
+*VMOption 512MB/512 MB:   "7168000"
+*VMOption 1024MB/1024 MB: "7168000"
+
+*AcceptsTrueType:        True
+*PrintPSErrors:          True
+*AccurateScreensSupport: True
+
+*%---------------------------------------------------------
+*%-----------   Installable Oprions Group   ---------------
+*%---------------------------------------------------------
+*OpenGroup: InstallableOptions/Installable Options
+
+*% === Model ====================================
+*OpenUI *Model/Model: PickOne
+*DefaultModel: 5020i
+*Model 5020i/5020i: ""
+*Model 5000i/5000i: ""
+*Model 4020i/4020i: ""
+*Model 4000i/4000i: ""
+*CloseUI: *Model
+
+*% === Paper Source Unit ========================
+*OpenUI *PaperSourceUnit/Paper Source Unit: PickOne
+*DefaultPaperSourceUnit: None
+*PaperSourceUnit None/None: ""
+*PaperSourceUnit Unit2/Unit 2: ""
+*PaperSourceUnit Unit3/Unit 3: ""
+*PaperSourceUnit Unit4/Unit 4: ""
+*CloseUI: *PaperSourceUnit
+
+*CloseGroup: InstallableOptions
+
+*%---------------------------------------------------------
+*%-----------   OS Supported UI Group   -------------------
+*%---------------------------------------------------------
+
+*% === Input Slot ===============================
+*OpenUI *InputSlot/Input Slot: PickOne
+*OrderDependency: 20 AnySetup *InputSlot
+*DefaultInputSlot: AutoSelect
+*InputSlot AutoSelect/Automatically select: "<</ManualFeed false /BRTraysw true >> setpagedevice"
+*InputSlot Tray1/Tray1: "<</ManualFeed false /BRTraysw false /BRFeeder 0>> setpagedevice"
+*InputSlot Tray2/Tray2: "<</ManualFeed false /BRTraysw false /BRFeeder 1>> setpagedevice"
+*InputSlot Tray3/Tray3: "<</ManualFeed false /BRTraysw false /BRFeeder 2>> setpagedevice"
+*InputSlot Tray4/Tray4: "<</ManualFeed false /BRTraysw false /BRFeeder 3>> setpagedevice"
+*InputSlot MPTray/Multipurpose Feeder: "<</ManualFeed false /BRTraysw false /BRFeeder 4>> setpagedevice"
+*CloseUI: *InputSlot
+
+*%---------------------------------------------------------
+*%-----------   Paper Group   -----------------------------
+*%---------------------------------------------------------
+
+*%==== PageSize ======================================
+*OpenUI *PageSize/Paper Size: PickOne
+*OrderDependency: 30 AnySetup *PageSize
+*DefaultPageSize: 8.5x11
+*PageSize A4JIS/A4:			"<</PageSize[595 842]/ImagingBBox null>>setpagedevice"
+*PageSize A5/A5:			"<</PageSize[420 595]/ImagingBBox null>>setpagedevice"
+*PageSize A5L/A5(Long Edge):	"<</PageSize[595 420]/ImagingBBox null>>setpagedevice"
+*PageSize A6/A6:			"<</PageSize[297 420]/ImagingBBox null>>setpagedevice"
+*PageSize B5/B5(JIS):			"<</PageSize[516 729]/ImagingBBox null>>setpagedevice"
+*PageSize B5ISO/B5(ISO):			"<</PageSize[499 709]/ImagingBBox null>>setpagedevice"
+*PageSize 8.5x14/Legal:			"<</PageSize[612 1008]/ImagingBBox null>>setpagedevice"
+*PageSize Mexico/Mexico Legal:			"<</PageSize[612 963]/ImagingBBox null>>setpagedevice"
+*PageSize IndiaLegal/India Legal:			"<</PageSize[609 978]/ImagingBBox null>>setpagedevice"
+*PageSize 8.5x13/Folio: 	"<</PageSize[612 936]/ImagingBBox null>>setpagedevice"
+*PageSize 8.5x11/Letter:		"<</PageSize[612 792]/ImagingBBox null>>setpagedevice"
+*PageSize 7.25x10.5/Executive: 		"<</PageSize[522 756]/ImagingBBox null>>setpagedevice"
+*PageSize 184x260/16K(184x260mm): 	"<</PageSize[522 737]/ImagingBBox null>>setpagedevice"
+*PageSize 195x270/16K(195x270mm): 	"<</PageSize[553 765]/ImagingBBox null>>setpagedevice"
+*PageSize 197x273/16K(197x273mm): 	"<</PageSize[558 774]/ImagingBBox null>>setpagedevice"
+*PageSize JPostcard/Hagaki:		"<</PageSize[284 419]/ImagingBBox null>>setpagedevice"
+*PageSize EnvelopeCom10/Com-10:			"<</PageSize[297 684]/ImagingBBox null>>setpagedevice"
+*PageSize EnvelopeMonarch/Monarch:		"<</PageSize[279 540]/ImagingBBox null>>setpagedevice"
+*PageSize EnvelopeDL/DL:			"<</PageSize[312 624]/ImagingBBox null>>setpagedevice"
+*PageSize EnvelopeC5/C5:			"<</PageSize[459 649]/ImagingBBox null>>setpagedevice"
+*PageSize EnvelopeYou4/Envelope You #4:		"<</PageSize[298 666]/ImagingBBox null>>setpagedevice"
+*PageSize EnvelopeChou3/Chokei 3 Envelope: 	"<</PageSize[340 666]/ImagingBBox null>>setpagedevice"
+*PageSize EnvelopeChou4/Chokei 4 Envelope: 	"<</PageSize[255 581]/ImagingBBox null>>setpagedevice"
+*PageSize 3x5in/3"x5":			"<</PageSize[216 360]/ImagingBBox null>>setpagedevice"
+*PageSize A4Short/270mm Paper:      	"<</PageSize[595 765]/ImagingBBox null>>setpagedevice"
+*CloseUI: *PageSize
+
+*NonUIOrderDependency: 40 AnySetup *CustomPageSize
+*VariablePaperSize: True
+*LeadingEdge Short: ""
+*LeadingEdge Long: ""
+*DefaultLeadingEdge: Short
+*MaxMediaWidth: "612.283"
+*MaxMediaHeight: "1008.2835"
+*HWMargins: 12 12 12 12
+*CustomPageSize True: "
+	<</BRCustomPageSize true>> setpagedevice 
+	exch pop exch pop 0 eq{exch}if 
+	<< /PageSize [ 5 -2 roll ] /ImagingBBox null >> 
+	setpagedevice 
+"
+*End
+*ParamCustomPageSize Width: 1 points 197.8583 612.283
+*ParamCustomPageSize Height: 2 points 360 1008.2835
+*ParamCustomPageSize WidthOffset: 3 points 0 0
+*ParamCustomPageSize HeightOffset: 4 points 0 0
+*ParamCustomPageSize Orientation: 5 int 0 3
+
+*OpenUI *PageRegion: PickOne
+*OrderDependency: 45 AnySetup *PageRegion
+*DefaultPageRegion: 8.5x11
+*PageRegion A4JIS/A4:			"<</PageSize[595 842]/ImagingBBox null>>setpagedevice"
+*PageRegion A5/A5:			"<</PageSize[420 595]/ImagingBBox null>>setpagedevice"
+*PageRegion A5L/A5(Long Edge):	"<</PageSize[595 420]/ImagingBBox null>>setpagedevice"
+*PageRegion A6/A6:			"<</PageSize[297 420]/ImagingBBox null>>setpagedevice"
+*PageRegion B5/B5(JIS):			"<</PageSize[516 729]/ImagingBBox null>>setpagedevice"
+*PageRegion B5ISO/B5(ISO):			"<</PageSize[499 709]/ImagingBBox null>>setpagedevice"
+*PageRegion 8.5x14/Legal:		"<</PageSize[612 1008]/ImagingBBox null>>setpagedevice"
+*PageRegion Mexico/Mexico Legal:			"<</PageSize[612 963]/ImagingBBox null>>setpagedevice"
+*PageRegion IndiaLegal/India Legal:			"<</PageSize[609 978]/ImagingBBox null>>setpagedevice"
+*PageRegion 8.5x13/Folio:	"<</PageSize[612 936]/ImagingBBox null>>setpagedevice"
+*PageRegion 8.5x11/Letter:		"<</PageSize[612 792]/ImagingBBox null>>setpagedevice"
+*PageRegion 7.25x10.5/Executive:	"<</PageSize[522 756]/ImagingBBox null>>setpagedevice"
+*PageRegion 184x260/16K(184x260mm):	"<</PageSize[522 737]/ImagingBBox null>>setpagedevice"
+*PageRegion 195x270/16K(195x270mm):	"<</PageSize[553 765]/ImagingBBox null>>setpagedevice"
+*PageRegion 197x273/16K(197x273mm):	"<</PageSize[558 774]/ImagingBBox null>>setpagedevice"
+*PageRegion JPostcard/Hagaki:		"<</PageSize[284 419]/ImagingBBox null>>setpagedevice"
+*PageRegion EnvelopeCom10/Com-10:		"<</PageSize[297 684]/ImagingBBox null>>setpagedevice"
+*PageRegion EnvelopeMonarch/Monarch:		"<</PageSize[279 540]/ImagingBBox null>>setpagedevice"
+*PageRegion EnvelopeDL/DL:			"<</PageSize[312 624]/ImagingBBox null>>setpagedevice"
+*PageRegion EnvelopeC5/C5:			"<</PageSize[459 649]/ImagingBBox null>>setpagedevice"
+*PageRegion EnvelopeYou4/Envelope You #4:	"<</PageSize[298 666]/ImagingBBox null>>setpagedevice"
+*PageRegion EnvelopeChou3/Chokei 3 Envelope: 	"<</PageSize[340 666]/ImagingBBox null>>setpagedevice"
+*PageRegion EnvelopeChou4/Chokei 4 Envelope: 	"<</PageSize[255 581]/ImagingBBox null>>setpagedevice"
+*PageRegion 3x5in/3"x5":			"<</PageSize[216 360]/ImagingBBox null>>setpagedevice"
+*PageRegion A4Short/270mm Paper:	"<</PageSize[595 765]/ImagingBBox null>>setpagedevice"
+*CloseUI: *PageRegion
+
+*DefaultImageableArea: 8.5x11
+*ImageableArea A4JIS/A4:				"12 12 583 830"
+*ImageableArea A5/A5:				"12 12 408 583"
+*ImageableArea A5L/A5(Long Edge):		"12 12 583 408"
+*ImageableArea A6/A6:				"12 12 285 408"
+*ImageableArea B5/B5(JIS):			"12 12 504 717"
+*ImageableArea B5ISO/B5(ISO):			"12 12 487 697"
+*ImageableArea 8.5x14/Legal:			"12 12 600 996"
+*ImageableArea Mexico/Mexico Legal:			"12 12 600 951"
+*ImageableArea IndiaLegal/India Legal:			"12 12 597 966"
+*ImageableArea 8.5x13/Folio:	"12 12 600 924"
+*ImageableArea 8.5x11/Letter:			"12 12 600 780"
+*ImageableArea 7.25x10.5/Executive:		"12 12 510 744"
+*ImageableArea 184x260/16K(184x260mm):	"12 12 510 725"
+*ImageableArea 195x270/16K(195x270mm):	"12 12 541 753"
+*ImageableArea 197x273/16K(197x273mm):	"12 12 546 762"
+*ImageableArea JPostcard/Hagaki:			"12 12 272 407"
+*ImageableArea EnvelopeCom10/Com-10:			"12 12 285 672"
+*ImageableArea EnvelopeMonarch/Monarch:		"12 12 267 528"
+*ImageableArea EnvelopeDL/DL:			"12 12 300 612"
+*ImageableArea EnvelopeC5/C5:			"12 12 447 637"
+*ImageableArea EnvelopeYou4/Envelope You #4:		"12 12 286 654"
+*ImageableArea EnvelopeChou3/Chokei 3 Envelope: 		"12 12 328 654"
+*ImageableArea EnvelopeChou4/Chokei 4 Envelope: 		"12 12 243 569"
+*ImageableArea 3x5in/3"x5":			"12 12 204 348"
+*ImageableArea A4Short/270mm Paper:		"12 12 583 753"
+
+*DefaultPaperDimension: 8.5x11
+*PaperDimension A4JIS/A4:				"595 842"
+*PaperDimension A5/A5:				"420 595"
+*PaperDimension A5L/A5(Long Edge):		"595 420"
+*PaperDimension A6/A6:				"297 420"
+*PaperDimension B5/B5(JIS):			"515 727"
+*PaperDimension B5ISO/B5(ISO):			"499 709"
+*PaperDimension 8.5x14/Legal:			"612 1008"
+*PaperDimension Mexico/Mexico Legal:			"612 963"
+*PaperDimension IndiaLegal/India Legal:			"609 978"
+*PaperDimension 8.5x13/Folio:	"612 936"
+*PaperDimension 8.5x11/Letter:			"612 792"
+*PaperDimension 7.25x10.5/Executive:		"522 756"
+*PaperDimension 184x260/16K(184x260mm):	"522 737"
+*PaperDimension 195x270/16K(195x270mm):	"553 765"
+*PaperDimension 197x273/16K(197x273mm):	"558 774"
+*PaperDimension JPostcard/Hagaki:		"284 419"
+*PaperDimension EnvelopeCom10/Com-10:			"297 684"
+*PaperDimension EnvelopeMonarch/Monarch:		"279 540"
+*PaperDimension EnvelopeDL/DL:			"312 624"
+*PaperDimension EnvelopeC5/C5:			"459 649"
+*PaperDimension EnvelopeYou4/Envelope You #4:		"298 666"
+*PaperDimension EnvelopeChou3/Chokei 3 Envelope: 		"340 666"
+*PaperDimension EnvelopeChou4/Chokei 4 Envelope: 		"255 581"
+*PaperDimension 3x5in/3"x5":			"216 360"
+*PaperDimension A4Short/270mm Paper:	"595 765"
+
+*%---------------------------------------------------------
+*%-----------   Printer Features Group   ------------------
+*%---------------------------------------------------------
+
+*OpenGroup: KMPrinterFeatures/Basic
+
+*%==== Duplex ======================================
+*OpenUI *Duplex/Duplex Options: PickOne
+*OrderDependency: 25 AnySetup *Duplex
+*DefaultDuplex: DuplexNoTumble
+*Duplex DuplexTumble/Short Edge: "<</Duplex true /Tumble true>>setpagedevice"
+*Duplex DuplexNoTumble/Long Edge: "<</Duplex true /Tumble false>>setpagedevice"
+*Duplex None/Simplex: "<</Duplex false /Tumble false>>setpagedevice"
+*CloseUI: *Duplex
+
+*%==== MediaType =====================================
+*OpenUI *BRMediaType/Paper Type:  PickOne
+*OrderDependency: 50 AnySetup *BRMediaType
+*DefaultBRMediaType: Plain
+*BRMediaType Plain/Plain Paper: "<</MediaType (REGULAR)>>setpagedevice"
+*BRMediaType Env/Envelope: "<</MediaType (ENVELOPES)>>setpagedevice"
+*BRMediaType EnvThick/Env. Thick: "<</MediaType (ENVTHICK)>>setpagedevice"
+*BRMediaType EnvThin/Env. Thin: "<</MediaType (ENVTHIN)>>setpagedevice"
+*BRMediaType Letterhead/Letterhead: "<</MediaType (LETTERHEAD)>>setpagedevice"
+*BRMediaType PostCard/Hagaki: "<</MediaType (POSTCARD)>>setpagedevice"
+*BRMediaType Thick/Thick: "<</MediaType (THICK)>>setpagedevice"
+*BRMediaType ThickPaper2/Thicker: "<</MediaType (THICK2)>>setpagedevice"
+*BRMediaType Thin/Thin: "<</MediaType (THIN)>>setpagedevice"
+*BRMediaType BOND/Bond Paper: "<</MediaType (BOND)>>setpagedevice"
+*BRMediaType Label/Label: "<</MediaType (LABEL)>>setpagedevice"
+*BRMediaType ColoredPaper/Colored Paper: "<</MediaType (COLOR)>>setpagedevice"
+*BRMediaType Recycled/Recycled Paper: "<</MediaType (RECYCLED)>>setpagedevice"
+*CloseUI: *BRMediaType
+
+*CloseGroup: KMPrinterFeatures
+
+*%---------------------------------------------------------
+*%-----------   Quality UI Group   ------------------------
+*%---------------------------------------------------------
+
+*OpenGroup: KMPrinterFeaturesQuality/Quality
+
+*%==== Resolution ====================================
+*OpenUI *Resolution/Resolution: PickOne
+*OrderDependency: 70 AnySetup *Resolution
+*DefaultResolution: 600dpi
+*Resolution 300dpi/300 dpi: "<</HWResolution [300 300] >> setpagedevice"
+*Resolution	600dpi/600 dpi: "<</HWResolution [600 600] >> setpagedevice"
+*Resolution	2400x600dpi/HQ 1200: "<</HWResolution [1200 1200] >> setpagedevice
+statusdict/true1200 known{statusdict begin false true1200 end}if
+"
+*Resolution	1200dpi/1200 dpi: "<</HWResolution [1200 1200] >> setpagedevice 
+statusdict/true1200 known{statusdict begin true true1200 end}if
+"
+*CloseUI: *Resolution
+
+*CloseGroup: KMPrinterFeaturesQuality
+
+*%---------------------------------------------------------
+*%-----------   Color UI Group   --------------------------
+*%---------------------------------------------------------
+
+*OpenGroup: KMPrinterFeaturesToner/Toner
+
+*% Toner Save ===============
+*OpenUI *TonerSaveMode/Toner Save: Boolean
+*DefaultTonerSaveMode: False
+*OrderDependency: 10 AnySetup  *TonerSaveMode
+*TonerSaveMode False/Off: "
+	statusdict/tonersave known{statusdict begin false tonersave end}if
+"
+*End
+*TonerSaveMode True/On: "
+	statusdict/tonersave known{statusdict begin true tonersave end}if
+"
+*End
+*CloseUI: *TonerSaveMode
+
+*CloseGroup: KMPrinterFeaturesToner
+
+*%---------------------------------------------------------
+*%-----------   Secure Print Group   ----------------------
+*%---------------------------------------------------------
+
+*OpenGroup: BRJobHoldG/Confidential Print
+
+*OpenUI *BRPassword/Confidential Print: PickOne
+*OrderDependency: 33 AnySetup *BRPassword
+*DefaultBRPassword: False
+*BRPassword False/Off: "<</BRHold 0>>setpagedevice"
+*BRPassword 1122: "<</BRHold 2 /BRHoldType 1/BRHoldKey 1122>> setpagedevice"
+*BRPassword 8519: "<</BRHold 2 /BRHoldType 1/BRHoldKey 8519>> setpagedevice"
+*BRPassword 3956: "<</BRHold 2 /BRHoldType 1/BRHoldKey 3956>> setpagedevice"
+*BRPassword 2186: "<</BRHold 2 /BRHoldType 1/BRHoldKey 2186>> setpagedevice"
+*BRPassword 3315: "<</BRHold 2 /BRHoldType 1/BRHoldKey 3315>> setpagedevice"
+*BRPassword 0896: "<</BRHold 2 /BRHoldType 1/BRHoldKey 0896>> setpagedevice"
+*CloseUI: *BRPassword
+
+*CloseGroup: BRJobHoldG
+
+*%---------------------------------------------------------
+*% ==================================
+*% === Security Options =============
+*% ==================================
+
+*% ==================================
+*%  Output Method
+*% ==================================
+*OpenGroup: OutputMethod/Output Method
+
+
+*OpenUI  *KMOutputMethod/Output Method: PickOne
+*OrderDependency: 22 AnySetup *KMOutputMethod
+*DefaultKMOutputMethod: None
+*KMOutputMethod None/Print:  " "
+*End
+*KMOutputMethod Secure/Secure Print: " "
+*End
+*KMOutputMethod ProofMode/Proof Print:  " "
+*End
+*KMOutputMethod Box/Save in User Box:  " "
+*End
+*KMOutputMethod BoxPrint/Save in Box and Print:  " "
+*End
+*KMOutputMethod IDPrint/ID & Print:  " "
+*End
+*KMOutputMethod SafeQ/SafeQ:  " "
+*End
+*CloseUI: *KMOutputMethod
+
+*% ==================================
+*%  Secure Print ID
+*% ==================================
+*OpenUI *KMSecID/Secure Print ID: PickOne
+*OrderDependency: 10 AnySetup *KMSecID
+*DefaultKMSecID: None
+*KMSecID None/None: " "
+*CloseUI: *KMSecID
+
+*% Custom PostScript KMSecID option
+*CustomKMSecID True: " "
+*ParamCustomKMSecID Username: 1 string 1 16
+
+*% ==================================
+*%  Secure Print password
+*% ==================================
+*OpenUI *KMSecPass/Secure Print Password: PickOne
+*OrderDependency: 10 AnySetup *KMSecPass
+*DefaultKMSecPass: None
+*KMSecPass None/None: " "
+*CloseUI: *KMSecPass
+
+*% Custom PostScript KMSecPass option
+*CustomKMSecPass True: " "
+*ParamCustomKMSecPass Password: 1 password 1 8
+
+*% ==================================
+*%  Box Number
+*% ==================================
+*OpenUI *KMBoxNumber/Box Number: PickOne
+*OrderDependency: 10 AnySetup *KMBoxNumber
+*DefaultKMBoxNumber: None
+*KMBoxNumber None/None: " "
+*CloseUI: *KMBoxNumber
+
+*% Custom PostScript KMBoxNumber option
+*CustomKMBoxNumber True: " "
+*ParamCustomKMBoxNumber Number: 1 int 1 999999999
+
+*% ==================================
+*%  File Name
+*% ==================================
+*OpenUI *KMBoxFileName/File Name: PickOne
+*OrderDependency: 10 AnySetup *KMBoxFileName
+*DefaultKMBoxFileName: None
+*KMBoxFileName None/None: " "
+*CloseUI: *KMBoxFileName
+
+*% Custom PostScript KMBoxFileName option
+*CustomKMBoxFileName True: " "
+*ParamCustomKMBoxFileName Name: 1 string 1 30
+
+
+*% ==================================
+*%  SafeQ User
+*% ==================================
+*OpenUI *KMSafeQUser/SafeQ User: PickOne
+*OrderDependency: 10 AnySetup *KMSafeQUser
+*DefaultKMSafeQUser: <Current_User>
+*KMSafeQUser <Current_User>: " "
+*CloseUI: *KMSafeQUser
+
+*% Custom PostScript KMSafeQUser option
+*CustomKMSafeQUser True: " "
+*ParamCustomKMSafeQUser User: 1 string 1 16
+
+
+*CloseGroup: OutputMethod
+
+
+*% ==================================
+*% === Security Options =============
+*% ==================================
+
+*% ==================================
+*% === Account Track Options ========
+*% ==================================
+*OpenGroup: AccountTrack/Account Track
+
+
+*OpenUI *KMSectionManagement/Account Track: Boolean
+*OrderDependency: 52 AnySetup *KMSectionManagement
+*DefaultKMSectionManagement: False
+*KMSectionManagement False/Off: " "
+*KMSectionManagement True/On: " "
+*End
+*CloseUI: *KMSectionManagement
+
+*% ==================================
+*%  Account Track Department Code
+*% ==================================
+*OpenUI *KMDepCode/Department Code: PickOne
+*OrderDependency: 10 AnySetup *KMDepCode
+*DefaultKMDepCode: None
+*KMDepCode None/None: " "
+*CloseUI: *KMDepCode
+
+*% Custom PostScript KMDepCode option
+*CustomKMDepCode True: " "
+*ParamCustomKMDepCode Name: 1 string 1 16
+
+*% ==================================
+*%  Account Track Password
+*% ==================================
+*OpenUI *KMAccPass/Password: PickOne
+*OrderDependency: 10 AnySetup *KMAccPass
+*DefaultKMAccPass: None
+*KMAccPass None/None: " "
+*CloseUI: *KMAccPass
+
+*% Custom PostScript KMAccPass option
+*CustomKMAccPass True: " "
+*ParamCustomKMAccPass Key: 1 password 1 16
+
+
+*CloseGroup: AccountTrack
+
+
+*% ==================================
+*% === Security Options =============
+*% ==================================
+
+*% ==================================
+*% === User Authentication Options ==
+*% ==================================
+*OpenGroup: UserAuth/User Authentication
+
+
+*% ==================================
+*%  Authentication
+*% ==================================
+*OpenUI *KMAuthentication/User Authentication: PickOne
+*OrderDependency: 42 AnySetup *KMAuthentication
+*DefaultKMAuthentication: False
+*KMAuthentication False/Off: " "
+*KMAuthentication Private/MFP: " "
+*KMAuthentication Server/External Server: " "
+*KMAuthentication Server/MFP + External Server: " "
+*KMAuthentication PSES/PSES: " "
+*End
+*CloseUI: *KMAuthentication
+
+*% ==================================
+*%  Authentication Server
+*% ==================================
+*OpenUI *KMAuthServer/Authentication Server: PickOne
+*OrderDependency: 43 AnySetup *KMAuthServer
+*DefaultKMAuthServer: 1
+*KMAuthServer 1: " "
+*KMAuthServer 2: " "
+*KMAuthServer 3: " "
+*KMAuthServer 4: " "
+*KMAuthServer 5: " "
+*KMAuthServer 6: " "
+*KMAuthServer 7: " "
+*KMAuthServer 8: " "
+*KMAuthServer 9: " "
+*KMAuthServer 10: " "
+*KMAuthServer 11: " "
+*KMAuthServer 12: " "
+*KMAuthServer 13: " "
+*KMAuthServer 14: " "
+*KMAuthServer 15: " "
+*KMAuthServer 16: " "
+*KMAuthServer 17: " "
+*KMAuthServer 18: " "
+*KMAuthServer 19: " "
+*KMAuthServer 20: " "
+*End
+*CloseUI: *KMAuthServer
+
+
+*% ==================================
+*%  Authentication UserName
+*% ==================================
+*OpenUI *KMAuthUser/Username: PickOne
+*OrderDependency: 10 AnySetup *KMAuthUser
+*DefaultKMAuthUser: None
+*KMAuthUser None/None: " "
+*CloseUI: *KMAuthUser
+
+*% Custom PostScript KMAuthUser option
+*CustomKMAuthUser True: " "
+*ParamCustomKMAuthUser Name: 1 string 1 16
+
+*% ==================================
+*%  Authentication Password
+*% ==================================
+*OpenUI *KMAuthPass/Password: PickOne
+*OrderDependency: 10 AnySetup *KMAuthPass
+*DefaultKMAuthPass: None
+*KMAuthPass None/None: " "
+*CloseUI: *KMAuthPass
+
+*% Custom PostScript KMAuthPass option
+*CustomKMAuthPass True: " "
+*ParamCustomKMAuthPass Key: 1 password 1 16
+
+
+*CloseGroup: UserAuth
+
+*% ==================================
+*% === Security Options =============
+*% ==================================
+
+*% ==================================
+*% === Stamp Date/Time ==============
+*% ==================================
+*OpenGroup: KMDTStamp/Date Time Stamp
+
+
+*OpenUI *KMStampDateTime/Date and Time: PickOne
+*OrderDependency: 30 AnySetup *KMStampDateTime
+*DefaultKMStampDateTime: None
+*KMStampDateTime None/None: " "
+*KMStampDateTime Date/Date: " "
+*KMStampDateTime DateTime/Date and Time: " "
+*CloseUI: *KMStampDateTime
+
+*% ==================================
+*%  Stamp Date Format
+*% ==================================
+*OpenUI *KMStampDateFormat/Date Format: PickOne
+*OrderDependency: 31 AnySetup *KMStampDateFormat
+*DefaultKMStampDateFormat: DATE1
+*KMStampDateFormat DATE1/'12/8/23 : " "
+*KMStampDateFormat DATE4/23 Aug, 2012 : " "
+*KMStampDateFormat DATE2/Aug 23, 2012 : " "
+*KMStampDateFormat DATE5/23/8/'12 : " "
+*KMStampDateFormat DATE3/8/23/'12 : " "
+*CloseUI: *KMStampDateFormat
+
+*% ==================================
+*%  Stamp Time Format
+*% ==================================
+*OpenUI *KMStampTimeFormat/Time Format: PickOne
+*OrderDependency: 31 AnySetup *KMStampTimeFormat
+*DefaultKMStampTimeFormat: TIME1
+*KMStampTimeFormat TIME1/1 23PM:" "
+*KMStampTimeFormat TIME2/13 23:" "
+*CloseUI: *KMStampTimeFormat
+
+
+*% ==================================
+*%  Stamp Print Position
+*% ==================================
+*OpenUI *KMStampPrintPosition/Print Position: PickOne
+*OrderDependency: 73 AnySetup *KMStampPrintPosition
+*DefaultKMStampPrintPosition: LEFTTOP
+*KMStampPrintPosition LEFTTOP/Top Left:" "
+*KMStampPrintPosition CENTERTOP/Top:" "
+*KMStampPrintPosition RIGHTTOP/Top Right:" "
+*KMStampPrintPosition LEFTCENTER/Left:" "
+*KMStampPrintPosition CENTER/Center:" "
+*KMStampPrintPosition RIGHTCENTER/Right:" "
+*KMStampPrintPosition LEFTBOTTOM/Bottom Left:" "
+*KMStampPrintPosition CENTERBOTTOM/Bottom:" "
+*KMStampPrintPosition RIGHTBOTTOM/Bottom Right:" "
+*CloseUI: *KMStampPrintPosition
+
+
+*CloseGroup: KMDTStamp
+
+
+*% ==================================
+*% === Security Options =============
+*% ==================================
+
+*% ==================================
+*% === Stamp Page Number ============
+*% ==================================
+*OpenGroup: KMPNStamp/Page Number Stamp
+
+
+*OpenUI *KMStampPageNumberEnable/Page Number: Boolean
+*OrderDependency: 80 AnySetup *KMStampPageNumberEnable
+*DefaultKMStampPageNumberEnable: False
+*KMStampPageNumberEnable False/Off: " "
+*KMStampPageNumberEnable True/On: " "
+*End
+*CloseUI: *KMStampPageNumberEnable
+
+*% ==================================
+*%  Stamp Page Number Starting Page
+*% ==================================
+*OpenUI *KMStampPNStartingPage/Starting Page: PickOne
+*OrderDependency: 81 AnySetup *KMStampPNStartingPage
+*DefaultKMStampPNStartingPage: 1
+*KMStampPNStartingPage 1/1: " "
+*CloseUI: *KMStampPNStartingPage
+
+*% Custom PostScript Stamp Page Number Starting Page option
+*CustomKMStampPNStartingPage True: " "
+*ParamCustomKMStampPNStartingPage Number: 1 int 1 99999
+
+*% ==================================
+*%  Stamp Page Number Starting Page
+*% ==================================
+*OpenUI *KMStampPNStartingNumber/Starting Page Number: PickOne
+*OrderDependency: 82 AnySetup *KMStampPNStartingNumber
+*DefaultKMStampPNStartingNumber: 1
+*KMStampPNStartingNumber 1/1: " "
+*CloseUI: *KMStampPNStartingNumber
+
+*% Custom PostScript Stamp Page Number Starting Page Number option
+*CustomKMStampPNStartingNumber True: " "
+*ParamCustomKMStampPNStartingNumber Number: 1 int 1 99999
+
+
+*% ==================================
+*%  Stamp Page Number Print Position
+*% ==================================
+*OpenUI *KMStampPNPrintPosition/Print Position: PickOne
+*OrderDependency: 85 AnySetup *KMStampPNPrintPosition
+*DefaultKMStampPNPrintPosition: LEFTTOP
+*KMStampPNPrintPosition LEFTTOP/Top Left:" "
+*KMStampPNPrintPosition CENTERTOP/Top:" "
+*KMStampPNPrintPosition RIGHTTOP/Top Right:" "
+*KMStampPNPrintPosition LEFTCENTER/Left:" "
+*KMStampPNPrintPosition CENTER/Center:" "
+*KMStampPNPrintPosition RIGHTCENTER/Right:" "
+*KMStampPNPrintPosition LEFTBOTTOM/Bottom Left:" "
+*KMStampPNPrintPosition CENTERBOTTOM/Bottom:" "
+*KMStampPNPrintPosition RIGHTBOTTOM/Bottom Right:" "
+*CloseUI: *KMStampPNPrintPosition
+
+
+*CloseGroup: KMPNStamp
+*%---------------------------------------------------------
+*%-----------   User Constraints   ------------------------
+*%---------------------------------------------------------
+*UIConstraints:	*Model	5020i *PaperSourceUnit	Unit4
+*UIConstraints:	*Model	4020i	*PaperSourceUnit	Unit4
+*UIConstraints:	*Model	4000i *PaperSourceUnit	Unit4
+*UIConstraints:	*PaperSourceUnit	Unit4 *Model	5020i
+*UIConstraints:	*PaperSourceUnit	Unit4	*Model	4020i
+*UIConstraints:	*PaperSourceUnit	Unit4 *Model	4000i
+*UIConstraints:	*PaperSourceUnit  None	*InputSlot	Tray2
+*UIConstraints:	*PaperSourceUnit	None	*InputSlot	Tray3
+*UIConstraints:	*PaperSourceUnit	None	*InputSlot	Tray4
+*UIConstraints:	*PaperSourceUnit	Unit2	*InputSlot	Tray3
+*UIConstraints:	*PaperSourceUnit	Unit2	*InputSlot	Tray4
+*UIConstraints:	*PaperSourceUnit	Unit3	*InputSlot	Tray4
+*UIConstraints:	*PageSize A5	*Duplex	DuplexTumble
+*UIConstraints:	*PageSize	A5	*Duplex	DuplexNoTumble
+*UIConstraints:	*PageSize	A5L	*Duplex	DuplexTumble
+*UIConstraints:	*PageSize	A5L	*Duplex	DuplexNoTumble
+*UIConstraints:	*PageSize	A6	*Duplex	DuplexTumble
+*UIConstraints:	*PageSize	A6	*Duplex	DuplexNoTumble
+*UIConstraints:	*PageSize	B5	*Duplex	DuplexTumble
+*UIConstraints:	*PageSize	B5	*Duplex	DuplexNoTumble
+*UIConstraints:	*PageSize	B5ISO	*Duplex	DuplexTumble
+*UIConstraints:	*PageSize	B5ISO	*Duplex	DuplexNoTumble
+*UIConstraints:	*PageSize	7.25x10.5	*Duplex	DuplexTumble
+*UIConstraints:	*PageSize	7.25x10.5	*Duplex	DuplexNoTumble
+*UIConstraints:	*PageSize	184x260	*Duplex	DuplexTumble
+*UIConstraints:	*PageSize	184x260	*Duplex	DuplexNoTumble
+*UIConstraints:	*PageSize	195x270	*Duplex	DuplexTumble
+*UIConstraints:	*PageSize	195x270	*Duplex	DuplexNoTumble
+*UIConstraints:	*PageSize	197x273	*Duplex	DuplexTumble
+*UIConstraints:	*PageSize	197x273	*Duplex	DuplexNoTumble
+*UIConstraints:	*PageSize	JPostcard	*Duplex	DuplexTumble
+*UIConstraints:	*PageSize	JPostcard	*Duplex	DuplexNoTumble
+*UIConstraints:	*PageSize	EnvelopeCom10	*Duplex	DuplexTumble
+*UIConstraints:	*PageSize	EnvelopeCom10	*Duplex	DuplexNoTumble
+*UIConstraints:	*PageSize	EnvelopeMonarch	*Duplex	DuplexTumble
+*UIConstraints:	*PageSize	EnvelopeMonarch	*Duplex	DuplexNoTumble
+*UIConstraints:	*PageSize	EnvelopeDL	*Duplex	DuplexTumble
+*UIConstraints:	*PageSize	EnvelopeDL	*Duplex	DuplexNoTumble
+*UIConstraints:	*PageSize	EnvelopeC5	*Duplex	DuplexTumble
+*UIConstraints:	*PageSize	EnvelopeC5	*Duplex	DuplexNoTumble
+*UIConstraints:	*PageSize	EnvelopeYou4	*Duplex	DuplexTumble
+*UIConstraints:	*PageSize	EnvelopeYou4	*Duplex	DuplexNoTumble
+*UIConstraints:	*PageSize	EnvelopeChou3	*Duplex	DuplexTumble
+*UIConstraints:	*PageSize	EnvelopeChou3	*Duplex	DuplexNoTumble
+*UIConstraints:	*PageSize	EnvelopeChou4	*Duplex	DuplexTumble
+*UIConstraints:	*PageSize	EnvelopeChou4	*Duplex	DuplexNoTumble
+*UIConstraints:	*PageSize	3x5in	*Duplex	DuplexTumble
+*UIConstraints:	*PageSize	3x5in	*Duplex	DuplexNoTumble
+*UIConstraints:	*CustomPageSize	True	*Duplex	DuplexTumble
+*UIConstraints:	*CustomPageSize	True	*Duplex DuplexNoTumble
+*UIConstraints:	*Duplex	DuplexTumble	*PageSize	A5
+*UIConstraints:	*Duplex	DuplexTumble	*PageSize	A5L
+*UIConstraints:	*Duplex	DuplexTumble	*PageSize	A6
+*UIConstraints:	*Duplex	DuplexTumble	*PageSize	B5
+*UIConstraints:	*Duplex	DuplexTumble	*PageSize	B5ISO
+*UIConstraints:	*Duplex	DuplexTumble	*PageSize	7.25x10.5
+*UIConstraints:	*Duplex	DuplexTumble	*PageSize	184x260
+*UIConstraints:	*Duplex	DuplexTumble	*PageSize	195x270
+*UIConstraints:	*Duplex	DuplexTumble	*PageSize	197x273
+*UIConstraints:	*Duplex	DuplexTumble	*PageSize	JPostcard
+*UIConstraints:	*Duplex	DuplexTumble	*PageSize	EnvelopeCom10
+*UIConstraints:	*Duplex	DuplexTumble	*PageSize	EnvelopeMonarch
+*UIConstraints:	*Duplex	DuplexTumble	*PageSize	EnvelopeDL
+*UIConstraints:	*Duplex	DuplexTumble	*PageSize	EnvelopeC5
+*UIConstraints:	*Duplex	DuplexTumble	*PageSize	EnvelopeYou4
+*UIConstraints:	*Duplex	DuplexTumble	*PageSize	EnvelopeChou3
+*UIConstraints:	*Duplex	DuplexTumble	*PageSize	EnvelopeChou4
+*UIConstraints:	*Duplex	DuplexTumble	*PageSize	3x5in
+*UIConstraints:	*Duplex	DuplexTumble	*CustomPageSize True
+*UIConstraints:	*Duplex	DuplexNoTumble	*PageSize	A5
+*UIConstraints:	*Duplex	DuplexNoTumble	*PageSize	A5L
+*UIConstraints:	*Duplex	DuplexNoTumble	*PageSize	A6
+*UIConstraints:	*Duplex	DuplexNoTumble	*PageSize	B5
+*UIConstraints:	*Duplex	DuplexNoTumble	*PageSize	B5ISO
+*UIConstraints:	*Duplex	DuplexNoTumble	*PageSize	7.25x10.5
+*UIConstraints:	*Duplex	DuplexNoTumble	*PageSize	184x260
+*UIConstraints:	*Duplex	DuplexNoTumble	*PageSize	195x270
+*UIConstraints:	*Duplex	DuplexNoTumble	*PageSize	197x273
+*UIConstraints:	*Duplex	DuplexNoTumble	*PageSize	JPostcard
+*UIConstraints:	*Duplex	DuplexNoTumble	*PageSize	EnvelopeCom10
+*UIConstraints:	*Duplex	DuplexNoTumble	*PageSize	EnvelopeMonarch
+*UIConstraints:	*Duplex	DuplexNoTumble	*PageSize	EnvelopeDL
+*UIConstraints:	*Duplex	DuplexNoTumble	*PageSize	EnvelopeC5
+*UIConstraints:	*Duplex	DuplexNoTumble	*PageSize	EnvelopeYou4
+*UIConstraints:	*Duplex	DuplexNoTumble	*PageSize	EnvelopeChou3
+*UIConstraints:	*Duplex	DuplexNoTumble	*PageSize	EnvelopeChou4
+*UIConstraints:	*Duplex	DuplexNoTumble	*PageSize	3x5in
+*UIConstraints:	*Duplex	DuplexNoTumble	*CustomPageSize True
+*UIConstraints:	*InputSlot	Tray2	*PaperSourceUnit  None
+*UIConstraints:	*InputSlot	Tray3	*PaperSourceUnit  None
+*UIConstraints:	*InputSlot	Tray3	*PaperSourceUnit  Unit2
+*UIConstraints:	*InputSlot	Tray4	*PaperSourceUnit  None
+*UIConstraints:	*InputSlot	Tray4	*PaperSourceUnit  Unit2
+*UIConstraints:	*InputSlot	Tray4	*PaperSourceUnit  Unit3
+*UIConstraints:	*InputSlot	Tray1	*BRMediaType	Env
+*UIConstraints:	*InputSlot	Tray1	*BRMediaType	EnvThick
+*UIConstraints:	*InputSlot	Tray1	*BRMediaType	EnvThin
+*UIConstraints:	*InputSlot	Tray1	*BRMediaType	ThickPaper2
+*UIConstraints:	*InputSlot	Tray1	*BRMediaType	BOND
+*UIConstraints:	*InputSlot	Tray1	*BRMediaType	Label
+*UIConstraints:	*InputSlot	Tray2	*BRMediaType	Env
+*UIConstraints:	*InputSlot	Tray2	*BRMediaType	EnvThick
+*UIConstraints:	*InputSlot	Tray2	*BRMediaType	EnvThin
+*UIConstraints:	*InputSlot	Tray2	*BRMediaType	PostCard
+*UIConstraints:	*InputSlot	Tray2	*BRMediaType	ThickPaper2
+*UIConstraints:	*InputSlot	Tray2	*BRMediaType	BOND
+*UIConstraints:	*InputSlot	Tray2	*BRMediaType	Label
+*UIConstraints:	*InputSlot	Tray3	*BRMediaType	Env
+*UIConstraints:	*InputSlot	Tray3	*BRMediaType	EnvThick
+*UIConstraints:	*InputSlot	Tray3	*BRMediaType	EnvThin
+*UIConstraints:	*InputSlot	Tray3	*BRMediaType	PostCard
+*UIConstraints:	*InputSlot	Tray3	*BRMediaType	ThickPaper2
+*UIConstraints:	*InputSlot	Tray3	*BRMediaType	BOND
+*UIConstraints:	*InputSlot	Tray3	*BRMediaType	Label
+*UIConstraints:	*InputSlot	Tray4	*BRMediaType	Env
+*UIConstraints:	*InputSlot	Tray4	*BRMediaType	EnvThick
+*UIConstraints:	*InputSlot	Tray4	*BRMediaType	EnvThin
+*UIConstraints:	*InputSlot	Tray4	*BRMediaType	PostCard
+*UIConstraints:	*InputSlot	Tray4	*BRMediaType	ThickPaper2
+*UIConstraints:	*InputSlot	Tray4	*BRMediaType	BOND
+*UIConstraints:	*InputSlot	Tray4	*BRMediaType	Label
+*UIConstraints:	*BRMediaType	Env	*InputSlot	Tray1
+*UIConstraints:	*BRMediaType	Env	*InputSlot	Tray2
+*UIConstraints:	*BRMediaType	Env	*InputSlot	Tray3
+*UIConstraints:	*BRMediaType	Env	*InputSlot	Tray4
+*UIConstraints:	*BRMediaType	EnvThick	*InputSlot	Tray1
+*UIConstraints:	*BRMediaType	EnvThick	*InputSlot	Tray2
+*UIConstraints:	*BRMediaType	EnvThick	*InputSlot	Tray3
+*UIConstraints:	*BRMediaType	EnvThick	*InputSlot	Tray4
+*UIConstraints:	*BRMediaType	EnvThin	*InputSlot	Tray1
+*UIConstraints:	*BRMediaType	EnvThin	*InputSlot	Tray2
+*UIConstraints:	*BRMediaType	EnvThin	*InputSlot	Tray3
+*UIConstraints:	*BRMediaType	EnvThin	*InputSlot	Tray4
+*UIConstraints:	*BRMediaType	PostCard	*InputSlot	Tray2
+*UIConstraints:	*BRMediaType	PostCard	*InputSlot	Tray3
+*UIConstraints:	*BRMediaType	PostCard	*InputSlot	Tray4
+*UIConstraints:	*BRMediaType	ThickPaper2	*InputSlot	Tray1
+*UIConstraints:	*BRMediaType	ThickPaper2	*InputSlot	Tray2
+*UIConstraints:	*BRMediaType	ThickPaper2	*InputSlot	Tray3
+*UIConstraints:	*BRMediaType	ThickPaper2	*InputSlot	Tray4
+*UIConstraints:	*BRMediaType	BOND	*InputSlot	Tray1
+*UIConstraints:	*BRMediaType	BOND	*InputSlot	Tray2
+*UIConstraints:	*BRMediaType	BOND	*InputSlot	Tray3
+*UIConstraints:	*BRMediaType	BOND	*InputSlot	Tray4
+*UIConstraints:	*BRMediaType	Label	*InputSlot	Tray1
+*UIConstraints:	*BRMediaType	Label	*InputSlot	Tray2
+*UIConstraints:	*BRMediaType	Label	*InputSlot	Tray3
+*UIConstraints:	*BRMediaType	Label	*InputSlot	Tray4
+
+*%---------------------------------------------------------
+*%-----------   Font Information   ------------------------
+*%---------------------------------------------------------
+
+*DefaultFont: Courier
+*Font AvantGarde-Book: Standard "(001.000)" Standard ROM
+*Font AvantGarde-BookOblique: Standard "(001.000)" Standard ROM
+*Font AvantGarde-Demi: Standard "(001.000)" Standard ROM
+*Font AvantGarde-DemiOblique: Standard "(001.000)" Standard ROM
+*Font Bookman-Demi: Standard "(001.000)" Standard ROM
+*Font Bookman-DemiItalic: Standard "(001.000)" Standard ROM
+*Font Bookman-Light: Standard "(001.000)" Standard ROM
+*Font Bookman-LightItalic: Standard "(001.000)" Standard ROM
+*Font Courier: Standard "(001.000)" Standard ROM
+*Font Courier-Bold: Standard "(001.000)" Standard ROM
+*Font Courier-Oblique: Standard "(001.000)" Standard ROM
+*Font Courier-BoldOblique: Standard "(001.000)" Standard ROM
+*Font Helvetica: Standard "(001.000)" Standard ROM
+*Font Helvetica-Bold: Standard "(001.000)" Standard ROM
+*Font Helvetica-Oblique: Standard "(001.000)" Standard ROM
+*Font Helvetica-BoldOblique: Standard "(001.000)" Standard ROM
+*Font Helvetica-Narrow: Standard "(001.000)" Standard ROM
+*Font Helvetica-Narrow-Bold: Standard "(001.000)" Standard ROM
+*Font Helvetica-Narrow-BoldOblique: Standard "(001.000)" Standard ROM
+*Font Helvetica-Narrow-Oblique: Standard "(001.000)" Standard ROM
+*Font Helvetica-Light: Standard "(001.000)" Standard ROM
+*Font Helvetica-LightOblique: Standard "(001.000)" Standard ROM
+*Font Helvetica-Black: Standard "(001.000)" Standard ROM
+*Font Helvetica-BlackOblique: Standard "(001.000)" Standard ROM
+*Font NewCenturySchlbk-Roman: Standard "(001.000)" Standard ROM
+*Font NewCenturySchlbk-Bold: Standard "(001.000)" Standard ROM
+*Font NewCenturySchlbk-Italic: Standard "(001.000)" Standard ROM
+*Font NewCenturySchlbk-BoldItalic: Standard "(001.000)" Standard ROM
+*Font Palatino-Roman: Standard "(001.000)" Standard ROM
+*Font Palatino-Bold: Standard "(001.000)" Standard ROM
+*Font Palatino-Italic: Standard "(001.000)" Standard ROM
+*Font Palatino-BoldItalic: Standard "(001.000)" Standard ROM
+*Font Symbol: Special "(001.000)" Standard ROM
+*Font Times-Roman: Standard "(001.000)" Standard ROM
+*Font Times-Bold: Standard "(001.000)" Standard ROM
+*Font Times-Italic: Standard "(001.000)" Standard ROM
+*Font Times-BoldItalic: Standard "(001.000)" Standard ROM
+*Font ZapfChancery-MediumItalic: Standard "(001.000)" Standard ROM
+*Font ZapfDingbats: Special "(001.000)" Special ROM
+
+*% end of PPD

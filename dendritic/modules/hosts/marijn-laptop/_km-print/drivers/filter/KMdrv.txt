@@ -1,0 +1,90 @@
+# KM Driver Settings sample file
+# this file shoul be placed in the users home folder and named KMdrv.txt
+# to use these settings file, modify the KMbeuEmpPS.pl filter and change 
+# following settings: 
+# my $usesettingsfile=1; 
+# my $homefolderspath="/home";
+#
+# Setting that will be made in this settings file will override settings made 
+# in the print dialog.
+#
+# Please un-comment (remove the ; character) the lines for the settings 
+# that are needed and change the <value> to your needs.
+
+# [OutputMethod] 
+#  Values:  Print        normal print
+#           Secure       secure print
+#           ProofMode    proof print
+#           Box          store in box
+#           BoxPrint     store in box and print
+#           IDPrint      ID & Print (used in combination with Authentication)
+#           SafeQ        used to send different user name
+;OutputMethod=<value>
+
+# [Secure Print] 
+# To enable Secure Print, OutputMethod needs to be set to Secure.
+# This can be done either within this file or by selecting the option in the 
+# print dialog.
+# SecurePrintID: text of 1 to 16 characters
+;SecurePrintID=<value>
+# SecurePrintPassword: text of 1 to 8 characters
+;SecurePrintPassword=<value>
+
+# [Box Printing]
+# For Box Print, OutputMethod needs to be set to Box or BoxPrint.
+# This can be done either within this file or by selecting the option in the 
+# print dialog.
+# BoxNumber: any number from 1 to 999999999
+;BoxNumber=<value>
+# BoxFileName: text of 1 to 30 characters
+;BoxFileName=<value>
+
+# [SafeQ Printing]
+# In SafeQ environment it might be necessary to use a different user name, 
+# than the current Linux User. To enable this function, the OutputMethod 
+# needs to be set to SafeQ.
+# This can be done either within this file or by selecting the option in the 
+# print dialog.
+# SafeQUser: text of 1 to 30 characters
+;SafeQUser=<value>
+
+
+# [Account Track]
+# AccountTrack value can be True or False
+;AccountTrack=True
+# DepartmentCode: text of 1 to 16 characters
+;DepartmentCode=<value>
+# AccountPassword: text of 1 to 16 characters
+;AccountPassword=<value>
+
+
+# [Authentication]
+# Authentication value can be True, False, PSES or Server
+# False = No Authentication
+# True = MFP Authentication
+# Server = (MFP +) External Server Authentication
+# PSES = PSES (Page Scope Enterprise Suite) Authentication 
+# This function can enabled either within this file or by selecting the option
+# in the print dialog.
+;Authentication=False
+# For External Server Authentication, the server number of the list of 
+# registered authentication servers of the device needs to be provided
+# AuthenticationServer: any number from 1 to 20
+;AuthenticationServer=<value>
+# AuthenticationUsername: text of 1 to 16 characters
+;AuthenticationUsername=<value>
+# AuthenticationPassword: text of 1 to 16 characters
+;AuthenticationPassword=<value>
+
+
+# [Printer Driver Encryption]
+# Authentication value can be True, False, PSES or Server
+# False = No Authentication
+# True = MFP Authentication
+# This function can enabled either within this file or by configuring the
+# printers default options (installed options) in cups
+;Encryption=False
+# Encryption Passphrase: text of 20 characters
+# passphrase has to be the same as configured at the printer
+;EncryptionPassphrase=<value>
+

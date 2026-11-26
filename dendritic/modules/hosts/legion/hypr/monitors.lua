@@ -1,0 +1,39 @@
+local monitors = {
+    { 
+        -- laptop panel (internal)
+        output = "desc:California Institute of Technology 0x1637 0x00006000",
+        mode = "2560x1600@60",
+        position = "0x0",
+        scale = 1.25,
+    },
+    {
+        -- HDMI ultrawide external monitor
+        output = "desc:Philips Consumer Electronics Company 34M2C3500L UK02514050797",
+        mode = "3440x1440@100",
+        position = "2048x-160",
+        scale = 1,
+    },
+    {
+        -- LPA Erasmus 18th floor
+        output = "desc:Lenovo Group Limited LEN T22i-10 V5NB5377",
+        mode = "1920x1080@60",
+        position = "2048x-160",
+        scale = 1,
+    },
+    {
+        -- Library of Science
+        output = "desc:Dell Inc. DELL P2425HE 3N3BL34",
+        mode = "1920x1080@100",
+        position = "-100x-1080",
+        scale = 1,
+    },
+    -- Mirror main on any other display
+    { output = "", mode = "preferred", position = "auto", scale = 1, mirror = "desc:California Institute of Technology 0x1637 0x00006000" },
+}
+
+for _, monitor in ipairs(monitors) do
+    hl.monitor(monitor)
+end
+
+-- the panels run 8-bit, so a fullscreen app requesting HDR would switch to wide gamut without 10-bit
+hl.config({ render = { cm_auto_hdr = 0 } })

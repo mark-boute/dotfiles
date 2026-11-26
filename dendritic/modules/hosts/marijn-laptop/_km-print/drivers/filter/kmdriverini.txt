@@ -1,0 +1,7 @@
+# kmdriverini.txt file is part of the KMbeuPS Driver package
+# this file is used during installation procedure
+# 
+<filterfile><file>KMbeuEmpPS.pl</file><description>cups filter</description></filterfile>
+<filterfile><file>KMbeuEnc.pm</file><description>encryption module</description></filterfile>
+
+
