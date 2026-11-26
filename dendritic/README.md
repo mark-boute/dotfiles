@@ -75,7 +75,7 @@ Hover over them in VS Code (nixd) for descriptions.
 |---|---|
 | `nh os switch ~/dotfiles/dendritic` | build and switch (Mark: `switch` alias) |
 | `nix fmt` | format all `.nix` files with nixfmt |
-| `nix flake check --no-build` | evaluate every host without building (CI runs this) |
+| `nix flake check` | evaluate every host without building the systems (CI runs this) |
 
 ## Warnings
 

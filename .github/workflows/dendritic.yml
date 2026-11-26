@@ -21,9 +21,9 @@ jobs:
           extra_nix_config: |
             accept-flake-config = false
 
-      # evaluates every host (nixosConfigurations) without building them
+      # evaluates every host; only builds what evaluation itself needs (e.g. the catppuccin palette)
       - name: Evaluate hosts
-        run: nix flake check --no-build
+        run: nix flake check
 
       - name: Check formatting
         run: nix fmt -- --ci
